@@ -24,4 +24,4 @@ export const PINK_COLOR = "#F12742";
 export const PINK_COLOR2 = "#E91E63";
 export const APP_MAIN_GREEN = "#069B4C";
 export const APP_MAIN_BLUE = "#01B5F2";
-export const DARK_BLUE = "#30336b"
+export const DARK_BLUE = "#30336b";

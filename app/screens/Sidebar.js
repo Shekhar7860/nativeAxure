@@ -40,7 +40,7 @@ export default  Sidebar  = props =>  {
 		     <Text style={styles.boldText}>Seemant Verma</Text>
 		     <Text style={styles.partnerText}>Partner</Text>
 		     </View>
-		     <View style={{width : '20%'}}/>
+		     <View style={{width : '5%'}}/>
          {isDrawerOpen ? <TouchableOpacity>
           <Image source={PROFILE_PIC}/>
           </TouchableOpacity> : null}

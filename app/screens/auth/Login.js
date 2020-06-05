@@ -155,7 +155,7 @@ class Login extends Component {
                   size={15}
                   textStyle={commonStyles.checkBoxText}
                 />
-                <View style={{width : '10%'}}/>
+                <View style={{width : '5%'}}/>
                 <ClickableText
                   textStyle={styles.forgotPassText}
                   isBoldText={false}
@@ -179,8 +179,6 @@ class Login extends Component {
                   >
                   REGISTER
                 </ClickableText>
-
-
             </View>
              </KeyboardAvoidingView>
     );
@@ -206,17 +204,18 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     marginTop: moderateScale(5),
     marginBottom: moderateScale(10),
-    marginHorizontal : moderateScale(23)
+    width : '100%',
+    marginHorizontal : moderateScale(20)
   },
   registerText : {
     marginTop : moderateScale(10),
-fontSize : moderateScale(13),
+    fontSize : moderateScale(13),
   },
   topMargin : {
     marginTop : moderateScale(20)
   },
   forgotPassText : {
-    fontSize : moderateScale(14)
+    fontSize : moderateScale(11)
   }
    });
   

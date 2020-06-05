@@ -46,7 +46,7 @@ const commonStyles = ScaledSheet.create({
   },
    checkBoxText: {
     fontWeight: null,
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(11),
   },
   otherButtons: {
     backgroundColor: PINK_COLOR,
@@ -70,7 +70,10 @@ const commonStyles = ScaledSheet.create({
     width : moderateScale(56),
     height : moderateScale(57),
     
- }
+ },
+  content : {
+  marginHorizontal : moderateScale(10)
+  }
 
 });
 

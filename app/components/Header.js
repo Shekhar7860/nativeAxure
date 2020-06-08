@@ -34,8 +34,14 @@ class Header extends PureComponent {
     return getStatusBarHeight();
   }
 
-  handleDrawerMenuClick = () => {
+  handleDrawerMenuClick = (img) => {
+    console.log('prssed', img)
+    if (img === 21) {
+      this.props.navigation.goBack()
+    }
+    else {
     this.props.navigation.openDrawer()
+  }
   };
 
   handleGoBack = () => {
@@ -52,8 +58,11 @@ class Header extends PureComponent {
  if (img === 10) {
  this.props.navigation.navigate('Search')
 }
-else {
+else if(img === 11) {
   this.props.navigation.goBack()
+}
+else {
+  
 }
   }
 
@@ -74,7 +83,8 @@ else {
       buttonText,
       buttonPress,
       navigation,
-      rightImage
+      rightImage,
+      leftImage
     } = this.props;
     const statusBarHeight = this.getStatusBarHeight();
     const paddingTop =
@@ -86,8 +96,8 @@ else {
             <View style={styles.leftView}>
               {isShowDrawer && (
                 <TouchableImage
-                  onPress={this.handleDrawerMenuClick}
-                  image={DRAWER_MENU}
+                  onPress={() => this.handleDrawerMenuClick(leftImage)}
+                  image={leftImage}
                   imageStyle={styles.image}
                 />
               )}

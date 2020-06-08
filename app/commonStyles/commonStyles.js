@@ -69,10 +69,12 @@ const commonStyles = ScaledSheet.create({
   largeIcon : {
     width : moderateScale(56),
     height : moderateScale(57),
-    
  },
   content : {
   marginHorizontal : moderateScale(10)
+  },
+  space : {
+    marginTop : moderateScale(20)
   }
 
 });

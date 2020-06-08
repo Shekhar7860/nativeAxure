@@ -8,7 +8,7 @@ import {WHITE, APP_MAIN_GREEN} from '../constants/colors';
 const AddNewButtonGroup = (props) => {
 	 const {color} = props;
 	return(<View>
-		    <TouchableOpacity style={{...styles.container, backgroundColor : color }}>
+		    <TouchableOpacity style={{...styles.container, backgroundColor : color }} onPress={props.onPress}>
 	       <Icon name="ios-add-circle-outline" 
            type="ionicon" size={moderateScale(30)} color={WHITE}/>
            <View style={{width:'8%'}}/>

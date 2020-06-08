@@ -10,32 +10,31 @@ import CardWithIcon from '../../components/CardWithIcon';
 import HR from '../../components/HR';
 import {View, Text, Button, SafeAreaView, Image, TouchableOpacity, FlatList, ScrollView} from 'react-native';
 
-export default class Quotes extends Component {
+export default class AllQuotes extends Component {
 
   constructor(props){
     super(props)
     this.state ={
-      items : [1, 2, 3, 4]
+      acceptedItems : [1, 2, 3, 4],
+      pendingItems : [1],
+      rejectedItems : [1]
+
+
     }
   }
 	componentDidMount = () => {
 		//this.props.navigation.navigate('Cart')
 	}
 
-
-addQuote = () => {
- this.props.navigation.navigate('AddQuote')
-}
-
  openQuote = () => {
     this.props.navigation.navigate('Quote')
   }
 
-  listItem = (item, index) => {
+  listItem = (item, index, status) => {
     return (
       <TouchableOpacity style={styles.rowItem} >
           <View style={styles.bottomQuotesRow}>
-          <View style={ index==0 ? styles.dotBlue : styles.dotGreen}/>
+          <View style={ status=="PENDING" ? styles.dotBlue :  status=="ACCEPTED" ?  styles.dotGreen : styles.dotRed}/>
           <View style={{width: '5%'}}/> 
           <View style={{width : '50%', justifyContent : 'center'}}>
             <Text style={styles.labelText}>Yantra Test Reseller</Text>
@@ -49,42 +48,73 @@ addQuote = () => {
     );
   };
 	render(){
-    const {items} = this.state;
+    const {acceptedItems, pendingItems, rejectedItems} = this.state;
 
 	return (<SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
-        <Header  navigation={this.props.navigation} rightImage={USER} title="QUOTES"/>
+        <Header  navigation={this.props.navigation} rightImage={USER} title="ALL QUOTES"/>
         <TouchableOpacity style={commonStyles.content} >
         <View style={styles.rowContent}>
         <View style={{marginLeft : moderateScale(-20)}}>
-        <AddNewButtonGroup color={APP_MAIN_GREEN} onPress={this.addQuote}/>
+        <AddNewButtonGroup color={APP_MAIN_GREEN} />
         </View>
         <View style={{marginRight : moderateScale(-10)}}>
         <ContainerSearch/>
         </View>
         </View>
-        <CardWithIcon color={APP_MAIN_BLUE} count={1} status={'Pending'} amount={'£1494.00'}  onPress={this.openQuote}/>
-        <CardWithIcon color={APP_MAIN_GREEN} count={3} status={'Accepted'} amount={'£4482.00'} onPress={this.onClickListen}/>
-        <CardWithIcon color={APP_MAIN_COLOR} count={1} status={'Rejected'} amount={'£2274.00'} onPress={this.onClickListen}/>
-         
+
+       
         <TouchableOpacity style={styles.quotesRow}>
         <View style={{width : '60%'}}>
-            <Text style={styles.recentText}>RECENT QUOTES</Text>
+            <Text style={styles.recentText}>PENDING</Text>
         </View>
         <View style={{width : '10%'}}/>
         <View style={{width :'30%'}}>
-            <TouchableOpacity style={styles.button}>
-            <Text style={styles.seeText}>SEE ALL</Text>
-            </TouchableOpacity>
+
+        </View>
+        </TouchableOpacity>
+          <FlatList
+                  style={styles.parentFlatList}
+                  data={pendingItems}
+                  extraData={this.state}
+                  keyExtractor={(item, index) => '' + index}
+                  renderItem={({item, index}) => this.listItem(item, index, 'PENDING')}
+                />
+         
+        <TouchableOpacity style={styles.quotesRow}>
+        <View style={{width : '60%'}}>
+            <Text style={styles.recentText}>ACCEPTED</Text>
+        </View>
+        <View style={{width : '10%'}}/>
+        <View style={{width :'30%'}}>
+
         </View>
         </TouchableOpacity>
         <FlatList
                   style={styles.parentFlatList}
-                  data={items}
+                  data={acceptedItems}
                   extraData={this.state}
                   keyExtractor={(item, index) => '' + index}
-                  renderItem={({item, index}) => this.listItem(item, index)}
+                  renderItem={({item, index}) => this.listItem(item, index, 'ACCEPTED')}
                 />
+
+        <TouchableOpacity style={styles.quotesRow}>
+        <View style={{width : '60%'}}>
+            <Text style={styles.recentText}>REJECTED</Text>
+        </View>
+        <View style={{width : '10%'}}/>
+        <View style={{width :'30%'}}>
+
+        </View>
+        </TouchableOpacity>
         
+        <FlatList
+                  style={styles.parentFlatList}
+                  data={rejectedItems}
+                  extraData={this.state}
+                  keyExtractor={(item, index) => '' + index}
+                  renderItem={({item, index}) => this.listItem(item, index, 'REJECTED')}
+                />
+
         </TouchableOpacity>
 		    </SafeAreaView>)
 	}
@@ -119,6 +149,14 @@ const styles = ScaledSheet.create({
   borderRadius : moderateScale(6),
   backgroundColor : APP_MAIN_GREEN
   },
+  dotRed : {
+  marginTop : moderateScale(5),
+  height : moderateScale(12),
+  width : moderateScale(12),
+  borderRadius : moderateScale(6),
+  backgroundColor : APP_MAIN_COLOR
+  },
+
   rowContent : {
   	flexDirection : 'row',
   	justifyContent : 'space-between',

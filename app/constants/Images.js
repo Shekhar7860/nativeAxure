@@ -16,6 +16,10 @@ export const HOME = require('../images/HOME.png');
 export const MAIL = require('../images/MAIL.png');
 export const SETTING = require('../images/SETTING.png');
 export const PHONE = require('../images/pHONE.png');
+export const BACK = require('../images/back.png');
+export const TASK = require('../images/task.png');
+
+
 
 
 

@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {PureComponent} from 'react'
 import Header from '../../components/Header';
 import commonStyles from '../../commonStyles/commonStyles';
 import {APP_LIGHT_BLUE_COLOR, SEMI_TRANSPARENT,WHITE,DARK_BLUE, NOTIFICATION_COUNT_BG_COLOR, APP_MAIN_GREEN, APP_MAIN_BLUE, APP_MAIN_COLOR} from '../../constants/colors'
@@ -10,7 +10,7 @@ import CardWithIcon from '../../components/CardWithIcon';
 import HR from '../../components/HR';
 import {View, Text, Button, SafeAreaView, Image, TouchableOpacity, FlatList, ScrollView} from 'react-native';
 
-export default class Quotes extends Component {
+export default class Quote extends PureComponent {
 
   constructor(props){
     super(props)
@@ -18,23 +18,14 @@ export default class Quotes extends Component {
       items : [1, 2, 3, 4]
     }
   }
-	componentDidMount = () => {
-		//this.props.navigation.navigate('Cart')
-	}
-
-
-addQuote = () => {
- this.props.navigation.navigate('AddQuote')
-}
-
- openQuote = () => {
-    this.props.navigation.navigate('Quote')
+  componentDidMount = () => {
+    //this.props.navigation.navigate('Cart')
   }
 
   listItem = (item, index) => {
     return (
-      <TouchableOpacity style={styles.rowItem} >
-          <View style={styles.bottomQuotesRow}>
+      <View style={styles.rowItem}>
+                   <View style={styles.bottomQuotesRow}>
           <View style={ index==0 ? styles.dotBlue : styles.dotGreen}/>
           <View style={{width: '5%'}}/> 
           <View style={{width : '50%', justifyContent : 'center'}}>
@@ -45,28 +36,28 @@ addQuote = () => {
           <Text style={styles.amountText}>£1494.00</Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </View>
     );
   };
-	render(){
+  render(){
     const {items} = this.state;
 
-	return (<SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
+  return (<SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
         <Header  navigation={this.props.navigation} rightImage={USER} title="QUOTES"/>
-        <TouchableOpacity style={commonStyles.content} >
+        <View style={commonStyles.content}>
         <View style={styles.rowContent}>
         <View style={{marginLeft : moderateScale(-20)}}>
-        <AddNewButtonGroup color={APP_MAIN_GREEN} onPress={this.addQuote}/>
+        <AddNewButtonGroup color={APP_MAIN_GREEN}/>
         </View>
         <View style={{marginRight : moderateScale(-10)}}>
         <ContainerSearch/>
         </View>
         </View>
-        <CardWithIcon color={APP_MAIN_BLUE} count={1} status={'Pending'} amount={'£1494.00'}  onPress={this.openQuote}/>
-        <CardWithIcon color={APP_MAIN_GREEN} count={3} status={'Accepted'} amount={'£4482.00'} onPress={this.onClickListen}/>
-        <CardWithIcon color={APP_MAIN_COLOR} count={1} status={'Rejected'} amount={'£2274.00'} onPress={this.onClickListen}/>
+        <CardWithIcon color={APP_MAIN_BLUE} count={1} status={'Pending'} amount={'£1494.00'}/>
+        <CardWithIcon color={APP_MAIN_GREEN} count={3} status={'Accepted'} amount={'£4482.00'}/>
+        <CardWithIcon color={APP_MAIN_COLOR} count={1} status={'Rejected'} amount={'£2274.00'}/>
          
-        <TouchableOpacity style={styles.quotesRow}>
+        <View style={styles.quotesRow}>
         <View style={{width : '60%'}}>
             <Text style={styles.recentText}>RECENT QUOTES</Text>
         </View>
@@ -76,7 +67,7 @@ addQuote = () => {
             <Text style={styles.seeText}>SEE ALL</Text>
             </TouchableOpacity>
         </View>
-        </TouchableOpacity>
+        </View>
         <FlatList
                   style={styles.parentFlatList}
                   data={items}
@@ -85,14 +76,14 @@ addQuote = () => {
                   renderItem={({item, index}) => this.listItem(item, index)}
                 />
         
-        </TouchableOpacity>
-		    </SafeAreaView>)
-	}
+        </View>
+        </SafeAreaView>)
+  }
 }
 
 const styles = ScaledSheet.create({
   subHeader : {
-  	color : NOTIFICATION_COUNT_BG_COLOR
+    color : NOTIFICATION_COUNT_BG_COLOR
   },
   bottomQuotesRow : {
   flexDirection : 'row',
@@ -120,10 +111,10 @@ const styles = ScaledSheet.create({
   backgroundColor : APP_MAIN_GREEN
   },
   rowContent : {
-  	flexDirection : 'row',
-  	justifyContent : 'space-between',
-  	marginTop : moderateScale(20),
-  	marginHorizontal : moderateScale(20)
+    flexDirection : 'row',
+    justifyContent : 'space-between',
+    marginTop : moderateScale(20),
+    marginHorizontal : moderateScale(20)
 
   },
  recentText : {

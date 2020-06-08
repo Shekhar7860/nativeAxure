@@ -8,9 +8,16 @@ import Login from "./screens/auth/Login";
 import HelpSteps from "./screens/HelpSteps";
 import Chat from "./screens/chat/Chat";
 import Home from "./screens/user/Home";
+import AddClient from "./screens/client/AddClient";
+import AllClients from "./screens/client/AllClients";
 import Search from "./screens/user/Search";
 import Cart from "./screens/cart/Cart";
 import Quotes from "./screens/quotes/Quotes";
+import AllQuotes from "./screens/quotes/AllQuotes";
+import AddQuote from "./screens/quotes/AddQuote";
+import Quote from "./screens/quotes/Quote";
+import Clients from "./screens/client/Clients";
+import Client from "./screens/client/Client";
 import ResourceHub from "./screens/user/ResourceHub";
 import Icon from 'react-native-vector-icons/AntDesign';
 // import Icon2 from 'react-native-vector-icons/Entypo';
@@ -45,6 +52,9 @@ function TabStackNavigator() {
         <Stack.Screen name="Tab1" component={Chat} />
         <Stack.Screen name="Search" component={Search} />
         <Stack.Screen name="Quotes" component={Quotes} />
+        <Stack.Screen name="Quote" component={Quote} />
+        <Stack.Screen name="AddQuote" component={AddQuote} />
+        <Stack.Screen name="AddClient" component={AddClient} />
         <Stack.Screen name="Resource" component={ResourceHub} />
       </Stack.Navigator>
     );

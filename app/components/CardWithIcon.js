@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {PureComponent} from 'react';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
@@ -7,16 +7,22 @@ import TouchableImage from './TouchableImage';
 import 	commonStyles from '../commonStyles/commonStyles';
 import {SEARCH, rightArrow} from '../constants/Images';
 
-const CardWithIcon = (props) => {
-	const {color, count, status, amount} = props;
+class CardWithIcon extends PureComponent   {
+
+  constructor(props){
+    super(props)
+  }
+		render (){
+	const {color, count, status, amount} = this.props;
 	return(
-	<View>
-	<TouchableOpacity style={{...styles.card, backgroundColor : color, borderColor : color}}>
+	<TouchableOpacity>
+	<TouchableOpacity style={{...styles.card, backgroundColor : color, borderColor : color}} onPress={this.props.onPress}>
 	<Text style={styles.text}>{count} {status}</Text>
 	<Image source={rightArrow} style={{...commonStyles.icon, ...styles.imageStyle}}/>
-	<Text style={styles.amount}>£ {amount}.00 </Text>
+	<Text style={styles.amount}> {amount}</Text>
 	</TouchableOpacity>
-	</View>)
+	</TouchableOpacity>)
+}
 
 }
 

@@ -2,11 +2,12 @@
 
 import React, {PureComponent} from 'react';
 
-import {StyleSheet, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Image, Text} from 'react-native';
 import {PHONE} from '../constants/Images';
 import BoldText from './BoldText';
-import {WHITE, APP_MAIN_COLOR, GRAY} from '../constants/colors';
-const BUTTON_HEIGHT = 40;
+import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import {WHITE, APP_MAIN_COLOR, GRAY, APP_MAIN_GREEN} from '../constants/colors';
+const BUTTON_HEIGHT = moderateScale(40);
 const BUTTON_TEXT_SIZE = 16;
 
 class ButtonDefault extends PureComponent {
@@ -31,9 +32,9 @@ class ButtonDefault extends PureComponent {
         style={[buttonMainStyle, this.props.style]}>
         <View style={styles.viewStyle}>
           {isShowImage && <Image source={source} style={styles.buttonImage} />}
-          <BoldText style={[styles.TextStyle, this.props.textStyle]}>
+          <Text style={[styles.TextStyle, this.props.textStyle]}>
             {this.props.children}
-          </BoldText>
+          </Text>
           {isShowLoading && (
             <Loading indicatorColor={APP_MAIN_COLOR} style={styles.loading} />
           )}
@@ -46,10 +47,12 @@ class ButtonDefault extends PureComponent {
 const styles = StyleSheet.create({
   SubmitButtonStyle: {
     justifyContent: 'center',
-    backgroundColor: WHITE,
+    backgroundColor: APP_MAIN_GREEN,
     borderRadius: BUTTON_HEIGHT / 2,
-    width: '100%',
+    width: '35%',
     height: BUTTON_HEIGHT,
+    marginTop : moderateScale(30),
+    marginHorizontal : moderateScale(20)
   },
   SubmitButtonDisable: {
     justifyContent: 'center',
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
     height: BUTTON_HEIGHT,
   },
   TextStyle: {
-    color: APP_MAIN_COLOR,
+    color: WHITE,
     fontSize: BUTTON_TEXT_SIZE,
     textAlign: 'center',
   },

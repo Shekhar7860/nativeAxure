@@ -1,9 +1,9 @@
 'use strict';
 
 import React, {PureComponent} from 'react';
-// import ModalDropdown from 'react-native-modal-dropdown';
+import ModalDropdown from 'react-native-modal-dropdown';
 import {StyleSheet, View, Image} from 'react-native';
-
+import commonStyles from '../commonStyles/commonStyles';
 import {BLACK, APP_MAIN_BLUE_COLOR, DARK_GRAY} from '../constants/colors';
 import {DOWN_ARROW} from '../constants/Images';
 
@@ -28,7 +28,7 @@ class SimpleDropdown extends PureComponent {
   };
 
   render() {
-    const {drowdownArray, placeHolder, style, textStyle,isIconVisible, dropDownWidth} = this.props;
+    const {drowdownArray, placeHolder, style, textStyle,isIconVisible, dropDownWidth, imageStyle} = this.props;
     let dropDownHeight = 0;
     if (drowdownArray) {
       dropDownHeight =
@@ -39,7 +39,7 @@ class SimpleDropdown extends PureComponent {
 
     return (
       <View>
-        <View style={[CommonStyles.shadowLayout, styles.flexRow], style}>
+        <View style={[commonStyles.shadowLayout, styles.flexRow], style}>
           <ModalDropdown
             ref={obj => {
               this.dropDown = obj;
@@ -51,13 +51,13 @@ class SimpleDropdown extends PureComponent {
             dropdownTextStyle={styles.dropDownListTextStyle}
             dropdownTextHighlightStyle={styles.dropDownSelectedListTextStyle}
             textStyle={[
-              CommonStyles.nurseAppotNotesAndOtherText,
+              commonStyles.nurseAppotNotesAndOtherText,
               styles.textBold,
             ], textStyle}
             options={drowdownArray}
           />
           {isIconVisible &&(
-            <Image style={styles.downArrow} source={DOWN_ARROW} />
+            <Image style={[styles.downArrow], imageStyle} source={DOWN_ARROW} />
           )}
           
         </View>

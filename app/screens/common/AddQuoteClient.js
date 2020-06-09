@@ -1,22 +1,19 @@
 import React, {PureComponent} from 'react'
 import Header from '../../components/Header';
 import commonStyles from '../../commonStyles/commonStyles';
-import {APP_LIGHT_BLUE_COLOR, LINE_COLOR, SEMI_TRANSPARENT,WHITE,DARK_BLUE, NOTIFICATION_COUNT_BG_COLOR, APP_MAIN_GREEN, APP_MAIN_BLUE, APP_MAIN_COLOR} from '../../constants/colors'
+import {APP_LIGHT_BLUE_COLOR, SEMI_TRANSPARENT,WHITE,DARK_BLUE, NOTIFICATION_COUNT_BG_COLOR, APP_MAIN_GREEN, APP_MAIN_BLUE, APP_MAIN_COLOR} from '../../constants/colors'
 import {USER, BACK, TASK, DRAWER_MENU} from '../../constants/Images';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
-import SimpleDropdown from '../../components/SimpleDropdown';
 import ClickableText from '../../components/ClickableText';
 import TouchableImage from '../../components/TouchableImage';
-import ButtonDefault from '../../components/ButtonDefault';
 import ContainerSearch from '../../components/ContainerSearch';
+import CardWithIcon from '../../components/CardWithIcon';
 import InputBox from '../../components/InputBox';
 import HR from '../../components/HR';
 import {View, Text, Button, ScrollView,  SafeAreaView, Image, TouchableOpacity, FlatList, Dimensions} from 'react-native';
-const arrDataType = ['Partner','Client','User'];
-const arrDataClient = ['Anil','Akram','Sagar', 'Sanjeev'];
-const arrDataStatus = ['Pending','Accepted','Rejected'];
-export default class AddQuote extends PureComponent {
+
+export default class AddQuoteClient extends PureComponent {
 
   constructor(props){
     super(props)
@@ -28,17 +25,13 @@ export default class AddQuote extends PureComponent {
     //this.props.navigation.navigate('Cart')
   }
 
-  addClientQuote = () =>  {
-    this.props.navigation.navigate('AddQuoteClient')
-  }
-
 
   render(){
     const {items} = this.state;
 
   return (<SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
-        <Header navigation={this.props.navigation} rightImage={USER} title="CREATE NEW" leftImage={BACK} />
-        <TouchableOpacity style={commonStyles.content} >
+        <Header navigation={this.props.navigation} rightImage={USER} title="QUOTE" leftImage={BACK} />
+                <TouchableOpacity style={commonStyles.content} >
         <View style={styles.rowContent}>
         <View style={{marginLeft : moderateScale(-20)}}>
         <AddNewButtonGroup color={APP_MAIN_GREEN}/>
@@ -54,36 +47,50 @@ export default class AddQuote extends PureComponent {
         </TouchableOpacity>
         <ScrollView>
         <View style={{...commonStyles.content, marginBottom : moderateScale(40)}}>
+        <Text style={styles.labelText}>Quote #</Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ quote: value })}/>
+
+         <View style={commonStyles.space}>
+        <Text style={styles.labelText}>Quote Title</Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ quoteTitle: value })}/>
+        </View>
+
+         <View style={commonStyles.space}>
+        <Text style={styles.labelText}>Quote Number/Code</Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ quoteCode: value })}/>
+        </View>
+
+        <View style={commonStyles.space}>
+        <Text style={styles.labelText}>MPH ID</Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ mphId: value })}/>
+        </View>
+
+        <View style={commonStyles.space}>
+        <Text style={styles.labelText}>PO Preference</Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ poPreference: value })}/>
+        </View>
+
+        <View style={commonStyles.space}>
         <Text style={styles.labelText}>Type</Text>
-        <SimpleDropdown placeHolder="Please select type"
-                  style={styles.dropDownStyle}
-                  drowdownArray={arrDataType}
-                  dropDownWidth={'85%'}
-                  imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
-                  isIconVisible={true}/>
-         <View style={{flexDirection : 'row'}}>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ type: value })}/>
+        </View>
+
+        <View style={commonStyles.space}>
+        <View style={{flexDirection : 'row'}}>
         <Text style={styles.labelText}>Client</Text>
         <View style={{width : '2%'}}/>
         <Text style={{fontSize : moderateScale(10), marginTop : moderateScale(20), color : APP_MAIN_BLUE}}> + Add New </Text>
         </View>
-        <SimpleDropdown placeHolder="Please select client"
-                  style={styles.dropDownStyle}
-                  drowdownArray={arrDataClient}
-                  dropDownWidth={'85%'}
-                  imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
-                  isIconVisible={true}/>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ client: value })}/>
+        </View>
 
-         <Text style={styles.labelText}>Status</Text>
-          <SimpleDropdown placeHolder="Please select status"
-                  style={styles.dropDownStyle}
-                  drowdownArray={arrDataStatus}
-                  dropDownWidth={'85%'}
-                  imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
-                  isIconVisible={true}/>
+         <View style={commonStyles.space}>
+        <Text style={styles.labelText}>Status</Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ status: value })}/>
+        </View>
 
-        
-               <ButtonDefault onPress={this.addClientQuote}>NEXT</ButtonDefault>
-             </View>
+              
+        </View>
           </ScrollView>
           
 
@@ -114,7 +121,7 @@ const styles = ScaledSheet.create({
   },
   rowContent : {
     flexDirection : 'row',
-    justifyContent : 'space-around',
+    justifyContent : 'space-between',
     marginTop : moderateScale(20),
     marginHorizontal : moderateScale(20)
 
@@ -160,11 +167,6 @@ inputBoxStyle: {
   input : {
     fontWeight : 'normal',
     fontSize : moderateScale(10)
-  },
-  dropDownStyle : {
-    marginHorizontal : moderateScale(20), marginTop : moderateScale(-20), flexDirection : 'row',
-    borderBottomWidth : moderateScale(1),
-    borderBottomColor : LINE_COLOR
   }
 
 

@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import {WHITE, APP_MAIN_COLOR, BLACK, PINK_COLOR} from '../constants/colors';
+import {WHITE, APP_MAIN_COLOR, BLACK, PINK_COLOR, LIGHTEST_GRAY, APP_MAIN_BLUE_COLOR} from '../constants/colors';
 
 const BADGE_WIDTH_HEIGHT = 8;
 const INPUT_BOX_HEIGHT = 40;
@@ -75,7 +75,30 @@ const commonStyles = ScaledSheet.create({
   },
   space : {
     marginTop : moderateScale(20)
-  }
+  },
+   shadowLayout: {
+    marginTop: 10,
+    justifyContent: 'center',
+    borderRadius: ADD_NOTE_BTN / 2,
+    flex: 1,
+    shadowColor: LIGHTEST_GRAY,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    elevation: 2,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: NOTES_TEXT_PADDING,
+  },
+   nurseAppotNotesAndOtherText: {
+    fontSize: 12,
+    color: APP_MAIN_BLUE_COLOR,
+    paddingTop: 3,
+    paddingBottom: 3,
+  },
+
 
 });
 

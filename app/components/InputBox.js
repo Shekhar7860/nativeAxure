@@ -5,7 +5,7 @@ import {StyleSheet, Image} from 'react-native';
 import {Input} from 'react-native-elements';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 
-import {APP_MAIN_BLUE_COLOR, APP_MAIN_COLOR_DISABLE, TRANSPARENT_COLOR} from '../constants/colors';
+import {APP_MAIN_BLUE_COLOR, APP_MAIN_COLOR_DISABLE, TRANSPARENT_COLOR, LINE_COLOR} from '../constants/colors';
 
 const INPUT_BOX_HEIGHT = 50;
 
@@ -55,6 +55,7 @@ const styles = ScaledSheet.create({
     fontWeight: 'bold',
   },
   inputContainerStyle: {
+    borderColor : LINE_COLOR
       },
   searchImage: {
     width: 16,

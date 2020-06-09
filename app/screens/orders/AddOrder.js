@@ -16,7 +16,7 @@ import {View, Text, Button, ScrollView,  SafeAreaView, Image, TouchableOpacity, 
 const arrDataType = ['Partner','Client','User'];
 const arrDataClient = ['Anil','Akram','Sagar', 'Sanjeev'];
 const arrDataStatus = ['Pending','Accepted','Rejected'];
-export default class AddQuote extends PureComponent {
+export default class AddOrder extends PureComponent {
 
   constructor(props){
     super(props)
@@ -54,14 +54,7 @@ export default class AddQuote extends PureComponent {
         </TouchableOpacity>
         <ScrollView>
         <View style={{...commonStyles.content, marginBottom : moderateScale(40)}}>
-        <Text style={styles.labelText}>Type</Text>
-        <SimpleDropdown placeHolder="Please select type"
-                  style={styles.dropDownStyle}
-                  drowdownArray={arrDataType}
-                  dropDownWidth={'85%'}
-                  imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
-                  isIconVisible={true}/>
-         <View style={{flexDirection : 'row'}}>
+                 <View style={{flexDirection : 'row'}}>
         <Text style={styles.labelText}>Client</Text>
         <View style={{width : '2%'}}/>
         <Text style={{fontSize : moderateScale(10), marginTop : moderateScale(20), color : APP_MAIN_BLUE}}> + Add New </Text>
@@ -72,14 +65,22 @@ export default class AddQuote extends PureComponent {
                   dropDownWidth={'85%'}
                   imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
                   isIconVisible={true}/>
+                  <View>
+        <Text style={styles.labelText}>MPH ID</Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ mphId: value })}/>
+        </View>
 
-         <Text style={styles.labelText}>Status</Text>
-          <SimpleDropdown placeHolder="Please select status"
-                  style={styles.dropDownStyle}
-                  drowdownArray={arrDataStatus}
-                  dropDownWidth={'85%'}
-                  imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
-                  isIconVisible={true}/>
+        <View>
+        <Text style={styles.labelText}>PO Preference</Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ poPreference: value })}/>
+        </View>
+
+
+
+         <View>
+        <Text style={styles.labelText}>Status</Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ status: value })}/>
+        </View>
 
         
                <ButtonDefault onPress={this.addClientQuote}>NEXT</ButtonDefault>

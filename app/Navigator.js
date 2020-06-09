@@ -18,9 +18,14 @@ import RecentOrders from "./screens/orders/RecentOrders";
 import AddOrder from "./screens/orders/AddOrder";
 import AllQuotes from "./screens/quotes/AllQuotes";
 import AddQuote from "./screens/quotes/AddQuote";
+import RecentProducts from "./screens/products/RecentProducts";
+import AllProducts from "./screens/products/AllProducts";
 import Quote from "./screens/quotes/Quote";
 import Clients from "./screens/client/Clients";
 import Client from "./screens/client/Client";
+import AddOrderQuote from "./screens/orders/AddOrderQuote";
+import AddProduct from "./screens/products/AddProduct";
+import Requests from "./screens/requests/Requests";
 import AddQuoteClient from "./screens/common/AddQuoteClient";
 import ResourceHub from "./screens/user/ResourceHub";
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -55,7 +60,7 @@ function TabStackNavigator() {
        <Stack.Navigator  screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Tab1" component={Chat} />
         <Stack.Screen name="Search" component={Search} />
-        <Stack.Screen name="Quotes" component={RecentOrders} />
+        <Stack.Screen name="Quotes" component={Requests} />
         <Stack.Screen name="Quote" component={Quote} />
         <Stack.Screen name="AddQuote" component={AddQuote} />
         <Stack.Screen name="AddQuoteClient" component={AddQuoteClient} />

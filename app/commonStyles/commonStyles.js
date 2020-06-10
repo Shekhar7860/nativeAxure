@@ -66,6 +66,10 @@ const commonStyles = ScaledSheet.create({
     width : moderateScale(20),
     height : moderateScale(20)
   },
+  smallIcon : {
+    width : moderateScale(10),
+    height : moderateScale(10)
+  },
   largeIcon : {
     width : moderateScale(56),
     height : moderateScale(57),
@@ -98,6 +102,9 @@ const commonStyles = ScaledSheet.create({
     paddingTop: 3,
     paddingBottom: 3,
   },
+  textWhite : {
+    color : WHITE
+  }
 
 
 });

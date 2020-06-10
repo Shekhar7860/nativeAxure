@@ -26,6 +26,7 @@ import Client from "./screens/client/Client";
 import AddOrderQuote from "./screens/orders/AddOrderQuote";
 import AddProduct from "./screens/products/AddProduct";
 import Requests from "./screens/requests/Requests";
+import AddSupportRequest from "./screens/requests/AddSupportRequest";
 import AddQuoteClient from "./screens/common/AddQuoteClient";
 import ResourceHub from "./screens/user/ResourceHub";
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -55,12 +56,13 @@ const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
+// Stack Navigator inside Tab Navigator  for initial screens
 function TabStackNavigator() {
   return (
        <Stack.Navigator  screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Tab1" component={Chat} />
         <Stack.Screen name="Search" component={Search} />
-        <Stack.Screen name="Quotes" component={Requests} />
+        <Stack.Screen name="Quotes" component={AddSupportRequest} />
         <Stack.Screen name="Quote" component={Quote} />
         <Stack.Screen name="AddQuote" component={AddQuote} />
         <Stack.Screen name="AddQuoteClient" component={AddQuoteClient} />
@@ -69,6 +71,7 @@ function TabStackNavigator() {
       </Stack.Navigator>
     );
 }
+
 
 
 function TabNavigator() {

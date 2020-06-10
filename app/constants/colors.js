@@ -28,3 +28,4 @@ export const DARK_BLUE = "#30336b";
 export const LINE_COLOR = '#e6e6e6';
 export const ORANGE_COLOR= '#f0932b';
 export const CARD_DARK_BLUE = '#130f40';
+export const FOREST_COLOR = '#0a3d62';

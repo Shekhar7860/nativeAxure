@@ -13,13 +13,13 @@ class CardWithIcon extends PureComponent   {
     super(props)
   }
 		render (){
-	const {color, count, status, amount} = this.props;
+	const {color, count, status, amount, amountStyle} = this.props;
 	return(
 	<TouchableOpacity>
 	<TouchableOpacity style={{...styles.card, backgroundColor : color, borderColor : color}} onPress={this.props.onPress}>
 	<Text style={styles.text}>{count} {status}</Text>
 	<Image source={rightArrow} style={{...commonStyles.icon, ...styles.imageStyle}}/>
-	<Text style={styles.amount}> {amount}</Text>
+	<Text style={[styles.amount, amountStyle]}> {amount}</Text>
 	</TouchableOpacity>
 	</TouchableOpacity>)
 }

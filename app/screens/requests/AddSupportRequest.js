@@ -45,8 +45,7 @@ export default class AddSupportRequest extends PureComponent {
         <View style={{justifyContent : 'center', alignItems : 'center'}}>
         <Text style={{...commonStyles.textWhite}}>New Ticket </Text>
          </View>
-        <View style={{marginRight : moderateScale(-10)}}>
-        
+        <View style={{width : '10%'}}>
         </View>
         </View>
         <TouchableOpacity style={commonStyles.content} >
@@ -54,35 +53,53 @@ export default class AddSupportRequest extends PureComponent {
         </TouchableOpacity>
         <ScrollView>
         <View style={{...commonStyles.content, marginBottom : moderateScale(40)}}>
-        <Text style={styles.labelText}>Type</Text>
-        <SimpleDropdown placeHolder="Please select type"
+        <Text style={styles.labelText}>SEARCH A REQUESTER<Text style={commonStyles.redColor}>*</Text></Text>
+        <InputBox rightIcon="user" placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ requester: value })}/>
+        <Text style={styles.labelText}>SUBJECT<Text style={commonStyles.redColor}>*</Text></Text>
+        <InputBox placeHolder="" boxStyle={styles.inputBoxStyle} inputStyle={styles.input} onChangeText={value => this.setState({ subject: value })}/>
+        <Text style={styles.labelText}>TYPE</Text>
+        <SimpleDropdown placeHolder="Please select"
                   style={styles.dropDownStyle}
                   drowdownArray={arrDataType}
                   dropDownWidth={'85%'}
                   imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
                   isIconVisible={true}/>
-         <View style={{flexDirection : 'row'}}>
-        <Text style={styles.labelText}>Client</Text>
-        <View style={{width : '2%'}}/>
-        <Text style={{fontSize : moderateScale(10), marginTop : moderateScale(20), color : APP_MAIN_BLUE}}> + Add New </Text>
-        </View>
-        <SimpleDropdown placeHolder="Please select client"
+        
+         <Text style={styles.labelText}>STATUS<Text style={commonStyles.redColor}>*</Text></Text>
+          <SimpleDropdown placeHolder="Please select"
+                  style={styles.dropDownStyle}
+                  drowdownArray={arrDataStatus}
+                  dropDownWidth={'85%'}
+                  imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
+                  isIconVisible={true}/>
+                   
+            <Text style={styles.labelText}>PRIORITY<Text style={commonStyles.redColor}>*</Text></Text>
+             <SimpleDropdown placeHolder="Please select"
                   style={styles.dropDownStyle}
                   drowdownArray={arrDataClient}
                   dropDownWidth={'85%'}
                   imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
                   isIconVisible={true}/>
 
-         <Text style={styles.labelText}>Status</Text>
-          <SimpleDropdown placeHolder="Please select status"
+              <Text style={styles.labelText}>GROUP</Text>
+              <SimpleDropdown placeHolder="Please select"
                   style={styles.dropDownStyle}
-                  drowdownArray={arrDataStatus}
+                  drowdownArray={arrDataClient}
                   dropDownWidth={'85%'}
                   imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
                   isIconVisible={true}/>
 
-        
-               <ButtonDefault onPress={this.addClientQuote}>NEXT</ButtonDefault>
+                  <Text style={styles.labelText}>AGENT</Text>
+                 <SimpleDropdown placeHolder="Please select"
+                  style={styles.dropDownStyle}
+                  drowdownArray={arrDataClient}
+                  dropDownWidth={'85%'}
+                  imageStyle={{marginTop : moderateScale(10), ...commonStyles.icon}}
+                  isIconVisible={true}/>
+
+
+
+
              </View>
           </ScrollView>
           

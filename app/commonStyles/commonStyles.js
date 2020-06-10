@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import {WHITE, APP_MAIN_COLOR, BLACK, PINK_COLOR, LIGHTEST_GRAY, APP_MAIN_BLUE_COLOR} from '../constants/colors';
+import {WHITE, APP_MAIN_COLOR, BLACK, PINK_COLOR, LIGHTEST_GRAY, APP_MAIN_BLUE_COLOR, RED} from '../constants/colors';
 
 const BADGE_WIDTH_HEIGHT = 8;
 const INPUT_BOX_HEIGHT = 40;
@@ -104,6 +104,9 @@ const commonStyles = ScaledSheet.create({
   },
   textWhite : {
     color : WHITE
+  },
+  redColor : {
+    color : RED
   }
 
 

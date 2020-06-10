@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Image} from 'react-native';
 import {Input} from 'react-native-elements';
 import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-
+import Icon from 'react-native-vector-icons/Feather';
 import {APP_MAIN_BLUE_COLOR, APP_MAIN_COLOR_DISABLE, TRANSPARENT_COLOR, LINE_COLOR} from '../constants/colors';
 
 const INPUT_BOX_HEIGHT = 50;
@@ -25,6 +25,7 @@ class InputBox extends Component {
       inputStyle,
       maxLines,
       isSearch,
+      rightIcon,
       searchImageStyle,
       placeHolderTextColor,
     } = this.props;
@@ -38,6 +39,7 @@ class InputBox extends Component {
         containerStyle={[styles.box, {...boxStyle}]}
         inputStyle={[styles.input, inputStyle]}
         inputContainerStyle={styles.inputContainerStyle}
+        rightIcon={{ type: 'feather', name : rightIcon }}
       />
     );
   }

@@ -28,7 +28,15 @@ class SimpleDropdown extends PureComponent {
   };
 
   render() {
-    const {drowdownArray, placeHolder, style, textStyle,isIconVisible, dropDownWidth, imageStyle} = this.props;
+    const {
+      drowdownArray,
+      placeHolder,
+      style,
+      textStyle,
+      isIconVisible,
+      dropDownWidth,
+      imageStyle,
+    } = this.props;
     let dropDownHeight = 0;
     if (drowdownArray) {
       dropDownHeight =
@@ -39,27 +47,33 @@ class SimpleDropdown extends PureComponent {
 
     return (
       <View>
-        <View style={[commonStyles.shadowLayout, styles.flexRow], style}>
+        <View style={([commonStyles.shadowLayout, styles.flexRow], style)}>
           <ModalDropdown
-            ref={obj => {
+            ref={(obj) => {
               this.dropDown = obj;
             }}
             defaultValue={placeHolder}
             style={styles.dropdownBtn}
             onSelect={(index, value) => this.handleDropdownSelect(index, value)}
-            dropdownStyle={[styles.dropdownView, {height: dropDownHeight}, {width : dropDownWidth}]}
+            dropdownStyle={[
+              styles.dropdownView,
+              {height: dropDownHeight},
+              {width: dropDownWidth},
+            ]}
             dropdownTextStyle={styles.dropDownListTextStyle}
             dropdownTextHighlightStyle={styles.dropDownSelectedListTextStyle}
-            textStyle={[
-              commonStyles.nurseAppotNotesAndOtherText,
-              styles.textBold,
-            ], textStyle}
+            textStyle={
+              ([commonStyles.nurseAppotNotesAndOtherText, styles.textBold],
+              textStyle)
+            }
             options={drowdownArray}
           />
-          {isIconVisible &&(
-            <Image style={[styles.downArrow], imageStyle} source={DOWN_ARROW} />
+          {isIconVisible && (
+            <Image
+              style={([styles.downArrow], imageStyle)}
+              source={DOWN_ARROW}
+            />
           )}
-          
         </View>
       </View>
     );

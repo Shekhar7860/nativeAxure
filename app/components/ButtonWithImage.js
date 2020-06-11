@@ -37,20 +37,18 @@ class ButtonWithImage extends PureComponent {
         disabled={isDisable}
         {...this.props}
         style={[buttonMainStyle, this.props.style]}>
-        <View style={{alignSelf : 'center'}}>
-        <View style={styles.viewStyle}>
-         {isShowRightIcon && (
-            <Image
-              source={rightImage}
-              style={[styles.buttonImage, rightImageStyle]}
-            />
-          )}
-          <BoldText style={[styles.textStyle, this.props.textStyle]}>
-            {this.props.children}
-          </BoldText>
-         
-          
-        </View>
+        <View style={{alignSelf: 'center'}}>
+          <View style={styles.viewStyle}>
+            {isShowRightIcon && (
+              <Image
+                source={rightImage}
+                style={[styles.buttonImage, rightImageStyle]}
+              />
+            )}
+            <BoldText style={[styles.textStyle, this.props.textStyle]}>
+              {this.props.children}
+            </BoldText>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -82,8 +80,7 @@ const styles = StyleSheet.create({
   textStyle: {
     color: WHITE,
     fontSize: BUTTON_TEXT_SIZE,
-    marginLeft: 0
-  
+    marginLeft: 0,
   },
   viewStyle: {
     flexDirection: 'row',
@@ -103,7 +100,7 @@ const styles = StyleSheet.create({
     width: BUTTON_TEXT_SIZE,
     height: BUTTON_TEXT_SIZE,
     marginRight: 10,
-    tintColor : WHITE
+    tintColor: WHITE,
   },
 });
 

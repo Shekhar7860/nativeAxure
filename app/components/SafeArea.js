@@ -1,6 +1,6 @@
-import React, { PureComponent } from 'react';
-import { View, SafeAreaView } from 'react-native';
-import { getStatusBarHeight, isIphoneX } from 'react-native-iphone-x-helper';
+import React, {PureComponent} from 'react';
+import {View, SafeAreaView} from 'react-native';
+import {getStatusBarHeight, isIphoneX} from 'react-native-iphone-x-helper';
 
 const defaultSafeAreaConfig = {
   top: true,
@@ -10,14 +10,14 @@ const defaultSafeAreaConfig = {
 };
 
 function getInsetConfig(inset = {}, enableTop) {
-  const safeAreaInsetConfig = { top: enableTop };
+  const safeAreaInsetConfig = {top: enableTop};
 
   if (inset === false) {
     Object.keys(defaultSafeAreaConfig).forEach((key) => {
       safeAreaInsetConfig[key] = 'never';
     });
   } else {
-    const saConfig = { ...defaultSafeAreaConfig, ...inset };
+    const saConfig = {...defaultSafeAreaConfig, ...inset};
 
     Object.entries(saConfig).forEach(([key, val]) => {
       if (typeof val === 'boolean') {
@@ -35,15 +35,14 @@ class SafeArea extends PureComponent {
   static defaultProps = {
     inset: defaultSafeAreaConfig,
     checkOrientation: true,
-  }
+  };
 
   state = {
     forceInset: getInsetConfig(this.props.inset),
-  }
-
+  };
 
   getStatusBarHeight() {
-    const { isLandscape } = this.props;
+    const {isLandscape} = this.props;
 
     if (isLandscape && isIphoneX()) {
       return 0;
@@ -53,18 +52,19 @@ class SafeArea extends PureComponent {
   }
 
   componentDidMount = () => {
-    const { checkOrientation, isLandscape, inset } = this.props;
+    const {checkOrientation, isLandscape, inset} = this.props;
 
     if (checkOrientation && isLandscape && isIphoneX()) {
-      this.setState({ forceInset: getInsetConfig(inset, false) });
+      this.setState({forceInset: getInsetConfig(inset, false)});
     }
-  }
+  };
 
   componentDidUpdate = (prevProps, prevState) => {
-    const { inset, checkOrientation, isLandscape } = this.props;
+    const {inset, checkOrientation, isLandscape} = this.props;
 
-    const shouldUpdateInset = inset !== prevProps.inset ||
-      (checkOrientation && (isLandscape !== prevProps.isLandscape));
+    const shouldUpdateInset =
+      inset !== prevProps.inset ||
+      (checkOrientation && isLandscape !== prevProps.isLandscape);
 
     if (shouldUpdateInset) {
       let topInset = true;
@@ -72,25 +72,18 @@ class SafeArea extends PureComponent {
       if (checkOrientation && isLandscape && isIphoneX()) {
         topInset = topInset;
       }
-      this.setState({ forceInset: getInsetConfig(inset, topInset) });
+      this.setState({forceInset: getInsetConfig(inset, topInset)});
     }
-  }
+  };
 
   render() {
-    const { inset, ...otherProps } = this.props;
-    const { forceInset } = this.state;
+    const {inset, ...otherProps} = this.props;
+    const {forceInset} = this.state;
 
     if (inset === false) {
-      return (
-        <View {...otherProps} />
-      );
+      return <View {...otherProps} />;
     }
-    return (
-      <SafeAreaView
-        {...otherProps}
-        forceInset={forceInset}
-      />
-    );
+    return <SafeAreaView {...otherProps} forceInset={forceInset} />;
   }
 }
 

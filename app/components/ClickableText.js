@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {PureComponent} from 'react';
-import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import {WHITE} from '../constants/colors';
 import BoldText from './BoldText';

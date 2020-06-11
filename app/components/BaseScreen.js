@@ -5,7 +5,7 @@ import SafeArea from './SafeArea';
 import {APP_MAIN_COLOR} from '../constants/colors';
 import {getStatusBarHeight} from 'react-native-iphone-x-helper';
 
-const MyStatusBar = props => {
+const MyStatusBar = (props) => {
   const {
     backgroundColor,
     barHeight,
@@ -57,7 +57,7 @@ class BaseScreen extends PureComponent {
       safeAreaStyle,
       blackElements,
       statusBarBGColor,
-      ParentStyle
+      ParentStyle,
     } = this.props;
     let statusbarPadding;
     if (Platform.OS === 'ios') {
@@ -93,11 +93,9 @@ const styles = StyleSheet.create({
   parent: {
     flex: 1,
     backgroundColor: APP_MAIN_COLOR,
-  
   },
   container: {
     flex: 1,
-    
   },
   body: {
     flex: 1,

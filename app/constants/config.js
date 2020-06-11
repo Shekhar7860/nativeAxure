@@ -25,17 +25,15 @@ export const API_AUTH_TOKEN = AUTH_TOKENS[ENVIRONMENT];
 
 const SEND_BIRD_CONFIGS = {
   production: {
-    appId: "386FA415-971A-46F7-AB19-8CA4971E505F",
-    token: "cacf7f8859992e4d429d6d4e710edc19036fa9ae",
-    apiUrl: "https://api.sendbird.com",
+    appId: '386FA415-971A-46F7-AB19-8CA4971E505F',
+    token: 'cacf7f8859992e4d429d6d4e710edc19036fa9ae',
+    apiUrl: 'https://api.sendbird.com',
   },
   staging: {
-    appId: "386FA415-971A-46F7-AB19-8CA4971E505F",
-    token: "cacf7f8859992e4d429d6d4e710edc19036fa9ae",
-    apiUrl: "https://api.sendbird.com",
+    appId: '386FA415-971A-46F7-AB19-8CA4971E505F',
+    token: 'cacf7f8859992e4d429d6d4e710edc19036fa9ae',
+    apiUrl: 'https://api.sendbird.com',
   },
 };
 
-
 export const SEND_BIRD_CONFIG = SEND_BIRD_CONFIGS[ENVIRONMENT];
-

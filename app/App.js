@@ -14,7 +14,7 @@ import {
   View,
   Text,
   StatusBar,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import {Provider} from 'react-redux';
 import {
@@ -25,28 +25,30 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import AppNavigator from './Navigator';
+import messaging, {AuthorizationStatus} from '@react-native-firebase/messaging';
 import store from './redux/store';
 
-
 function check() {
- // console.log('hiii')
+  // console.log('hiii')
 }
 
 class App extends PureComponent {
   componentDidMount() {
-    
+    this.getToken();
+  }
+
+  async getToken() {
+    const token = await messaging().getInitialNotification();
   }
 
   render() {
     return (
       <Provider store={store}>
-      <AppNavigator/>
+        <AppNavigator />
       </Provider>
-
     );
   }
-
-  }
+}
 
 const styles = StyleSheet.create({
   scrollView: {

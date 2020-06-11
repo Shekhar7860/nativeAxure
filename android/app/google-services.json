@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "813574962547",
+    "firebase_url": "https://trim-artifact-279404.firebaseio.com",
+    "project_id": "trim-artifact-279404",
+    "storage_bucket": "trim-artifact-279404.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813574962547:android:192646735052ee94e95906",
+        "android_client_info": {
+          "package_name": "com.nativeaxure"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "813574962547-1fnbrfkp365gte3nkq3glfqgmncr3h8a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsAFaZNkgDrZL1Rh-2Fwfr_MVXWrvStR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "813574962547-1fnbrfkp365gte3nkq3glfqgmncr3h8a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

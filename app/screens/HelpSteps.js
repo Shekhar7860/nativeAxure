@@ -2,8 +2,16 @@
 
 import React, {PureComponent} from 'react';
 
-import {StyleSheet, View, Text, TouchableOpacity, Platform, StatusBar, Image} from 'react-native';
-import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  StatusBar,
+  Image,
+} from 'react-native';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import FastImage from 'react-native-fast-image';
 import Swiper from 'react-native-swiper';
 import BaseScreen from '../components/BaseScreen';
@@ -89,7 +97,7 @@ class HelpSteps extends PureComponent {
     }
   };
 
-  handleIndexChanged = index => {
+  handleIndexChanged = (index) => {
     this.setState({currentIndex: index});
   };
 
@@ -102,14 +110,14 @@ class HelpSteps extends PureComponent {
       return <Loading />;
     }
     return (
-      <BaseScreen 
-      blackElements 
-      header={false} 
-      safeArea={false}
-      ParentStyle={styles.BasescreenStyle}>
-      <StatusBar hidden />
+      <BaseScreen
+        blackElements
+        header={false}
+        safeArea={false}
+        ParentStyle={styles.BasescreenStyle}>
+        <StatusBar hidden />
         <Swiper
-          ref={swiper => {
+          ref={(swiper) => {
             this._swiper = swiper;
           }}
           onIndexChanged={this.handleIndexChanged}
@@ -152,14 +160,13 @@ class HelpSteps extends PureComponent {
 const styles = StyleSheet.create({
   wrapper: {
     marginHorizontal: 0,
-    
   },
   image: {
     width: '100%',
     height: '100%',
   },
-  BasescreenStyle:{
-    marginTop:isIphoneX ? -30 : 0
+  BasescreenStyle: {
+    marginTop: isIphoneX ? -30 : 0,
   },
   buttonContainer: {
     width: 280,

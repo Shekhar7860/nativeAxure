@@ -1,4 +1,4 @@
-export const APP_NAME = "MPH GROUP"
+export const APP_NAME = 'MPH GROUP';
 export const ITEM_MARGIN_LEFT_RIGHT = 50; // Before Login
 export const HEADER_ITEMS_MARGIN_LEFT_RIGHT = 10;
 export const SCREEN_ITEMS_MARGIN_LEFT_RIGHT = 15; // After Login

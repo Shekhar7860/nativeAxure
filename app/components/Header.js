@@ -10,7 +10,7 @@ import TouchableImage from './TouchableImage';
 import BoldText from './BoldText';
 import {getStatusBarHeight, isIphoneX} from 'react-native-iphone-x-helper';
 import {HEADER_ITEMS_MARGIN_LEFT_RIGHT} from '../constants/const';
-import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 
 const HEADER_IMAGE_WIDTH_HEIGHT = moderateScale(25);
 const HEADER_HEIGHT = moderateScale(45);
@@ -35,13 +35,12 @@ class Header extends PureComponent {
   }
 
   handleDrawerMenuClick = (img) => {
-    console.log('prssed', img)
+    console.log('prssed', img);
     if (img === 21) {
-      this.props.navigation.goBack()
+      this.props.navigation.goBack();
+    } else {
+      this.props.navigation.openDrawer();
     }
-    else {
-    this.props.navigation.openDrawer()
-  }
   };
 
   handleGoBack = () => {
@@ -54,17 +53,14 @@ class Header extends PureComponent {
   };
 
   imageFunction = (img) => {
-    console.log('selected', img)
- if (img === 10) {
- this.props.navigation.navigate('Search')
-}
-else if(img === 11) {
-  this.props.navigation.goBack()
-}
-else {
-  
-}
-  }
+    console.log('selected', img);
+    if (img === 10) {
+      this.props.navigation.navigate('Search');
+    } else if (img === 11) {
+      this.props.navigation.goBack();
+    } else {
+    }
+  };
 
   render() {
     const {
@@ -84,7 +80,7 @@ else {
       buttonPress,
       navigation,
       rightImage,
-      leftImage
+      leftImage,
     } = this.props;
     const statusBarHeight = this.getStatusBarHeight();
     const paddingTop =
@@ -109,7 +105,7 @@ else {
                 />
               )}
             </View>
-            <BoldText style={{fontSize : moderateScale(20)}}>{title}</BoldText>
+            <BoldText style={{fontSize: moderateScale(20)}}>{title}</BoldText>
             <View style={styles.lastView}>
               <TouchableImage
                 image={rightImage}
@@ -118,7 +114,6 @@ else {
               />
             </View>
           </View>
-          
         </View>
       </SafeArea>
     );

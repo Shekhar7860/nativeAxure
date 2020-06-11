@@ -1,6 +1,14 @@
 import {StyleSheet} from 'react-native';
-import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import {WHITE, APP_MAIN_COLOR, BLACK, PINK_COLOR, LIGHTEST_GRAY, APP_MAIN_BLUE_COLOR, RED} from '../constants/colors';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
+import {
+  WHITE,
+  APP_MAIN_COLOR,
+  BLACK,
+  PINK_COLOR,
+  LIGHTEST_GRAY,
+  APP_MAIN_BLUE_COLOR,
+  RED,
+} from '../constants/colors';
 
 const BADGE_WIDTH_HEIGHT = 8;
 const INPUT_BOX_HEIGHT = 40;
@@ -19,10 +27,10 @@ const commonStyles = ScaledSheet.create({
   ketboardAvoidingContainer: {
     flex: 1,
   },
-   appNmetextStyle: {
-    textAlign : 'center',
-    fontWeight : 'bold',
-    fontSize : moderateScale(30)
+  appNmetextStyle: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: moderateScale(30),
   },
   inputBoxStyle: {
     marginBottom: moderateScale(40),
@@ -34,7 +42,7 @@ const commonStyles = ScaledSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
     marginLeft: 0,
-    paddingHorizontal: 0
+    paddingHorizontal: 0,
   },
   checkBoxText: {
     color: WHITE,
@@ -44,7 +52,7 @@ const commonStyles = ScaledSheet.create({
   forgotPassText: {
     fontSize: moderateScale(14),
   },
-   checkBoxText: {
+  checkBoxText: {
     fontWeight: null,
     fontSize: moderateScale(11),
   },
@@ -54,33 +62,33 @@ const commonStyles = ScaledSheet.create({
     flex: null,
     marginBottom: 10,
     borderRadius: 30,
-    width : '80%',
-    alignSelf : 'center'
+    width: '80%',
+    alignSelf: 'center',
   },
   otherButtonText: {
     color: 'white',
     fontSize: 13,
     textAlign: 'center',
   },
-  icon : {
-    width : moderateScale(20),
-    height : moderateScale(20)
+  icon: {
+    width: moderateScale(20),
+    height: moderateScale(20),
   },
-  smallIcon : {
-    width : moderateScale(10),
-    height : moderateScale(10)
+  smallIcon: {
+    width: moderateScale(10),
+    height: moderateScale(10),
   },
-  largeIcon : {
-    width : moderateScale(56),
-    height : moderateScale(57),
- },
-  content : {
-  marginHorizontal : moderateScale(10)
+  largeIcon: {
+    width: moderateScale(56),
+    height: moderateScale(57),
   },
-  space : {
-    marginTop : moderateScale(20)
+  content: {
+    marginHorizontal: moderateScale(10),
   },
-   shadowLayout: {
+  space: {
+    marginTop: moderateScale(20),
+  },
+  shadowLayout: {
     marginTop: 10,
     justifyContent: 'center',
     borderRadius: ADD_NOTE_BTN / 2,
@@ -96,20 +104,18 @@ const commonStyles = ScaledSheet.create({
     paddingBottom: 10,
     paddingLeft: NOTES_TEXT_PADDING,
   },
-   nurseAppotNotesAndOtherText: {
+  nurseAppotNotesAndOtherText: {
     fontSize: 12,
     color: APP_MAIN_BLUE_COLOR,
     paddingTop: 3,
     paddingBottom: 3,
   },
-  textWhite : {
-    color : WHITE
+  textWhite: {
+    color: WHITE,
   },
-  redColor : {
-    color : RED
-  }
-
-
+  redColor: {
+    color: RED,
+  },
 });
 
 export default commonStyles;

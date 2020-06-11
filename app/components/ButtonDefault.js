@@ -5,7 +5,7 @@ import React, {PureComponent} from 'react';
 import {StyleSheet, View, TouchableOpacity, Image, Text} from 'react-native';
 import {PHONE} from '../constants/Images';
 import BoldText from './BoldText';
-import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {WHITE, APP_MAIN_COLOR, GRAY, APP_MAIN_GREEN} from '../constants/colors';
 const BUTTON_HEIGHT = moderateScale(40);
 const BUTTON_TEXT_SIZE = 16;
@@ -28,7 +28,7 @@ class ButtonDefault extends PureComponent {
       <TouchableOpacity
         disabled={isDisable}
         {...this.props}
-        onPress ={this.props.onPress}
+        onPress={this.props.onPress}
         style={[buttonMainStyle, this.props.style]}>
         <View style={styles.viewStyle}>
           {isShowImage && <Image source={source} style={styles.buttonImage} />}
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
     borderRadius: BUTTON_HEIGHT / 2,
     width: '35%',
     height: BUTTON_HEIGHT,
-    marginTop : moderateScale(30),
-    marginHorizontal : moderateScale(20)
+    marginTop: moderateScale(30),
+    marginHorizontal: moderateScale(20),
   },
   SubmitButtonDisable: {
     justifyContent: 'center',

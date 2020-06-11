@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {PureComponent} from 'react';
-import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {StyleSheet, View, TouchableOpacity, Image} from 'react-native';
 import {
   APP_COMMON_BORDER_RADIUS,

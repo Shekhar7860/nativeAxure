@@ -10,6 +10,7 @@ import Home from './screens/user/Home';
 import Chat from './screens/chat/Chat';
 import Custom from './screens/user/Custom';
 import AddClient from './screens/client/AddClient';
+import EditClient from './screens/client/EditClient';
 import AllClients from './screens/client/AllClients';
 import Search from './screens/user/Search';
 import UserDetail from './screens/user/UserDetail';
@@ -65,12 +66,46 @@ function TabStackNavigator() {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Tab1" component={Home} />
       <Stack.Screen name="Search" component={Search} />
-      <Stack.Screen name="Quotes" component={Requests} />
+      <Stack.Screen name="Quotes" component={QuoteStackNavigator} />
+      <Stack.Screen name="Clients" component={ClientStackNavigator} />
+      <Stack.Screen name="Users" component={UsersStackNavigator} />
       <Stack.Screen name="Quote" component={Quote} />
       <Stack.Screen name="AddQuote" component={AddQuote} />
-      <Stack.Screen name="AddQuoteClient" component={AddQuoteClient} />
       <Stack.Screen name="AddClient" component={AddClient} />
       <Stack.Screen name="Resource" component={ResourceHub} />
+    </Stack.Navigator>
+  );
+}
+
+function ClientStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="ClientStack" component={Clients} />
+      <Stack.Screen name="AllClients" component={AllClients} />
+      <Stack.Screen name="Client" component={Client} />
+      <Stack.Screen name="EditClient" component={EditClient} />
+    </Stack.Navigator>
+  );
+}
+
+function QuoteStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="QuoteStack" component={Quotes} />
+      <Stack.Screen name="AllQuotes" component={AllQuotes} />
+      <Stack.Screen name="AddQuote" component={AddQuote} />
+      <Stack.Screen name="Quote" component={Quote} />
+      <Stack.Screen name="EditQuote" component={AddQuoteClient} />
+    </Stack.Navigator>
+  );
+}
+
+function UsersStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="UsersStack" component={Users} />
+      <Stack.Screen name="AllUsers" component={AllUsers} />
+      <Stack.Screen name="UserDetail" component={UserDetail} />
     </Stack.Navigator>
   );
 }
@@ -167,6 +202,7 @@ function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Help" component={HelpSteps} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={DrawerNavigator} />
       </Stack.Navigator>

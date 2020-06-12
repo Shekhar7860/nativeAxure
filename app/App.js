@@ -25,6 +25,7 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import AppNavigator from './Navigator';
+import SplashScreen from 'react-native-splash-screen';
 import messaging, {AuthorizationStatus} from '@react-native-firebase/messaging';
 import store from './redux/store';
 
@@ -34,9 +35,11 @@ function check() {
 
 class App extends PureComponent {
   componentDidMount() {
+    SplashScreen.hide();
     this.getToken();
   }
 
+  // checking if app opened from notification or not
   async getToken() {
     const token = await messaging().getInitialNotification();
   }

@@ -11,7 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER} from '../../constants/Images';
+import {USER, BACK} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
@@ -41,8 +41,8 @@ export default class AllQuotes extends Component {
     //this.props.navigation.navigate('Cart')
   };
 
-  openQuote = () => {
-    this.props.navigation.navigate('Quote');
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   listItem = (item, index, status) => {
@@ -79,11 +79,15 @@ export default class AllQuotes extends Component {
           navigation={this.props.navigation}
           rightImage={USER}
           title="ALL QUOTES"
+          leftImage={BACK}
         />
         <TouchableOpacity style={commonStyles.content}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
-              <AddNewButtonGroup color={APP_MAIN_GREEN} />
+              <AddNewButtonGroup
+                color={APP_MAIN_GREEN}
+                onPress={() => this.openScreen('AddQuote')}
+              />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
               <ContainerSearch />

@@ -39,12 +39,8 @@ export default class Users extends Component {
     //this.props.navigation.navigate('Cart')
   };
 
-  addQuote = () => {
-    this.props.navigation.navigate('AddQuote');
-  };
-
-  openQuote = () => {
-    this.props.navigation.navigate('Quote');
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   listItem = (item, index) => {
@@ -79,7 +75,7 @@ export default class Users extends Component {
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
-                onPress={this.addQuote}
+                onPress={() => this.openScreen('UserDetail')}
               />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
@@ -110,7 +106,9 @@ export default class Users extends Component {
             </View>
             <View style={{width: '10%'}} />
             <View style={{width: '30%'}}>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => this.openScreen('AllUsers')}>
                 <Text style={styles.seeText}>SEE ALL</Text>
               </TouchableOpacity>
             </View>

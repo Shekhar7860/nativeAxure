@@ -15,10 +15,10 @@ import {USER, BACK, TASK, DRAWER_MENU} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ClickableText from '../../components/ClickableText';
-import TouchableImage from '../../components/TouchableImage';
-import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import InputBox from '../../components/InputBox';
+import TouchableImage from '../../components/TouchableImage';
+import ContainerSearch from '../../components/ContainerSearch';
 import HR from '../../components/HR';
 import {
   View,
@@ -32,7 +32,7 @@ import {
   Dimensions,
 } from 'react-native';
 
-export default class AddQuoteClient extends PureComponent {
+export default class EditClient extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,10 +43,6 @@ export default class AddQuoteClient extends PureComponent {
     //this.props.navigation.navigate('Cart')
   };
 
-  openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
-  };
-
   render() {
     const {items} = this.state;
 
@@ -55,7 +51,7 @@ export default class AddQuoteClient extends PureComponent {
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
-          title="QUOTE"
+          title="CLIENT"
           leftImage={BACK}
         />
         <TouchableOpacity style={commonStyles.content}>
@@ -65,7 +61,6 @@ export default class AddQuoteClient extends PureComponent {
             </View>
             <TouchableImage
               image={DRAWER_MENU}
-              onPress={() => this.openScreen('AllQuotes')}
               imageStyle={{
                 ...commonStyles.icon,
                 marginLeft: moderateScale(-18),
@@ -80,31 +75,23 @@ export default class AddQuoteClient extends PureComponent {
         <ScrollView>
           <View
             style={{...commonStyles.content, marginBottom: moderateScale(40)}}>
-            <Text style={styles.labelText}>Quote #</Text>
+            <Text style={styles.labelText}>Client Name</Text>
             <InputBox
               placeHolder=""
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
-              onChangeText={(value) => this.setState({quote: value})}
+              onChangeText={(value) => this.setState({clientname: value})}
             />
 
             <View style={commonStyles.space}>
-              <Text style={styles.labelText}>Quote Title</Text>
+              <Text style={styles.labelText}>
+                Prefix (First 3 letters of Name)
+              </Text>
               <InputBox
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({quoteTitle: value})}
-              />
-            </View>
-
-            <View style={commonStyles.space}>
-              <Text style={styles.labelText}>Quote Number/Code</Text>
-              <InputBox
-                placeHolder=""
-                boxStyle={styles.inputBoxStyle}
-                inputStyle={styles.input}
-                onChangeText={(value) => this.setState({quoteCode: value})}
+                onChangeText={(value) => this.setState({first3letters: value})}
               />
             </View>
 
@@ -119,54 +106,62 @@ export default class AddQuoteClient extends PureComponent {
             </View>
 
             <View style={commonStyles.space}>
-              <Text style={styles.labelText}>PO Preference</Text>
+              <Text style={styles.labelText}>Trading As</Text>
               <InputBox
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({poPreference: value})}
+                onChangeText={(value) => this.setState({trading: value})}
               />
             </View>
 
             <View style={commonStyles.space}>
-              <Text style={styles.labelText}>Type</Text>
+              <Text style={styles.labelText}>VAT Registration</Text>
               <InputBox
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({type: value})}
+                onChangeText={(value) => this.setState({vatReg: value})}
               />
             </View>
 
             <View style={commonStyles.space}>
-              <View style={{flexDirection: 'row'}}>
-                <Text style={styles.labelText}>Client</Text>
-                <View style={{width: '2%'}} />
-                <Text
-                  style={{
-                    fontSize: moderateScale(10),
-                    marginTop: moderateScale(20),
-                    color: APP_MAIN_BLUE,
-                  }}>
-                  {' '}
-                  + Add New{' '}
-                </Text>
-              </View>
+              <Text style={styles.labelText}>Company Registration Number</Text>
               <InputBox
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({client: value})}
+                onChangeText={(value) => this.setState({comRegNum: value})}
               />
             </View>
 
             <View style={commonStyles.space}>
-              <Text style={styles.labelText}>Status</Text>
+              <Text style={styles.labelText}>Target Technology</Text>
               <InputBox
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({status: value})}
+                onChangeText={(value) => this.setState({targetTech: value})}
+              />
+            </View>
+
+            <View style={commonStyles.space}>
+              <Text style={styles.labelText}>Email</Text>
+              <InputBox
+                placeHolder=""
+                boxStyle={styles.inputBoxStyle}
+                inputStyle={styles.input}
+                onChangeText={(value) => this.setState({email: value})}
+              />
+            </View>
+
+            <View style={commonStyles.space}>
+              <Text style={styles.labelText}>Currency</Text>
+              <InputBox
+                placeHolder=""
+                boxStyle={styles.inputBoxStyle}
+                inputStyle={styles.input}
+                onChangeText={(value) => this.setState({currency: value})}
               />
             </View>
           </View>

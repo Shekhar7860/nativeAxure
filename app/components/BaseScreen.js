@@ -92,7 +92,6 @@ class BaseScreen extends PureComponent {
 const styles = StyleSheet.create({
   parent: {
     flex: 1,
-    backgroundColor: APP_MAIN_COLOR,
   },
   container: {
     flex: 1,

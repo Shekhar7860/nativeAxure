@@ -39,6 +39,10 @@ export default class Quote extends PureComponent {
     //this.props.navigation.navigate('Cart')
   };
 
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
+  };
+
   render() {
     const {items} = this.state;
 
@@ -69,7 +73,9 @@ export default class Quote extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Image source={TASK} style={commonStyles.icon} />
+                <TouchableOpacity onPress={() => this.openScreen('EditQuote')}>
+                  <Image source={TASK} style={commonStyles.icon} />
+                </TouchableOpacity>
               </View>
             </View>
 

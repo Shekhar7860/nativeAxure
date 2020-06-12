@@ -32,28 +32,32 @@ export default class Clients extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      items: [1, 2],
+      items: [{name: 'DenMark HQ'}, {name: 'Yantra Dev'}],
     };
   }
-  componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+  componentDidMount = () => {};
+
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   listItem = (item, index) => {
     return (
-      <View style={styles.rowItem}>
+      <TouchableOpacity
+        style={styles.rowItem}
+        onPress={() => this.openScreen('Client', item)}>
         <View style={styles.bottomQuotesRow}>
           <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>Denmark HQ</Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£1494.00</Text>
+            <Text style={styles.amountText}></Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
   render() {
@@ -69,24 +73,15 @@ export default class Clients extends PureComponent {
         <View style={commonStyles.content}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
-              <AddNewButtonGroup color={APP_MAIN_GREEN} />
+              <AddNewButtonGroup
+                color={APP_MAIN_GREEN}
+                onPress={() => this.openScreen('AddClient')}
+              />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
               <ContainerSearch />
             </View>
           </View>
-          <CardWithIcon
-            color={APP_MAIN_GREEN}
-            count={''}
-            status={''}
-            amount={'1 Active'}
-          />
-          <CardWithIcon
-            color={APP_MAIN_COLOR}
-            count={''}
-            status={''}
-            amount={'1 InActive'}
-          />
 
           <View style={styles.quotesRow}>
             <View style={{width: '60%'}}>
@@ -94,7 +89,9 @@ export default class Clients extends PureComponent {
             </View>
             <View style={{width: '10%'}} />
             <View style={{width: '30%'}}>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => this.openScreen('AllClients')}>
                 <Text style={styles.seeText}>SEE ALL</Text>
               </TouchableOpacity>
             </View>

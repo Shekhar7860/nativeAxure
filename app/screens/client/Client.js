@@ -17,6 +17,7 @@ import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import HR from '../../components/HR';
+import TouchableImage from '../../components/TouchableImage';
 import {
   View,
   Text,
@@ -39,8 +40,8 @@ export default class Client extends PureComponent {
     //this.props.navigation.navigate('Cart')
   };
 
-  addNew = () => {
-    this.props.navigation.navigate('AddClient');
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   render() {
@@ -57,7 +58,10 @@ export default class Client extends PureComponent {
         <View style={commonStyles.content}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
-              <AddNewButtonGroup color={APP_MAIN_GREEN} onPress={this.addNew} />
+              <AddNewButtonGroup
+                color={APP_MAIN_GREEN}
+                onPress={() => this.openScreen('AddClient')}
+              />
             </View>
             <View style={{marginRight: moderateScale(-10)}}></View>
           </View>
@@ -73,7 +77,9 @@ export default class Client extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Image source={TASK} style={commonStyles.icon} />
+                <TouchableOpacity onPress={() => this.openScreen('EditClient')}>
+                  <Image source={TASK} style={commonStyles.icon} />
+                </TouchableOpacity>
               </View>
             </View>
 

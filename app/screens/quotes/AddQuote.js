@@ -47,8 +47,8 @@ export default class AddQuote extends PureComponent {
     //this.props.navigation.navigate('Cart')
   };
 
-  addClientQuote = () => {
-    this.props.navigation.navigate('AddQuoteClient');
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   render() {
@@ -63,7 +63,7 @@ export default class AddQuote extends PureComponent {
           leftImage={BACK}
         />
         <TouchableOpacity style={commonStyles.content}>
-          <View style={styles.rowContent}>
+          <TouchableOpacity style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup color={APP_MAIN_GREEN} />
             </View>
@@ -78,7 +78,7 @@ export default class AddQuote extends PureComponent {
             <View style={{marginRight: moderateScale(-10)}}>
               <ContainerSearch />
             </View>
-          </View>
+          </TouchableOpacity>
         </TouchableOpacity>
         <ScrollView>
           <View
@@ -124,7 +124,9 @@ export default class AddQuote extends PureComponent {
               isIconVisible={true}
             />
 
-            <ButtonDefault onPress={this.addClientQuote}>NEXT</ButtonDefault>
+            <ButtonDefault onPress={() => this.openScreen('EditQuote')}>
+              NEXT
+            </ButtonDefault>
           </View>
         </ScrollView>
       </SafeAreaView>

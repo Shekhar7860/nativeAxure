@@ -1,8 +1,8 @@
 export const rightArrow = require('../images/arrow_right.png');
-export const TEST = require('../images/Test.png');
+export const TEST = require('../images/HelpStep1.png');
 export const PROFILE_PIC = require('../images/Profile-white.png');
-export const HELP_STEP_2 = require('../images/Test_1.png');
-export const HELP_STEP_3 = require('../images/Test_2.png');
+export const HELP_STEP_2 = require('../images/HelpStep2.png');
+export const HELP_STEP_3 = require('../images/HelpStep3.png');
 export const DRAWER_MENU = require('../images/hamburger.png');
 export const ADD = require('../images/add.png');
 export const SEARCH = require('../images/search.png');

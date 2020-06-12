@@ -11,7 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER, rightArrow} from '../../constants/Images';
+import {USER, rightArrow, BACK} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
@@ -41,12 +41,8 @@ export default class AllUsers extends Component {
     //this.props.navigation.navigate('Cart')
   };
 
-  openQuote = () => {
-    this.props.navigation.navigate('Quote');
-  };
-
-  addNew = () => {
-    this.props.navigation.navigate('AddClient');
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   listItem = (item, index, status) => {
@@ -83,11 +79,15 @@ export default class AllUsers extends Component {
           navigation={this.props.navigation}
           rightImage={USER}
           title="ALL USERS"
+          leftImage={BACK}
         />
         <TouchableOpacity style={commonStyles.content}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
-              <AddNewButtonGroup color={APP_MAIN_GREEN} onPress={this.addNew} />
+              <AddNewButtonGroup
+                color={APP_MAIN_GREEN}
+                onPress={() => this.openScreen('UserDetail')}
+              />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
               <ContainerSearch />

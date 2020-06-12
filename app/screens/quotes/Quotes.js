@@ -39,17 +39,15 @@ export default class Quotes extends Component {
     //this.props.navigation.navigate('Cart')
   };
 
-  addQuote = () => {
-    this.props.navigation.navigate('AddQuote');
-  };
-
-  openQuote = () => {
-    this.props.navigation.navigate('Quote');
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   listItem = (item, index) => {
     return (
-      <TouchableOpacity style={styles.rowItem}>
+      <TouchableOpacity
+        style={styles.rowItem}
+        onPress={() => this.openScreen('Quote', item)}>
         <View style={styles.bottomQuotesRow}>
           <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
           <View style={{width: '5%'}} />
@@ -79,7 +77,7 @@ export default class Quotes extends Component {
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
-                onPress={this.addQuote}
+                onPress={() => this.openScreen('AddQuote')}
               />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
@@ -114,7 +112,9 @@ export default class Quotes extends Component {
             </View>
             <View style={{width: '10%'}} />
             <View style={{width: '30%'}}>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => this.openScreen('AllQuotes')}>
                 <Text style={styles.seeText}>SEE ALL</Text>
               </TouchableOpacity>
             </View>

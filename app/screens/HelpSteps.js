@@ -10,6 +10,7 @@ import {
   Platform,
   StatusBar,
   Image,
+  ImageBackground,
 } from 'react-native';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import FastImage from 'react-native-fast-image';
@@ -17,9 +18,11 @@ import Swiper from 'react-native-swiper';
 import BaseScreen from '../components/BaseScreen';
 import {isIphoneX} from 'react-native-iphone-x-helper';
 import BoldText from '../components/BoldText';
+import ButtonWithImage from '../components/ButtonWithImage';
+import commonStyles from '../commonStyles/commonStyles';
 import NormalText from '../components/NormalText';
 import TouchableImage from '../components/TouchableImage';
-import {TEST, HELP_STEP_2, HELP_STEP_3} from '../constants/Images';
+import {TEST, HELP_STEP_2, HELP_STEP_3, rightArrow} from '../constants/Images';
 import {WHITE, LIGHT_GREEN, APP_MAIN_COLOR} from '../constants/colors';
 
 let PAGE_1 = TEST;
@@ -89,6 +92,10 @@ class HelpSteps extends PureComponent {
     return <View style={styles.activeDotStyle} />;
   }
 
+  goToLanding = () => {
+    this.props.navigation.navigate('Login');
+  };
+
   handleButtonPress = () => {
     if (this.state.currentIndex === TOTAL_SLIDES - 1) {
       this._navigateToLandingOnBack();
@@ -127,30 +134,50 @@ class HelpSteps extends PureComponent {
           activeDot={this.renderActiveDot()}
           style={styles.wrapper}
           showsButtons={false}>
-          <Image
+          <ImageBackground
             resizeMode="cover"
             style={styles.image}
-            source={isPortrait ? PAGE_1 : PAGE_1_L}
-          />
-          <Image
+            source={isPortrait ? PAGE_1 : PAGE_1_L}>
+            <Text style={styles.labelTextStyle}>
+              Create and {'\n'} view Quotes
+            </Text>
+          </ImageBackground>
+          <ImageBackground
             resizeMode="cover"
             style={styles.image}
-            source={isPortrait ? PAGE_2 : PAGE_2_L}
-          />
-          <Image
+            source={isPortrait ? PAGE_2 : PAGE_2_L}>
+            <Text style={styles.labelTextStyle}>
+              Access list {'\n'} of Orders
+            </Text>
+          </ImageBackground>
+          <ImageBackground
             resizeMode="cover"
             style={styles.image}
-            source={isPortrait ? PAGE_3 : PAGE_3_L}
-          />
+            source={isPortrait ? PAGE_3 : PAGE_3_L}>
+            <Text style={styles.labelTextStyle}>View Invoices</Text>
+          </ImageBackground>
         </Swiper>
+
         <TouchableOpacity
           style={
             isPortrait ? styles.buttonContainer : styles.buttonContainerLand
-          }
-          onPress={this.handleButtonPress}>
-          <BoldText style={styles.buttonText}>
-            {this.state.buttonLabel}
-          </BoldText>
+          }>
+          {this.state.currentIndex !== 2 ? (
+            <TouchableOpacity onPress={() => this.goToLanding()}>
+              <Text style={styles.skipText}>SKIP</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity>
+              <ButtonWithImage
+                onPress={() => this.goToLanding()}
+                isShowRightIcon
+                style={commonStyles.otherButtons}
+                textStyle={commonStyles.otherButtonText}
+                rightImage={rightArrow}>
+                GET STARTED
+              </ButtonWithImage>
+            </TouchableOpacity>
+          )}
         </TouchableOpacity>
       </BaseScreen>
     );
@@ -162,8 +189,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 0,
   },
   image: {
+    flex: 1,
     width: '100%',
     height: '100%',
+    justifyContent: 'center',
   },
   BasescreenStyle: {
     marginTop: isIphoneX ? -30 : 0,
@@ -172,14 +201,10 @@ const styles = StyleSheet.create({
     width: 280,
     height: BUTTON_HEIGHT,
     position: 'absolute',
-    bottom: 40,
+    bottom: 20,
     justifyContent: 'center',
     alignContent: 'center',
     alignSelf: 'center',
-    backgroundColor: APP_MAIN_COLOR,
-    borderColor: WHITE,
-    borderWidth: 1,
-    borderRadius: BUTTON_HEIGHT / 2,
   },
   buttonContainerLand: {
     width: 200,
@@ -212,6 +237,16 @@ const styles = StyleSheet.create({
     color: WHITE,
     textAlign: 'center',
     fontSize: 16,
+  },
+  labelTextStyle: {
+    fontSize: moderateScale(25),
+    textAlign: 'center',
+    color: WHITE,
+  },
+  skipText: {
+    textAlign: 'center',
+    color: WHITE,
+    fontSize: moderateScale(20),
   },
 });
 

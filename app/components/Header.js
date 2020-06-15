@@ -84,7 +84,7 @@ class Header extends PureComponent {
     } = this.props;
     const statusBarHeight = this.getStatusBarHeight();
     const paddingTop =
-      Platform.OS === 'android' ? {paddingTop: moderateScale(10)} : {};
+      Platform.OS === 'android' ? {paddingTop: moderateScale(20)} : {};
     return (
       <SafeArea style={[styles.container, paddingTop]}>
         <View>

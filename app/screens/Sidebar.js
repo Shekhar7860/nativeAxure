@@ -18,6 +18,7 @@ import {
 import {PROFILE_PIC} from '../constants/Images';
 import {useIsDrawerOpen} from '@react-navigation/drawer';
 import Clients from './client/Clients';
+import StoreDB from '../storage/StoreDB';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 
 const ITEMS = [
@@ -35,6 +36,7 @@ const ITEMS = [
 ];
 
 logOut = (props) => {
+  StoreDB.logoutUser();
   props.navigation.navigate('Login');
 };
 

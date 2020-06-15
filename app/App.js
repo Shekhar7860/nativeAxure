@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
 import {
   Header,
   LearnMoreLinks,
@@ -27,11 +28,10 @@ import {
 import AppNavigator from './Navigator';
 import SplashScreen from 'react-native-splash-screen';
 import messaging, {AuthorizationStatus} from '@react-native-firebase/messaging';
-import store from './redux/store';
+import createStore from './redux/store';
+//import store from './redux/store';
 
-function check() {
-  // console.log('hiii')
-}
+const {store, persistor} = createStore();
 
 class App extends PureComponent {
   componentDidMount() {
@@ -47,7 +47,9 @@ class App extends PureComponent {
   render() {
     return (
       <Provider store={store}>
-        <AppNavigator />
+        <PersistGate loading={null} persistor={persistor}>
+          <AppNavigator />
+        </PersistGate>
       </Provider>
     );
   }

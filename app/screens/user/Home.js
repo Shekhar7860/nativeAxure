@@ -2,15 +2,31 @@ import React, {PureComponent} from 'react';
 import Header from '../../components/Header';
 import TouchableImage from '../../components/TouchableImage';
 import commonStyles from '../../commonStyles/commonStyles';
-import {SEARCH, SLIDE_1, SLIDE_2} from '../../constants/Images';
+import {
+  SEARCH,
+  SLIDE_1,
+  SLIDE_2,
+  SLIDE_3,
+  SLIDE_4,
+  SLIDE_5,
+  SLIDE_6,
+} from '../../constants/Images';
 import {View, Text, Button, SafeAreaView, FlatList} from 'react-native';
+import BaseScreen from '../../components/BaseScreen';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 
 export default class Chat extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      imagesList: [{image: SLIDE_1}, {image: SLIDE_2}],
+      imagesList: [
+        {image: SLIDE_1},
+        {image: SLIDE_2},
+        {image: SLIDE_3},
+        {image: SLIDE_4},
+        {image: SLIDE_5},
+        {image: SLIDE_6},
+      ],
     };
   }
   componentDidMount = () => {
@@ -18,10 +34,18 @@ export default class Chat extends PureComponent {
   };
 
   openScreen = (index) => {
-    if (index == 0) {
-      this.props.navigation.navigate('Quotes');
-    } else {
-      this.props.navigation.navigate('Resource');
+    switch (index) {
+      case 0:
+        this.props.navigation.navigate('Quotes');
+        break;
+      case 2:
+        this.props.navigation.navigate('Users');
+        break;
+      case 5:
+        this.props.navigation.navigate('Resource');
+        break;
+      default:
+      // code block
     }
   };
 

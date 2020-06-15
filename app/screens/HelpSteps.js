@@ -21,6 +21,7 @@ import BoldText from '../components/BoldText';
 import ButtonWithImage from '../components/ButtonWithImage';
 import commonStyles from '../commonStyles/commonStyles';
 import NormalText from '../components/NormalText';
+import StoreDB from '../storage/StoreDB';
 import TouchableImage from '../components/TouchableImage';
 import {TEST, HELP_STEP_2, HELP_STEP_3, rightArrow} from '../constants/Images';
 import {WHITE, LIGHT_GREEN, APP_MAIN_COLOR} from '../constants/colors';
@@ -78,12 +79,6 @@ class HelpSteps extends PureComponent {
     }
   };
 
-  _navigateToLanding = () => {
-    StoreDB.appIntroStatus(true).then(() => {
-      this.props.navigation.navigate('LoginDashboard');
-    });
-  };
-
   renderInactiveDot() {
     return <View style={styles.inactiveDotStyle} />;
   }
@@ -93,7 +88,9 @@ class HelpSteps extends PureComponent {
   }
 
   goToLanding = () => {
-    this.props.navigation.navigate('Login');
+    StoreDB.appIntroStatus(true).then(() => {
+      this.props.navigation.navigate('Login');
+    });
   };
 
   handleButtonPress = () => {

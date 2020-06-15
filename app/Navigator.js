@@ -6,6 +6,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Login from './screens/auth/Login';
 import HelpSteps from './screens/HelpSteps';
+import Landing from './screens/Landing';
 import Home from './screens/user/Home';
 import Chat from './screens/chat/Chat';
 import Custom from './screens/user/Custom';
@@ -202,6 +203,7 @@ function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name="Landing" component={Landing} />
         <Stack.Screen name="Help" component={HelpSteps} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Home" component={DrawerNavigator} />

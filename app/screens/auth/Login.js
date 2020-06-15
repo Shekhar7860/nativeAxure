@@ -25,6 +25,9 @@ import {
 } from '../../constants/colors';
 import InputBox from '../../components/InputBox';
 import {APP_NAME} from '../../constants/const';
+import {loginUser} from '../../redux/reducers/session';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
+import StoreDB from '../../storage/StoreDB';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 
 class Login extends Component {
@@ -54,7 +57,7 @@ class Login extends Component {
     // });
   }
 
-  startLogin = () => {
+  login = () => {
     const {username, password, isRememberMe} = this.state;
     // console.group('username', username, 'password', password)
     if (!username) {
@@ -64,51 +67,9 @@ class Login extends Component {
     } else if (!password) {
       Alert.alert('', 'Please enter Password.');
     } else {
-      this.setState({showLoading: true});
-      this.props
-        .loginUser(username, password)
-        .then((response) => {
-          this.setState({showLoading: false});
-          if (response.code === 200) {
-            let nextScreen = response.data.type;
-            if (isRememberMe) {
-              StoreDB.userEmail(username);
-              StoreDB.userPassword(password);
-            } else {
-              StoreDB.userEmail('');
-              StoreDB.userPassword('');
-            }
-            Api.setAuthToken(response.data.auth_token);
-            StoreDB.loggedInUserData(response.data);
-            const userId = response.data.id.toString();
-            const nickname = response.data.name;
-            this.setState({isLoading: true}, () => {
-              this.props.sendbirdLogin({userId, nickname});
-            });
-
-            this.props.navigation.navigate('TabViewHandler', {
-              Screen: nextScreen,
-            });
-          } else {
-            if (response.validation_errors) {
-              showErrorPopup(response.validation_errors);
-            } else {
-              showErrorPopup(response.message);
-            }
-          }
-        })
-        .catch((error) => {
-          this.setState({showLoading: false});
-          if (error.code === 'unauthorized') {
-            showErrorPopup(
-              "Couldn't validate those credentials.\nPlease try again",
-            );
-          } else {
-            showErrorPopup(
-              'There was an unexpected error.\nPlease wait a few minutes and try again.',
-            );
-          }
-        });
+      this.props.loginUser(username, password);
+      // StoreDB.loggedInUserData({name: username});
+      // this.props.navigation.navigate('Home');
     }
   };
 
@@ -160,7 +121,7 @@ class Login extends Component {
           </View>
           <View style={styles.topMargin}>
             <ButtonWithImage
-              onPress={() => this.props.navigation.navigate('Home')}
+              onPress={() => this.login()}
               isShowRightIcon
               style={commonStyles.otherButtons}
               textStyle={commonStyles.otherButtonText}

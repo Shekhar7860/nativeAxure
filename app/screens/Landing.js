@@ -4,10 +4,33 @@ import StoreDB from '../storage/StoreDB';
 import BaseScreen from '../components/BaseScreen';
 import {WHITE} from '../constants/colors';
 import Loading from '../components/Loading';
+import {checkInternet} from '../redux/reducers/netInfo';
+import NetInfo from '@react-native-community/netinfo';
+import {connect} from 'react-redux';
 
-export default class Landing extends PureComponent {
+class Landing extends PureComponent {
 	componentDidMount = () => {
 		this.init();
+		this.checkNet();
+	};
+
+	checkNet = () => {
+		// NetInfo.isConnected.addEventListener(
+		// 	'connectionChange',
+		// 	this.handleConnectionChange,
+		// );
+		NetInfo.addEventListener((state) => {
+			this.handleConnectionChange(state);
+		});
+		NetInfo.fetch().then((state) => {
+			console.log('Connection type', state.type);
+			console.log('Is connected?', state.isConnected);
+		});
+	};
+
+	handleConnectionChange = (state) => {
+		var status = state.isConnected;
+		this.props.checkInternet(status);
 	};
 
 	async init() {
@@ -41,3 +64,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 });
+
+const mapDispatchToProps = {
+	checkInternet,
+};
+
+export default connect(null, mapDispatchToProps)(Landing);

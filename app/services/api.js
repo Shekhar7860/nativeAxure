@@ -151,12 +151,39 @@ export default class Api {
   static sendRequest(method, path, body) {
     let url = `${API_URL}/${path}`;
     //alert(JSON.stringify(body));
-    axios
+    return axios
       .post(url, body, {
         headers: {'X-Auth-Token': API_AUTH_TOKEN, 'Client-id': API_CLIENT_ID},
       })
       .then(function (response) {
         console.log('res', response);
+        let data = response;
+        switch (response.status) {
+          case 200: {
+            if (data.status === 'fail') {
+              throw {
+                request: {url, data: body},
+                response: data,
+                ...data,
+              };
+            }
+            return data;
+          }
+          case 401:
+            throw {
+              code: 'unauthorized',
+              status: res.status,
+              request: {url, data: requestBody},
+              response: data,
+            };
+          default:
+            throw {
+              code: 'unknown',
+              status: res.status,
+              request: {url, data: requestBody},
+              response: data,
+            };
+        }
       })
       .catch(function (error) {
         console.log('err', error);

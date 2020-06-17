@@ -17,6 +17,7 @@ import ButtonWithImage from '../../components/ButtonWithImage';
 import {CheckBox} from 'react-native-elements';
 import ClickableText from '../../components/ClickableText';
 import commonStyles from '../../commonStyles/commonStyles';
+import {connect} from 'react-redux';
 import {
   APP_MAIN_COLOR,
   WHITE,
@@ -67,9 +68,9 @@ class Login extends Component {
     } else if (!password) {
       Alert.alert('', 'Please enter Password.');
     } else {
-      this.props.loginUser(username, password);
-      // StoreDB.loggedInUserData({name: username});
-      // this.props.navigation.navigate('Home');
+      // this.props.loginUser(username, password);
+      StoreDB.loggedInUserData({name: username});
+      this.props.navigation.navigate('Home');
     }
   };
 
@@ -118,6 +119,7 @@ class Login extends Component {
               onPress={this.startForgotPassword}>
               Forgot Your Password?
             </ClickableText>
+            <View style={{width: '5%'}} />
           </View>
           <View style={styles.topMargin}>
             <ButtonWithImage
@@ -154,6 +156,7 @@ const styles = ScaledSheet.create({
   forgotPassParent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-around',
     marginTop: moderateScale(5),
     marginBottom: moderateScale(10),
     width: '100%',
@@ -171,4 +174,8 @@ const styles = ScaledSheet.create({
   },
 });
 
-export default Login;
+const mapDispatchToProps = {
+  loginUser,
+};
+
+export default connect(null, mapDispatchToProps)(Login);

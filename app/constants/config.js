@@ -8,7 +8,7 @@ export const __PROD__ = ENVIRONMENT === 'production';
 
 const API_URLS = {
   production: '',
-  staging: 'https://staging.mphgroup.uk/public/api/orhc/1.0',
+  staging: 'https://stagingmph.mphgroup.uk/public/api/1.0',
 };
 
 const AUTH_TOKENS = {

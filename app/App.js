@@ -29,6 +29,7 @@ import AppNavigator from './Navigator';
 import SplashScreen from 'react-native-splash-screen';
 import messaging, {AuthorizationStatus} from '@react-native-firebase/messaging';
 import createStore from './redux/store';
+import NetInfo from '@react-native-community/netinfo';
 //import store from './redux/store';
 
 const {store, persistor} = createStore();
@@ -36,8 +37,20 @@ const {store, persistor} = createStore();
 class App extends PureComponent {
   componentDidMount() {
     SplashScreen.hide();
+    // NetInfo.isConnected.addEventListener(
+    //   'connectionChange',
+    //   this.handleConnectionChange,
+    // );
+    // NetInfo.isConnected.fetch().done((isConnected) => {
+    //   console.group('isConnected', isConnected);
+    //   status = isConnected;
+    // });
     this.getToken();
   }
+
+  handleConnectionChange = (isConnected) => {
+    status = isConnected;
+  };
 
   // checking if app opened from notification or not
   async getToken() {

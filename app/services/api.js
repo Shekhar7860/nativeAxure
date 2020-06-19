@@ -1,6 +1,7 @@
 import {API_AUTH_TOKEN, API_CLIENT_ID, API_URL} from '../constants/config';
 import {pickBy, pick} from 'lodash';
 import axios from 'axios';
+import withQuery from 'with-query';
 
 const urlTo = (path) => {
   return `${API_URL}/${path}`;
@@ -36,6 +37,7 @@ function formDataToObject(formData) {
 
 export default class Api {
   static setAuthToken(v) {
+    console.log('token', v);
     this.authToken = v;
   }
 
@@ -54,106 +56,133 @@ export default class Api {
     return response;
   }
 
-  static login(loginObj) {
-    // let formData = pick(loginObj, ['email', 'password']);
-    let response = this.sendRequest('POST', 'login', loginObj);
+  static login(loginObj = {}) {
+    let formData = pick(loginObj, ['email', 'password']);
+    let response = this.sendRequest('POST', 'login', {formData});
     return response;
   }
 
-  // static sendRequest(method, path, opts = {}, skipAuth = false) {
-  //   let fetchOpts = {
-  //     method,
-  //   };
-  //   let fullPath = path;
+  static updateProfilePicture(apptData = {}) {
+    console.group('inside api');
+    const formData = clearQuery(pick(apptData, ['file']));
+    console.group('formDat2', formData);
+    let response = this.sendRequest('POST', 'user/profile-pic/store', {
+      formData,
+    });
+    return response;
+  }
 
-  //   let headers = {
-  //     'X-Auth-Token': API_AUTH_TOKEN,
-  //     'Client-id': API_CLIENT_ID,
-  //   };
-  //   console.log('this.authToken: ' + this.authToken);
-  //   if (!skipAuth && this.authToken) {
-  //     headers.authorization = `Bearer ${this.authToken}`;
-  //   }
+  static sendRequest(method, path, opts = {}, skipAuth = false) {
+    let fetchOpts = {
+      method,
+    };
+    let fullPath = path;
 
-  //   const jsonBody = opts.jsonBody;
-  //   if (jsonBody) {
-  //     headers['content-type'] = 'application/vnd.api+json';
-  //     fetchOpts.body = JSON.stringify(jsonBody);
-  //   }
+    let headers = {
+      'X-Auth-Token': API_AUTH_TOKEN,
+      'Client-id': API_CLIENT_ID,
+    };
+    console.log('this.authToken: ' + this.authToken);
+    if (!skipAuth && this.authToken) {
+      headers.authorization = `Bearer ${this.authToken}`;
+    }
 
-  //   const query = clearQuery(opts.query);
-  //   if (query) {
-  //     fullPath = withQuery(fullPath, query);
-  //   }
+    const jsonBody = opts.jsonBody;
+    if (jsonBody) {
+      headers['content-type'] = 'application/vnd.api+json';
+      fetchOpts.body = JSON.stringify(jsonBody);
+    }
 
-  //   const formData = opts.formData;
-  //   if (formData) {
-  //     headers['content-type'] = 'multipart/form-data';
-  //     fetchOpts.body = toFormData(formData);
-  //   }
+    const query = clearQuery(opts.query);
+    if (query) {
+      fullPath = withQuery(fullPath, query);
+    }
 
-  //   fetchOpts.headers = headers;
+    const formData = opts.formData;
+    if (formData) {
+      headers['content-type'] = 'multipart/form-data';
+      fetchOpts.body = toFormData(formData);
+    }
 
-  //   const url = urlTo(fullPath, opts.publicApi);
-  //   const requestBody = jsonBody || formDataToObject(formData) || query || '';
-  //   console.log('Request:', fetchOpts.headers, url, requestBody);
-  //   return fetch(url, fetchOpts)
-  //     .then(async res => {
-  //       let data = res;
-  //       try {
-  //         data = await res.json();
-  //       } catch (parseError) {
-  //         console.log('Response parse error: ', parseError);
-  //       }
+    fetchOpts.headers = headers;
 
-  //       console.log('Response:', res, data);
+    const url = urlTo(fullPath, opts.publicApi);
+    const requestBody = jsonBody || formDataToObject(formData) || query || '';
+    console.log('Request:', fetchOpts.headers, url, requestBody);
+    return fetch(url, fetchOpts)
+      .then(async (res) => {
+        let data = res;
+        try {
+          data = await res.json();
+        } catch (parseError) {
+          console.log('Response parse error: ', parseError);
+        }
 
-  //       switch (res.status) {
-  //         case 200: {
-  //           if (data.status === 'fail') {
-  //             throw {
-  //               request: { url, data: requestBody },
-  //               response: data,
-  //               ...data,
-  //             };
-  //           }
-  //           return data;
-  //         }
-  //         case 401:
-  //           throw {
-  //             code: 'unauthorized',
-  //             status: res.status,
-  //             request: { url, data: requestBody },
-  //             response: data,
-  //           };
-  //         default:
-  //           throw {
-  //             code: 'unknown',
-  //             status: res.status,
-  //             request: { url, data: requestBody },
-  //             response: data,
-  //           };
-  //       }
-  //     })
-  //     .catch(error => {
-  //       console.log(
-  //         'Request:',
-  //         fetchOpts.method,
-  //         url,
-  //         requestBody,
-  //         '\nError:',
-  //         error,
-  //       );
-  //       throw error;
-  //     });
-  // }
+        console.log('Response:', res, data);
 
-  static sendRequest(method, path, body) {
+        switch (res.status) {
+          case 200: {
+            if (data.status === 'fail') {
+              throw {
+                request: {url, data: requestBody},
+                response: data,
+                ...data,
+              };
+            }
+            return data;
+          }
+          case 401:
+            throw {
+              code: 'unauthorized',
+              status: res.status,
+              request: {url, data: requestBody},
+              response: data,
+            };
+          default:
+            throw {
+              code: 'unknown',
+              status: res.status,
+              request: {url, data: requestBody},
+              response: data,
+            };
+        }
+      })
+      .catch((error) => {
+        console.log(
+          'Request:',
+          fetchOpts.method,
+          url,
+          requestBody,
+          '\nError:',
+          error,
+        );
+        throw error;
+      });
+  }
+
+  static sendRequestNew(method, path, body) {
     let url = `${API_URL}/${path}`;
     //alert(JSON.stringify(body));
+    console.log('sent', body);
+    var headers = {};
+    console.log('this.authToken: ' + this.authToken);
+    if (this.authToken) {
+      headers = {
+        'X-Auth-Token': API_AUTH_TOKEN,
+        'Client-id': API_CLIENT_ID,
+        authorization: `Bearer ${this.authToken}`,
+      };
+    } else {
+      headers = {
+        'X-Auth-Token': API_AUTH_TOKEN,
+        'Client-id': API_CLIENT_ID,
+      };
+    }
+    console.log('headers', headers);
+
     return axios
       .post(url, body, {
-        headers: {'X-Auth-Token': API_AUTH_TOKEN, 'Client-id': API_CLIENT_ID},
+        headers: headers,
       })
       .then(function (response) {
         console.log('res', response);

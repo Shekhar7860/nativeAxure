@@ -24,6 +24,8 @@ import {
   APP_MAIN_COLOR_DISABLE,
   BLACK,
 } from '../../constants/colors';
+import {CommonActions} from '@react-navigation/native';
+
 import InputBox from '../../components/InputBox';
 import {APP_NAME} from '../../constants/const';
 import {loginUser} from '../../redux/reducers/session';
@@ -77,7 +79,6 @@ class Login extends Component {
         this.props
           .loginUser(username, password)
           .then((response) => {
-            var response = response.data;
             this.setState({showLoading: false});
             if (response.code === 200) {
               if (isRememberMe) {
@@ -92,6 +93,10 @@ class Login extends Component {
               const userId = response.data.id.toString();
               const nickname = response.data.name;
               this.props.navigation.navigate('Home');
+
+              this.props.navigation.reset({
+                routes: [{name: 'Home'}],
+              });
             } else {
               if (response.validation_errors) {
                 showErrorPopup(response.validation_errors);

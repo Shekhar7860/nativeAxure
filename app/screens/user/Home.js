@@ -11,10 +11,17 @@ import {
   SLIDE_5,
   SLIDE_6,
 } from '../../constants/Images';
-import {View, Text, Button, SafeAreaView, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  SafeAreaView,
+  FlatList,
+  BackHandler,
+} from 'react-native';
 import BaseScreen from '../../components/BaseScreen';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
-
+import {StackActions} from '@react-navigation/native';
 export default class Chat extends PureComponent {
   constructor(props) {
     super(props);
@@ -28,10 +35,31 @@ export default class Chat extends PureComponent {
         {image: SLIDE_6},
       ],
     };
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
-  componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+
+  componentDidMount() {
+    this.init();
+    this._sub = this.props.navigation.addListener('didFocus', () => {
+      this.init();
+    });
+  }
+
+  init = () => {
+    BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick,
+    );
   };
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick,
+    );
+  }
+
+  handleBackButtonClick() {}
 
   openScreen = (index) => {
     switch (index) {

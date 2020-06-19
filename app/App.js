@@ -52,9 +52,7 @@ class App extends PureComponent {
   render() {
     return (
       <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <AppNavigator />
-        </PersistGate>
+        <AppNavigator />
       </Provider>
     );
   }

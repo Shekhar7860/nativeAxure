@@ -4,10 +4,35 @@ import StoreDB from '../storage/StoreDB';
 import BaseScreen from '../components/BaseScreen';
 import {WHITE} from '../constants/colors';
 import Loading from '../components/Loading';
+import {checkInternet} from '../redux/reducers/netInfo';
+import {getUserInfo} from '../redux/reducers/session';
+import NetInfo from '@react-native-community/netinfo';
+import Api from '../services/api';
+import {connect} from 'react-redux';
 
-export default class Landing extends PureComponent {
+class Landing extends PureComponent {
 	componentDidMount = () => {
 		this.init();
+		this.checkNet();
+	};
+
+	checkNet = () => {
+		// NetInfo.isConnected.addEventListener(
+		// 	'connectionChange',
+		// 	this.handleConnectionChange,
+		// );
+		NetInfo.addEventListener((state) => {
+			this.handleConnectionChange(state);
+		});
+		NetInfo.fetch().then((state) => {
+			console.log('Connection type', state.type);
+			console.log('Is connected?', state.isConnected);
+		});
+	};
+
+	handleConnectionChange = (state) => {
+		var status = state.isConnected;
+		this.props.checkInternet(status);
 	};
 
 	async init() {
@@ -16,10 +41,19 @@ export default class Landing extends PureComponent {
 		if (!introDone) {
 			return this.props.navigation.navigate('Help');
 		} else {
-			if (userData.name) {
-				return this.props.navigation.navigate('Home');
+			if (userData.auth_token) {
+				Api.setAuthToken(userData.auth_token);
+				this.props.navigation.navigate('Home');
+				// resetting stack so that as to stop function of back button
+				this.props.navigation.reset({
+					routes: [{name: 'Home'}],
+				});
 			} else {
-				return this.props.navigation.navigate('Login');
+				// resetting stack so that as to stop function of back button
+				this.props.navigation.reset({
+					routes: [{name: 'Login'}],
+				});
+				this.props.navigation.navigate('Login');
 			}
 		}
 	}
@@ -41,3 +75,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 });
+
+const mapDispatchToProps = {
+	checkInternet,
+	getUserInfo,
+};
+
+export default connect(null, mapDispatchToProps)(Landing);

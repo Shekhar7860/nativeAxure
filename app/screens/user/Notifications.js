@@ -33,6 +33,7 @@ export default class Notifications extends PureComponent {
     };
   }
   componentDidMount = () => {
+    // alert(JSON.stringify(this.props));
     //this.props.navigation.navigate('Cart')
   };
 

@@ -24,11 +24,15 @@ import {
   APP_MAIN_COLOR_DISABLE,
   BLACK,
 } from '../../constants/colors';
+import {CommonActions} from '@react-navigation/native';
+
 import InputBox from '../../components/InputBox';
 import {APP_NAME} from '../../constants/const';
 import {loginUser} from '../../redux/reducers/session';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 import StoreDB from '../../storage/StoreDB';
+import Api from '../../services/api';
+import OverlaySpinner from '../../components/OverlaySpinner';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 
 class Login extends Component {
@@ -46,31 +50,76 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    // this.props.initLogin();
-    // StoreDB.userEmail().then(email => {
-    //   StoreDB.userPassword().then(password => {
-    //     this.setState({
-    //       username: email,
-    //       password: password,
-    //       isRememberMe: true,
-    //     });
-    //   });
-    // });
+    console.log(this.props);
+    StoreDB.userEmail().then((email) => {
+      StoreDB.userPassword().then((password) => {
+        this.setState({
+          username: email,
+          password: password,
+          isRememberMe: true,
+        });
+      });
+    });
   }
 
   login = () => {
     const {username, password, isRememberMe} = this.state;
-    // console.group('username', username, 'password', password)
-    if (!username) {
-      Alert.alert('', 'Please enter Username.');
-    } else if (!isEmailValid(username)) {
-      Alert.alert('', 'Please enter valid Username.');
-    } else if (!password) {
-      Alert.alert('', 'Please enter Password.');
+    const {online} = this.props;
+
+    if (online) {
+      // console.group('username', username, 'password', password)
+      if (!username) {
+        Alert.alert('', 'Please enter Username.');
+      } else if (!isEmailValid(username)) {
+        Alert.alert('', 'Please enter valid Username.');
+      } else if (!password) {
+        Alert.alert('', 'Please enter Password.');
+      } else {
+        this.setState({showLoading: true});
+        this.props
+          .loginUser(username, password)
+          .then((response) => {
+            this.setState({showLoading: false});
+            if (response.code === 200) {
+              if (isRememberMe) {
+                StoreDB.userEmail(username);
+                StoreDB.userPassword(password);
+              } else {
+                StoreDB.userEmail('');
+                StoreDB.userPassword('');
+              }
+              Api.setAuthToken(response.data.auth_token);
+              StoreDB.loggedInUserData(response.data);
+              const userId = response.data.id.toString();
+              const nickname = response.data.name;
+              this.props.navigation.navigate('Home');
+
+              this.props.navigation.reset({
+                routes: [{name: 'Home'}],
+              });
+            } else {
+              if (response.validation_errors) {
+                showErrorPopup(response.validation_errors);
+              } else {
+                showErrorPopup(response.message);
+              }
+            }
+          })
+          .catch((error) => {
+            this.setState({showLoading: false});
+            if (error.code === 'unauthorized') {
+              showErrorPopup(
+                "Couldn't validate those credentials.\nPlease try again",
+              );
+            } else {
+              showErrorPopup(
+                'There was an unexpected error.\nPlease wait a few minutes and try again.',
+              );
+            }
+          });
+      }
     } else {
-      // this.props.loginUser(username, password);
-      StoreDB.loggedInUserData({name: username});
-      this.props.navigation.navigate('Home');
+      Alert.alert('', 'No Internet Connection');
     }
   };
 
@@ -135,6 +184,13 @@ class Login extends Component {
             REGISTER
           </ClickableText>
         </View>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </KeyboardAvoidingView>
     );
   }
@@ -174,8 +230,12 @@ const styles = ScaledSheet.create({
   },
 });
 
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
 const mapDispatchToProps = {
   loginUser,
 };
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

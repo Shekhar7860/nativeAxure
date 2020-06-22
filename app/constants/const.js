@@ -1,4 +1,6 @@
 export const APP_NAME = 'MPH GROUP';
+export const DEFAULT_IMG_URL =
+  'https://media.istockphoto.com/photos/beautiful-woman-posing-against-dark-background-picture-id638756792?k=6&m=638756792&s=612x612&w=0&h=4OBakrSLCzjRrgvAe1ZV0jkReI_88u3bUM7FV_UA5dc=';
 export const ITEM_MARGIN_LEFT_RIGHT = 50; // Before Login
 export const HEADER_ITEMS_MARGIN_LEFT_RIGHT = 10;
 export const SCREEN_ITEMS_MARGIN_LEFT_RIGHT = 15; // After Login

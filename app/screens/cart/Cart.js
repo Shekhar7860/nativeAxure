@@ -3,11 +3,8 @@ import {View, Text, Button} from 'react-native';
 
 export default Cart = (props) => {
 	return (
-		<View>
+		<View style={{marginTop: 20}}>
 			<Text>This is Cart Screen </Text>
-			<Button
-				title="OpenDrawer"
-				onPress={() => props.navigation.openDrawer()}></Button>
 		</View>
 	);
 };

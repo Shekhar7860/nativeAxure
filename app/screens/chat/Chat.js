@@ -2,7 +2,14 @@ import React, {PureComponent} from 'react';
 import Header from '../../components/Header';
 import TouchableImage from '../../components/TouchableImage';
 import commonStyles from '../../commonStyles/commonStyles';
-import {SEARCH, SLIDE_1, SLIDE_2, BACK, CHAT_PIC} from '../../constants/Images';
+import {
+  SEARCH,
+  SLIDE_1,
+  SLIDE_2,
+  BACK,
+  CHAT_PIC,
+  DRAWER_MENU,
+} from '../../constants/Images';
 import {View, Text, Button, SafeAreaView, FlatList, Image} from 'react-native';
 import {APP_MAIN_BLUE} from '../../constants/colors';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -60,7 +67,7 @@ export default class Chat extends PureComponent {
           navigation={this.props.navigation}
           title="CHAT"
           rightImage={SEARCH}
-          leftImage={BACK}
+          leftImage={DRAWER_MENU}
         />
         {/* horizontal list */}
         <FlatList

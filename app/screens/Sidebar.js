@@ -90,7 +90,7 @@ openImagePicker = (setProfilePic, props) => {
       setProfilePic(response.uri);
 
       let image = {uri: response.uri, name: 'image.jpg', type: 'image/jpeg'};
-      profilePicApi(image, props);
+      profilePicApi(image);
       // You can also display the image using data:
       // const source = { uri: 'data:image/jpeg;base64,' + response.data };
     }

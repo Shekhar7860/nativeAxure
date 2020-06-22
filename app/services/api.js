@@ -102,6 +102,7 @@ export default class Api {
     const formData = opts.formData;
     if (formData) {
       headers['content-type'] = 'multipart/form-data';
+      headers['Accept'] = 'application/json';
       fetchOpts.body = toFormData(formData);
     }
 

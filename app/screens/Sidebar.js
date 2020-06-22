@@ -102,7 +102,7 @@ profilePicApi = (image, props) => {
   props
     .updateProfilePic(image)
     .then((response) => {
-      // console.log('insideApi', response);
+      console.log('insideApi' + response);
       // if (response.code === 200) {
       //   this.setState({showLoading: false});
       //   Toast.show('Profile Pic Updated Successfully');

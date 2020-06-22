@@ -69,6 +69,7 @@ export default class Api {
     let response = this.sendRequest('POST', 'user/profile-pic/store', {
       formData,
     });
+
     return response;
   }
 
@@ -84,7 +85,7 @@ export default class Api {
     };
     console.log('this.authToken: ' + this.authToken);
     if (!skipAuth && this.authToken) {
-      headers.authorization = `Bearer ${this.authToken}`;
+      //  headers.authorization = `Bearer ${this.authToken}`;
     }
 
     const jsonBody = opts.jsonBody;
@@ -148,15 +149,7 @@ export default class Api {
         }
       })
       .catch((error) => {
-        console.log(
-          'Request:',
-          fetchOpts.method,
-          url,
-          requestBody,
-          '\nError:',
-          error,
-        );
-        throw error;
+        console.log('err', error);
       });
   }
 

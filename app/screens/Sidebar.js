@@ -41,6 +41,9 @@ const ITEMS = [
 
 logOut = (props) => {
   StoreDB.logoutUser();
+  props.navigation.reset({
+    routes: [{name: 'Login'}],
+  });
   props.navigation.navigate('Login');
 };
 

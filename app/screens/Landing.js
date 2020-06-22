@@ -5,7 +5,9 @@ import BaseScreen from '../components/BaseScreen';
 import {WHITE} from '../constants/colors';
 import Loading from '../components/Loading';
 import {checkInternet} from '../redux/reducers/netInfo';
+import {getUserInfo} from '../redux/reducers/session';
 import NetInfo from '@react-native-community/netinfo';
+import Api from '../services/api';
 import {connect} from 'react-redux';
 
 class Landing extends PureComponent {
@@ -39,10 +41,19 @@ class Landing extends PureComponent {
 		if (!introDone) {
 			return this.props.navigation.navigate('Help');
 		} else {
-			if (userData.name) {
-				return this.props.navigation.navigate('Home');
+			if (userData.auth_token) {
+				Api.setAuthToken(userData.auth_token);
+				this.props.navigation.navigate('Home');
+				// resetting stack so that as to stop function of back button
+				this.props.navigation.reset({
+					routes: [{name: 'Home'}],
+				});
 			} else {
-				return this.props.navigation.navigate('Login');
+				// resetting stack so that as to stop function of back button
+				this.props.navigation.reset({
+					routes: [{name: 'Login'}],
+				});
+				this.props.navigation.navigate('Login');
 			}
 		}
 	}
@@ -67,6 +78,7 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = {
 	checkInternet,
+	getUserInfo,
 };
 
 export default connect(null, mapDispatchToProps)(Landing);

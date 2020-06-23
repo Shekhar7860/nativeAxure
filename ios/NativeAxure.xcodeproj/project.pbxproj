@@ -81,6 +81,7 @@
 		D97A6F2587AE4AB385C84D58 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		EDE011A924A1E3D500DCF9E7 /* mphBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mphBeta.entitlements; path = NativeAxure/mphBeta.entitlements; sourceTree = "<group>"; };
 		FCD6FFE24E574337826BBE9C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		FD3A46EC302D9E9C58507B1E /* Pods-NativeAxure.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NativeAxure.debug.xcconfig"; path = "Target Support Files/Pods-NativeAxure/Pods-NativeAxure.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -141,6 +142,7 @@
 		13B07FAE1A68108700A75B9A /* NativeAxure */ = {
 			isa = PBXGroup;
 			children = (
+				EDE011A924A1E3D500DCF9E7 /* mphBeta.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -779,6 +781,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = NativeAxure/mphBeta.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ER8GT5ZEAJ;
@@ -794,9 +798,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.avonbeta;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mphbeta;
 				PRODUCT_NAME = mphBeta;
-				PROVISIONING_PROFILE_SPECIFIER = Avon_Devolpement_Provisoning;
+				PROVISIONING_PROFILE_SPECIFIER = MPH_Beta_Distribution_Provisoning;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -809,6 +813,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = NativeAxure/mphBeta.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ER8GT5ZEAJ;
@@ -819,9 +825,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.avonbeta;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mphbeta;
 				PRODUCT_NAME = mphBeta;
-				PROVISIONING_PROFILE_SPECIFIER = Avon_Devolpement_Provisoning;
+				PROVISIONING_PROFILE_SPECIFIER = MPH_Beta_Distribution_Provisoning;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

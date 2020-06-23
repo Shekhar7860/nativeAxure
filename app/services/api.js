@@ -69,9 +69,41 @@ export default class Api {
     let response = this.sendRequest('POST', 'user/profile-pic/store', {
       formData,
     });
-
     return response;
   }
+
+  static uploadfile = (file) => {
+    let url =
+      'https://stagingmph.mphgroup.uk/public/api/1.0/user/profile-pic/store';
+    let UplodedFile = new FormData();
+    UplodedFile.append('file', {
+      type: 'image/jpeg',
+      uri: this.state.pickerResponse.path,
+      name: 'file.jpeg',
+    });
+
+    return axios({
+      method: 'post',
+      url: url,
+      data: UplodedFile,
+      headers: {
+        Authorization: 'Bearer  aVFao/84QKAbX67Xlh.F0EbqEXpoPJPh',
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        'X-Auth-Token': API_AUTH_TOKEN,
+        'Client-id': API_CLIENT_ID,
+      },
+    })
+      .then((response) => {
+        console.log('success');
+
+        console.log(response);
+        return response;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   static sendRequest(method, path, opts = {}, skipAuth = false) {
     let fetchOpts = {
@@ -85,7 +117,7 @@ export default class Api {
     };
     console.log('this.authToken: ' + this.authToken);
     if (!skipAuth && this.authToken) {
-      //  headers.authorization = `Bearer ${this.authToken}`;
+      headers.authorization = `Bearer ${this.authToken}`;
     }
 
     const jsonBody = opts.jsonBody;
@@ -102,7 +134,6 @@ export default class Api {
     const formData = opts.formData;
     if (formData) {
       headers['content-type'] = 'multipart/form-data';
-      headers['Accept'] = 'application/json';
       fetchOpts.body = toFormData(formData);
     }
 

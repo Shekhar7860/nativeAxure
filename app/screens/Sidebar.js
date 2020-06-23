@@ -16,6 +16,9 @@ import {
   APP_MAIN_COLOR_DISABLE,
 } from '../constants/colors';
 import {PROFILE_PIC} from '../constants/Images';
+import {showErrorPopup} from '../util/utils';
+import Toast from 'react-native-simple-toast';
+import OverlaySpinner from '../components/OverlaySpinner';
 import {useIsDrawerOpen} from '@react-navigation/drawer';
 import Clients from './client/Clients';
 import StoreDB from '../storage/StoreDB';
@@ -77,7 +80,7 @@ openImagePicker = (setProfilePic, props) => {
   };
 
   ImagePicker.showImagePicker(options, (response) => {
-    console.group('Response = ', response);
+    //console.group('Response = ', response);
 
     if (response.didCancel) {
       console.log('User cancelled image picker');
@@ -90,36 +93,11 @@ openImagePicker = (setProfilePic, props) => {
       setProfilePic(response.uri);
 
       let image = {uri: response.uri, name: 'image.jpg', type: 'image/jpeg'};
-      profilePicApi(image);
+      profilePicApi(image, props);
       // You can also display the image using data:
       // const source = { uri: 'data:image/jpeg;base64,' + response.data };
     }
   });
-};
-
-profilePicApi = (image, props) => {
-  // this.setState({ showLoading: true });
-  props
-    .updateProfilePic(image)
-    .then((response) => {
-      // console.log('insideApi', response);
-      // if (response.code === 200) {
-      //   this.setState({showLoading: false});
-      //   Toast.show('Profile Pic Updated Successfully');
-      // }
-    })
-    .catch((error) => {
-      // this.setState({showLoading: false});
-      // if (error.code === 'unauthorized') {
-      //   showErrorPopup(
-      //     "Couldn't validate those credentials.\nPlease try again",
-      //   );
-      // } else {
-      //   showErrorPopup(
-      //     'There was an unexpected error.\nPlease wait a few minutes and try again.',
-      //   );
-      // }
-    });
 };
 
 getRowItem = (item, index, props) => {
@@ -132,10 +110,35 @@ getRowItem = (item, index, props) => {
   );
 };
 const Sidebar = (props) => {
-  // console.log('mypoo', props.userInfo);
+  const [SHOW_LOADING, SET_LOADING] = useState(false);
+  profilePicApi = (image, props) => {
+    SET_LOADING(true);
+    props
+      .updateProfilePic(image)
+      .then((response) => {
+        console.log('insideApi', response);
+        if (response.code === 200) {
+          SET_LOADING(false);
+          Toast.show('Profile Pic Updated Successfully');
+        }
+      })
+      .catch((error) => {
+        SET_LOADING(false);
+        if (error.code === 'unauthorized') {
+          showErrorPopup(
+            "Couldn't validate those credentials.\nPlease try again",
+          );
+        } else {
+          showErrorPopup(
+            'There was an unexpected error.\nPlease wait a few minutes and try again.',
+          );
+        }
+      });
+  };
+  console.log('mypoo', props.userInfo);
   const {userInfo} = props;
   const isDrawerOpen = useIsDrawerOpen();
-  const [USER_PROFILE_PIC, setProfilePic] = useState('');
+  const [USER_PROFILE_PIC, setProfilePic] = useState(userInfo.profile_pic);
   return (
     <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
       <View style={styles.menuMargin}>
@@ -168,6 +171,13 @@ const Sidebar = (props) => {
           renderItem={({item, index}) => getRowItem(item, index, props)}
         />
       </View>
+      <OverlaySpinner
+        cancelable
+        visible={SHOW_LOADING}
+        color={WHITE}
+        textContent="Please wait..."
+        textStyle={{color: WHITE}}
+      />
     </SafeAreaView>
   );
 };

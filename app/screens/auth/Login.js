@@ -50,7 +50,7 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props);
+    // console.log(this.props);
     StoreDB.userEmail().then((email) => {
       StoreDB.userPassword().then((password) => {
         this.setState({
@@ -93,7 +93,6 @@ class Login extends Component {
               const userId = response.data.id.toString();
               const nickname = response.data.name;
               this.props.navigation.navigate('Home');
-
               this.props.navigation.reset({
                 routes: [{name: 'Home'}],
               });

@@ -18,6 +18,7 @@ import {
   SafeAreaView,
   FlatList,
   BackHandler,
+  Linking,
 } from 'react-native';
 import BaseScreen from '../../components/BaseScreen';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -70,7 +71,7 @@ export default class Chat extends PureComponent {
         this.props.navigation.navigate('Users');
         break;
       case 5:
-        this.props.navigation.navigate('Resource');
+        Linking.openURL('https://resourcehub.mphgroup.uk');
         break;
       default:
       // code block

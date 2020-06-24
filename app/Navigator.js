@@ -70,7 +70,7 @@ function TabStackNavigator() {
       <Stack.Screen name="Quotes" component={QuoteStackNavigator} />
       <Stack.Screen name="Clients" component={ClientStackNavigator} />
       <Stack.Screen name="Users" component={UsersStackNavigator} />
-      <Stack.Screen name="Quote" component={Quote} />
+      <Stack.Screen name="Orders" component={OrdersStackNavigator} />
       <Stack.Screen name="AddQuote" component={AddQuote} />
       <Stack.Screen name="AddClient" component={AddClient} />
       <Stack.Screen name="Resource" component={ResourceHub} />
@@ -107,6 +107,15 @@ function UsersStackNavigator() {
       <Stack.Screen name="UsersStack" component={Users} />
       <Stack.Screen name="AllUsers" component={AllUsers} />
       <Stack.Screen name="UserDetail" component={UserDetail} />
+    </Stack.Navigator>
+  );
+}
+
+function OrdersStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="OrdersStack" component={Orders} />
+      <Stack.Screen name="AddOrder" component={AddOrder} />
     </Stack.Navigator>
   );
 }

@@ -36,6 +36,7 @@ const {store, persistor} = createStore();
 
 class App extends PureComponent {
   componentDidMount() {
+    console.disableYellowBox = true;
     SplashScreen.hide();
     this.getToken();
   }

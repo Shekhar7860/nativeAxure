@@ -52,6 +52,10 @@ export const updateProfilePic = (file) => {
   return (dispatch) => {
     return API.updateProfilePicture({file})
       .then((response) => {
+        if (response.code === 200) {
+          // console.log('insidelogin', response);
+          //   dispatch(setUserInfo(response.data));
+        }
         console.group('this is res', response);
         return response;
       })

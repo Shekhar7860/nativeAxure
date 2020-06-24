@@ -22,6 +22,7 @@ import ButtonDefault from '../../components/ButtonDefault';
 import ContainerSearch from '../../components/ContainerSearch';
 import InputBox from '../../components/InputBox';
 import HR from '../../components/HR';
+import ExpandCollapseLayout from '../../components/ExpandCollapseLayout';
 import {
   View,
   Text,
@@ -86,7 +87,7 @@ export default class AddQuote extends PureComponent {
             <Text style={styles.labelText}>Type</Text>
             <SimpleDropdown
               placeHolder="Please select type"
-              style={styles.dropDownStyle}
+              style={commonStyles.dropDownStyle}
               drowdownArray={arrDataType}
               dropDownWidth={'85%'}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
@@ -107,7 +108,7 @@ export default class AddQuote extends PureComponent {
             </View>
             <SimpleDropdown
               placeHolder="Please select client"
-              style={styles.dropDownStyle}
+              style={commonStyles.dropDownStyle}
               drowdownArray={arrDataClient}
               dropDownWidth={'85%'}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
@@ -117,7 +118,7 @@ export default class AddQuote extends PureComponent {
             <Text style={styles.labelText}>Status</Text>
             <SimpleDropdown
               placeHolder="Please select status"
-              style={styles.dropDownStyle}
+              style={commonStyles.dropDownStyle}
               drowdownArray={arrDataStatus}
               dropDownWidth={'85%'}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
@@ -201,12 +202,5 @@ const styles = ScaledSheet.create({
   input: {
     fontWeight: 'normal',
     fontSize: moderateScale(10),
-  },
-  dropDownStyle: {
-    marginHorizontal: moderateScale(20),
-    marginTop: moderateScale(-20),
-    flexDirection: 'row',
-    borderBottomWidth: moderateScale(1),
-    borderBottomColor: LINE_COLOR,
   },
 });

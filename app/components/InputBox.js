@@ -33,11 +33,13 @@ class InputBox extends Component {
       rightIcon,
       searchImageStyle,
       placeHolderTextColor,
+      maxLength,
     } = this.props;
     return (
       <Input
         {...this.props}
         multiline={maxLines > 1}
+        maxLength={maxLength}
         numberOfLines={maxLines > 0 ? maxLines : null}
         placeholder={placeHolder}
         placeholderTextColor={placeHolderTextColor}

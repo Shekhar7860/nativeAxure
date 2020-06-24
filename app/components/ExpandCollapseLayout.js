@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     marginRight: APPT_DETAILS_ITEMS_MARGIN_LEFT_RIGHT + 10,
     borderBottomLeftRadius: APP_COMMON_BORDER_RADIUS,
     borderBottomRightRadius: APP_COMMON_BORDER_RADIUS,
-    backgroundColor: CARD_DARK_BLUE,
+
     marginTop: -5,
     paddingBottom: 5,
   },

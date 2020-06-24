@@ -16,6 +16,7 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import HR from '../../components/HR';
 import {
   View,
@@ -72,7 +73,8 @@ export default class Quotes extends Component {
           rightImage={USER}
           title="QUOTES"
         />
-        <TouchableOpacity style={commonStyles.content}>
+        <KeyboardAwareScrollView
+          contentContainerStyle={{...commonStyles.content, flex: 1}}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
@@ -126,7 +128,7 @@ export default class Quotes extends Component {
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) => this.listItem(item, index)}
           />
-        </TouchableOpacity>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     );
   }

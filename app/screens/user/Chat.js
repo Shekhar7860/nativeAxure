@@ -5,6 +5,8 @@ import commonStyles from '../../commonStyles/commonStyles';
 import {SEARCH, SLIDE_1, SLIDE_2} from '../../constants/Images';
 import {View, Text, Button, SafeAreaView, FlatList} from 'react-native';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
+import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} '../../constants/config';
+import { Freshchat, FreshchatConfig } from 'react-native-freshchat-sdk';
 
 export default class Chat extends PureComponent {
   constructor(props) {
@@ -14,6 +16,8 @@ export default class Chat extends PureComponent {
     };
   }
   componentDidMount = () => {
+    var freshchatConfig = new FreshchatConfig(FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY);
+    Freshchat.init(freshchatConfig);
     //this.props.navigation.navigate('Cart')
   };
 

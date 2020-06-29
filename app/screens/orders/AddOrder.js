@@ -51,6 +51,10 @@ export default class AddOrder extends PureComponent {
     this.props.navigation.navigate('AddQuoteClient');
   };
 
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
+  };
+
   render() {
     const {items} = this.state;
 
@@ -134,7 +138,9 @@ export default class AddOrder extends PureComponent {
               />
             </View>
 
-            <ButtonDefault onPress={this.addClientQuote}>NEXT</ButtonDefault>
+            <ButtonDefault onPress={() => this.openScreen('AddOrderQuote')}>
+              NEXT
+            </ButtonDefault>
           </View>
         </ScrollView>
       </SafeAreaView>

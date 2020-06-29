@@ -116,6 +116,7 @@ function OrdersStackNavigator() {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="OrdersStack" component={Orders} />
       <Stack.Screen name="AddOrder" component={AddOrder} />
+      <Stack.Screen name="AddOrderQuote" component={AddOrderQuote} />
     </Stack.Navigator>
   );
 }

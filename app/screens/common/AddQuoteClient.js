@@ -60,6 +60,24 @@ export default class AddQuoteClient extends PureComponent {
     this.props.navigation.navigate(screen, {clientData: param});
   };
 
+  listItem = (item, index) => {
+    return (
+      <TouchableOpacity style={styles.rowItem}>
+        <View style={styles.bottomQuotesRow}>
+          <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
+          <View style={{width: '5%'}} />
+          <View style={{width: '50%', justifyContent: 'center'}}>
+            <Text style={styles.labelText}>Yantra Test Reseller</Text>
+          </View>
+          <View style={{width: '20%'}} />
+          <View style={{width: '25%'}}>
+            <Text style={styles.amountText}>£1494.00</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   calculateCost = () => {};
   render() {
     const {items, isRememberMe} = this.state;
@@ -478,6 +496,37 @@ export default class AddQuoteClient extends PureComponent {
                 />
               </ExpandCollapseLayout>
             </View>
+
+            <View style={commonStyles.space}>
+              <Text style={styles.topLabelText}>List Of Items</Text>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>REF/SKU</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>PRODUCT</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>UNIT PRICE</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>BUY PRICE</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>QTY</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>TOTAL</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              style={styles.parentFlatList}
+              data={items}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) => this.listItem(item, index)}
+            />
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -498,6 +547,15 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
     height: moderateScale(40),
   },
+  bottomQuotesRow: {
+    flexDirection: 'row',
+    marginHorizontal: moderateScale(10),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  parentFlatList: {
+    marginTop: moderateScale(10),
+  },
 
   dotBlue: {
     marginTop: moderateScale(5),
@@ -517,6 +575,7 @@ const styles = ScaledSheet.create({
     width: '100%',
     marginHorizontal: moderateScale(10),
     marginTop: moderateScale(10),
+    justifyContent: 'space-between',
   },
   button: {
     backgroundColor: DARK_BLUE,
@@ -565,5 +624,20 @@ const styles = ScaledSheet.create({
   input: {
     fontWeight: 'normal',
     fontSize: moderateScale(10),
+  },
+  recentText: {
+    fontSize: moderateScale(12),
+    fontWeight: 'bold',
+  },
+  seeText: {
+    fontSize: moderateScale(11),
+    color: WHITE,
+  },
+  listWidth: {
+    width: '16%',
+  },
+  listRowText: {
+    fontSize: moderateScale(8),
+    fontWeight: 'normal',
   },
 });

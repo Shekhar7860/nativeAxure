@@ -36,7 +36,7 @@ class Header extends PureComponent {
 
   handleDrawerMenuClick = (img) => {
     console.log('prssed', img);
-    if (img === 21) {
+    if (img === 25) {
       this.props.navigation.goBack();
     } else {
       this.props.navigation.openDrawer();

@@ -55,7 +55,10 @@ export default class AddQuoteClient extends PureComponent {
   }
   componentDidMount = () => {
     if (this.props.route.params) {
-      console.group('routeParams', this.props.route.params);
+      console.log(
+        'routeParams',
+        this.props.route.params.clientData.quoteDetail,
+      );
       this.setState({
         quoteField: this.props.route.params.clientData.quoteDetail,
       });
@@ -87,7 +90,7 @@ export default class AddQuoteClient extends PureComponent {
   calculateCost = () => {};
   render() {
     const {items, isRememberMe, quoteField} = this.state;
-
+    console.log('id,', quoteField.id);
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
         <Header
@@ -144,6 +147,7 @@ export default class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({quoteCode: value})}
+                value={quoteField.code}
               />
             </View>
 

@@ -55,7 +55,8 @@ openScreen = (screenName, props) => {
     screenName == 'Clients' ||
     screenName == 'Quotes' ||
     screenName == 'Users' ||
-    screenName == 'Orders'
+    screenName == 'Orders' ||
+    screenName == 'Products'
   ) {
     props.navigation.navigate(screenName);
   } else if (screenName == 'Logout') {

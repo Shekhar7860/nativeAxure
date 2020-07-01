@@ -26,17 +26,57 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  Alert,
 } from 'react-native';
+import {getQuoteDetails} from '../../redux/reducers/quotes';
+import {connect} from 'react-redux';
 
-export default class Quote extends PureComponent {
+class Quote extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      quoteId: 0,
+      quote: {},
     };
   }
   componentDidMount = () => {
+    // console.group('props', this.props.route.params.clientData.id);
+    if (this.props.route.params) {
+      this.setState({quoteId: this.props.route.params.clientData.id});
+      this.getQuoteDetails(this.props.route.params.clientData.id);
+    }
+
     //this.props.navigation.navigate('Cart')
+  };
+
+  getQuoteDetails = (id) => {
+    const {online} = this.props;
+    if (online) {
+      this.props
+        .getQuoteDetails(id)
+        .then((response) => {
+          console.group('response', response);
+          // this.setState({showLoading: false});
+          if (response.code === 200) {
+            this.setState({quote: response.data});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
   };
 
   openScreen = (screen, param) => {
@@ -44,7 +84,7 @@ export default class Quote extends PureComponent {
   };
 
   render() {
-    const {items} = this.state;
+    const {items, quote} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -69,11 +109,14 @@ export default class Quote extends PureComponent {
               </View>
               <View style={styles.blueContentWidth} />
               <View style={styles.mainContentWidth}>
-                <Text style={styles.labelText}>Yantra Test Reseller</Text>
+                <Text style={styles.labelText}>{quote.name}</Text>
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <TouchableOpacity onPress={() => this.openScreen('EditQuote')}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.openScreen('EditQuote', {quoteDetail: quote})
+                  }>
                   <Image source={TASK} style={commonStyles.icon} />
                 </TouchableOpacity>
               </View>
@@ -87,7 +130,9 @@ export default class Quote extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.amountText}>Yantra</Text>
+                <Text style={styles.amountText}>
+                  {quote.billing_first_name} {quote.billing_last_name}
+                </Text>
               </View>
             </View>
 
@@ -99,7 +144,7 @@ export default class Quote extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.amountText}>Pending</Text>
+                <Text style={styles.amountText}>{quote.status}</Text>
               </View>
             </View>
 
@@ -123,7 +168,7 @@ export default class Quote extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.dateText}>19-05-2020 17-41-40</Text>
+                <Text style={styles.dateText}>{quote.created_at}</Text>
               </View>
             </View>
 
@@ -135,7 +180,7 @@ export default class Quote extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.amountTextLast}>£1494.00</Text>
+                <Text style={styles.amountTextLast}>£{quote.grand_total}</Text>
               </View>
             </View>
           </View>
@@ -227,3 +272,13 @@ const styles = ScaledSheet.create({
     width: '30%',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getQuoteDetails,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Quote);

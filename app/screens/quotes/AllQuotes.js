@@ -17,6 +17,7 @@ import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import HR from '../../components/HR';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   View,
   Text,
@@ -27,18 +28,35 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
+import {connect} from 'react-redux';
 
-export default class AllQuotes extends Component {
+class AllQuotes extends Component {
   constructor(props) {
     super(props);
     this.state = {
       acceptedItems: [1, 2, 3, 4],
-      pendingItems: [1],
+      pendingItems: [],
       rejectedItems: [1],
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    console.group('prii', this.props.quotes);
+    for (var i = 0; i < this.props.quotes.items.length; i++) {
+      if (this.props.quotes.items[i].status == 'Pending') {
+        this.state.pendingItems.push(this.props.quotes.items[i]);
+      } else if (this.props.quotes.items[i].status == 'Accepted') {
+        this.state.acceptedItems.push(this.props.quotes.items[i]);
+      } else {
+        this.state.rejectedItems.push(this.props.quotes.items[i]);
+      }
+    }
+    console.log('this', this.state.pendingItems);
+    this.setState({
+      pendingItems: this.state.pendingItems,
+      acceptedItems: this.state.acceptedItems,
+      rejectedItems: this.state.rejectedItems,
+    });
+    // this.props.navigation.navigate('Cart')
   };
 
   openScreen = (screen, param) => {
@@ -60,11 +78,11 @@ export default class AllQuotes extends Component {
           />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>Yantra Test Reseller</Text>
+            <Text style={styles.labelText}>{item.billing_company_name}</Text>
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£1494.00</Text>
+            <Text style={styles.amountText}>£{item.grand_total}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -74,79 +92,83 @@ export default class AllQuotes extends Component {
     const {acceptedItems, pendingItems, rejectedItems} = this.state;
 
     return (
-      <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
+      <KeyboardAwareScrollView style={commonStyles.ketboardAvoidingContainer}>
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
           title="ALL QUOTES"
           leftImage={BACK}
         />
-        <TouchableOpacity style={commonStyles.content}>
-          <View style={styles.rowContent}>
-            <View style={{marginLeft: moderateScale(-20)}}>
-              <AddNewButtonGroup
-                color={APP_MAIN_GREEN}
-                onPress={() => this.openScreen('AddQuote')}
-              />
-            </View>
-            <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
-            </View>
-          </View>
 
-          <TouchableOpacity style={styles.quotesRow}>
-            <View style={{width: '60%'}}>
-              <Text style={styles.recentText}>PENDING</Text>
+        <KeyboardAwareScrollView
+          contentContainerStyle={{...commonStyles.content, flex: 1}}>
+          <TouchableOpacity style={commonStyles.content}>
+            <View style={styles.rowContent}>
+              <View style={{marginLeft: moderateScale(-20)}}>
+                <AddNewButtonGroup
+                  color={APP_MAIN_GREEN}
+                  onPress={() => this.openScreen('AddQuote')}
+                />
+              </View>
+              <View style={{marginRight: moderateScale(-10)}}>
+                <ContainerSearch />
+              </View>
             </View>
-            <View style={{width: '10%'}} />
-            <View style={{width: '30%'}}></View>
+
+            <TouchableOpacity style={styles.quotesRow}>
+              <View style={{width: '60%'}}>
+                <Text style={styles.recentText}>PENDING</Text>
+              </View>
+              <View style={{width: '10%'}} />
+              <View style={{width: '30%'}}></View>
+            </TouchableOpacity>
+            <FlatList
+              style={styles.parentFlatList}
+              data={pendingItems}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) =>
+                this.listItem(item, index, 'PENDING')
+              }
+            />
+
+            <TouchableOpacity style={styles.quotesRow}>
+              <View style={{width: '60%'}}>
+                <Text style={styles.recentText}>ACCEPTED</Text>
+              </View>
+              <View style={{width: '10%'}} />
+              <View style={{width: '30%'}}></View>
+            </TouchableOpacity>
+            <FlatList
+              style={styles.parentFlatList}
+              data={acceptedItems}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) =>
+                this.listItem(item, index, 'ACCEPTED')
+              }
+            />
+
+            <TouchableOpacity style={styles.quotesRow}>
+              <View style={{width: '60%'}}>
+                <Text style={styles.recentText}>REJECTED</Text>
+              </View>
+              <View style={{width: '10%'}} />
+              <View style={{width: '30%'}}></View>
+            </TouchableOpacity>
+
+            <FlatList
+              style={styles.parentFlatList}
+              data={rejectedItems}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) =>
+                this.listItem(item, index, 'REJECTED')
+              }
+            />
           </TouchableOpacity>
-          <FlatList
-            style={styles.parentFlatList}
-            data={pendingItems}
-            extraData={this.state}
-            keyExtractor={(item, index) => '' + index}
-            renderItem={({item, index}) =>
-              this.listItem(item, index, 'PENDING')
-            }
-          />
-
-          <TouchableOpacity style={styles.quotesRow}>
-            <View style={{width: '60%'}}>
-              <Text style={styles.recentText}>ACCEPTED</Text>
-            </View>
-            <View style={{width: '10%'}} />
-            <View style={{width: '30%'}}></View>
-          </TouchableOpacity>
-          <FlatList
-            style={styles.parentFlatList}
-            data={acceptedItems}
-            extraData={this.state}
-            keyExtractor={(item, index) => '' + index}
-            renderItem={({item, index}) =>
-              this.listItem(item, index, 'ACCEPTED')
-            }
-          />
-
-          <TouchableOpacity style={styles.quotesRow}>
-            <View style={{width: '60%'}}>
-              <Text style={styles.recentText}>REJECTED</Text>
-            </View>
-            <View style={{width: '10%'}} />
-            <View style={{width: '30%'}}></View>
-          </TouchableOpacity>
-
-          <FlatList
-            style={styles.parentFlatList}
-            data={rejectedItems}
-            extraData={this.state}
-            keyExtractor={(item, index) => '' + index}
-            renderItem={({item, index}) =>
-              this.listItem(item, index, 'REJECTED')
-            }
-          />
-        </TouchableOpacity>
-      </SafeAreaView>
+        </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
     );
   }
 }
@@ -232,3 +254,11 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => ({
+  quotes: state.quotes.quotesList,
+});
+
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllQuotes);

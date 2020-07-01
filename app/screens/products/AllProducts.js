@@ -17,6 +17,8 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
+import {connect} from 'react-redux';
+import OverlaySpinner from '../../components/OverlaySpinner';
 import HR from '../../components/HR';
 import {
   View,
@@ -28,16 +30,47 @@ import {
   FlatList,
   ScrollView,
   Dimensions,
+  Alert,
 } from 'react-native';
+import {getProductsList} from '../../redux/reducers/products';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
 
-export default class AllProducts extends Component {
+class AllProducts extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      items: [1, 2, 3, 4],
+      showLoading: false,
     };
   }
   componentDidMount = () => {
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .getProductsList()
+        .then((response) => {
+          console.group('response', response);
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            this.setState({items: response.data.items});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
     //this.props.navigation.navigate('Cart')
   };
 
@@ -56,16 +89,14 @@ export default class AllProducts extends Component {
           <View style={styles.dotGreen} />
           <View style={{width: '5%'}} />
           <View style={{width: '95%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>
-              WorkBand (HMT-1 Premium Design Mounting Options)
-            </Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
         </View>
       </TouchableOpacity>
     );
   };
   render() {
-    const {items} = this.state;
+    const {items, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -105,6 +136,13 @@ export default class AllProducts extends Component {
             </View>
           </ScrollView>
         </TouchableOpacity>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -183,3 +221,13 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getProductsList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllProducts);

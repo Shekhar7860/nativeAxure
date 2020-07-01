@@ -50,10 +50,16 @@ export default class AddQuoteClient extends PureComponent {
     this.state = {
       items: [1, 2, 3, 4],
       isRememberMe: false,
+      quoteField: '',
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    if (this.props.route.params) {
+      console.group('routeParams', this.props.route.params);
+      this.setState({
+        quoteField: this.props.route.params.clientData.quoteDetail,
+      });
+    }
   };
 
   openScreen = (screen, param) => {
@@ -80,7 +86,7 @@ export default class AddQuoteClient extends PureComponent {
 
   calculateCost = () => {};
   render() {
-    const {items, isRememberMe} = this.state;
+    const {items, isRememberMe, quoteField} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -118,6 +124,7 @@ export default class AddQuoteClient extends PureComponent {
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
               onChangeText={(value) => this.setState({quote: value})}
+              value={quoteField.id}
             />
 
             <View style={commonStyles.space}>

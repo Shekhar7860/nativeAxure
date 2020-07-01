@@ -39,6 +39,7 @@ import Notifications from './screens/user/Notifications';
 import AddSupportRequest from './screens/requests/AddSupportRequest';
 import AddQuoteClient from './screens/common/AddQuoteClient';
 import ResourceHub from './screens/user/ResourceHub';
+import ChatScreen from './screens/chat/ChatScreen';
 import Icon from 'react-native-vector-icons/AntDesign';
 // import Icon2 from 'react-native-vector-icons/Entypo';
 // import Icon3 from 'react-native-vector-icons/MaterialIcons';
@@ -74,6 +75,16 @@ function TabStackNavigator() {
       <Stack.Screen name="AddQuote" component={AddQuote} />
       <Stack.Screen name="AddClient" component={AddClient} />
       <Stack.Screen name="Resource" component={ResourceHub} />
+      <Stack.Screen name="Products" component={ProductStackNavigator} />
+    </Stack.Navigator>
+  );
+}
+
+function ProductStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="ProductsStack" component={RecentProducts} />
+      <Stack.Screen name="AllProducts" component={AllProducts} />
     </Stack.Navigator>
   );
 }
@@ -120,6 +131,27 @@ function OrdersStackNavigator() {
     </Stack.Navigator>
   );
 }
+
+function ChatStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="ChatStack" component={Chat} />
+      <Stack.Screen name="ChatScreen" component={ChatScreen} />
+    </Stack.Navigator>
+  );
+}
+
+getTabBarVisibility = (route) => {
+  const routeName = route.state
+    ? route.state.routes[route.state.index].name
+    : '';
+
+  if (routeName === 'ChatScreen') {
+    return false;
+  }
+
+  return true;
+};
 
 function TabNavigator() {
   return (
@@ -169,16 +201,17 @@ function TabNavigator() {
           ),
         }}
         name="TabHome3"
-        component={Chat}
+        component={TabStackNavigator}
       />
       <Tab.Screen
         name="TabHome4"
-        options={{
+        options={({route}) => ({
           tabBarIcon: ({color, size}) => (
             <Image source={CHAT} style={commonStyles.icon} />
           ),
-        }}
-        component={Chat}
+          tabBarVisible: getTabBarVisibility(route),
+        })}
+        component={ChatStackNavigator}
       />
       <Tab.Screen
         options={{

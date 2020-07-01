@@ -18,6 +18,9 @@ import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import HR from '../../components/HR';
+import {getQuotesList} from '../../redux/reducers/quotes';
+import {connect} from 'react-redux';
+import OverlaySpinner from '../../components/OverlaySpinner';
 import {
   View,
   Text,
@@ -29,15 +32,74 @@ import {
   ScrollView,
 } from 'react-native';
 
-export default class Quotes extends Component {
+class Quotes extends Component {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      showLoading: false,
+      pendingItems: [],
+      acceptedItems: [],
+      rejectedItems: [],
+      pendingItemsCount: 0,
+      acceptedItemsCount: 0,
+      rejectedItemsCount: 0,
+      pendingItemsTotal: 0,
+      acceptedItemsTotal: 0,
+      rejectedItemsTotal: 0,
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    this.setState({showLoading: true});
+    this.props
+      .getQuotesList()
+      .then((response) => {
+        console.group('response', response);
+        this.setState({showLoading: false});
+        if (response.code === 200) {
+          let pendingSum = 0;
+          let acceptedSum = 0;
+          let rejectedSum = 0;
+          let arr = response.data.items
+            .slice(Math.max(response.data.items.length - 5, 1))
+            .reverse();
+          this.setState({items: arr});
+          for (var i = 0; i < response.data.items.length; i++) {
+            if (response.data.items[i].status == 'Pending') {
+              this.state.pendingItems.push(response.data.items[i]);
+              pendingSum += response.data.items[i].grand_total;
+            } else if (response.data.items[i].status == 'Accepted') {
+              console.group();
+              acceptedSum += response.data.items[i].grand_total;
+              this.state.acceptedItems.push(response.data.items[i].grand_total);
+            } else {
+              rejectedSum += response.data.items[i].grand_total;
+              this.state.rejectedItems.push(response.data.items[i].grand_total);
+            }
+          }
+          //  alert(pendingSum);
+          this.setState({
+            pendingItemsCount: this.state.pendingItems.length,
+            acceptedItemsCount: this.state.acceptedItems.length,
+            rejectedItemsCount: this.state.rejectedItems.length,
+            pendingItemsTotal: pendingSum,
+            acceptedItemsTotal: acceptedSum,
+            rejectedItemsTotal: rejectedSum,
+          });
+        }
+      })
+      .catch((error) => {
+        this.setState({showLoading: false});
+        if (error.code === 'unauthorized') {
+          showErrorPopup(
+            "Couldn't validate those credentials.\nPlease try again",
+          );
+        } else {
+          showErrorPopup(
+            'There was an unexpected error.\nPlease wait a few minutes and try again.',
+          );
+        }
+      });
   };
 
   openScreen = (screen, param) => {
@@ -53,18 +115,27 @@ export default class Quotes extends Component {
           <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>Yantra Test Reseller</Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£1494.00</Text>
+            <Text style={styles.amountText}>£{item.grand_total}</Text>
           </View>
         </View>
       </TouchableOpacity>
     );
   };
   render() {
-    const {items} = this.state;
+    const {
+      items,
+      showLoading,
+      pendingItemsCount,
+      acceptedItemsCount,
+      rejectedItemsCount,
+      pendingItemsTotal,
+      acceptedItemsTotal,
+      rejectedItemsTotal,
+    } = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -88,23 +159,23 @@ export default class Quotes extends Component {
           </View>
           <CardWithIcon
             color={APP_MAIN_BLUE}
-            count={1}
+            count={pendingItemsCount}
             status={'Pending'}
-            amount={'£1494.00'}
+            amount={'£' + ' ' + pendingItemsTotal}
             onPress={this.openQuote}
           />
           <CardWithIcon
             color={APP_MAIN_GREEN}
-            count={3}
+            count={acceptedItemsCount}
             status={'Accepted'}
-            amount={'£4482.00'}
+            amount={'£' + ' ' + acceptedItemsTotal}
             onPress={this.onClickListen}
           />
           <CardWithIcon
             color={APP_MAIN_COLOR}
-            count={1}
+            count={rejectedItemsCount}
             status={'Rejected'}
-            amount={'£2274.00'}
+            amount={'£' + ' ' + rejectedItemsTotal}
             onPress={this.onClickListen}
           />
 
@@ -129,6 +200,13 @@ export default class Quotes extends Component {
             renderItem={({item, index}) => this.listItem(item, index)}
           />
         </KeyboardAwareScrollView>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -207,3 +285,13 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getQuotesList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Quotes);

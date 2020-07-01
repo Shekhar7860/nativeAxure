@@ -77,6 +77,31 @@ export default class Api {
     return response;
   }
 
+  static getClientsList() {
+    let response = this.sendRequest('GET', 'clients');
+    return response;
+  }
+
+  static getQuotesList() {
+    let response = this.sendRequest('GET', 'quotes');
+    return response;
+  }
+
+  static getQuoteDetails(ID) {
+    let response = this.sendRequest('GET', `quotes/${ID}`);
+    return response;
+  }
+
+  static getClientDetails(ID) {
+    let response = this.sendRequest('GET', `clients/${ID}`);
+    return response;
+  }
+
+  static getProductsList() {
+    let response = this.sendRequest('GET', 'products');
+    return response;
+  }
+
   static sendRequest(method, path, opts = {}, skipAuth = false) {
     let fetchOpts = {
       method,

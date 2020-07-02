@@ -41,7 +41,13 @@ export default class Api {
     this.authToken = v;
   }
 
-  static signup(userData = {}) {
+  static login(loginObj = {}) {
+    let formData = pick(loginObj, ['email', 'password']);
+    let response = this.sendRequest('POST', 'login', {formData});
+    return response;
+  }
+
+  static addQuote(userData = {}) {
     const formData = clearQuery(
       pick(userData, [
         'first_name',
@@ -52,13 +58,22 @@ export default class Api {
         'password_confirmation',
       ]),
     );
-    let response = this.sendRequest('POST', 'register/orhc-user', {formData});
+    let response = this.sendRequest('POST', 'quotes', {formData});
     return response;
   }
 
-  static login(loginObj = {}) {
-    let formData = pick(loginObj, ['email', 'password']);
-    let response = this.sendRequest('POST', 'login', {formData});
+  static addClient(userData = {}) {
+    const formData = clearQuery(
+      pick(userData, [
+        'first_name',
+        'last_name',
+        'email',
+        'mobile',
+        'password',
+        'password_confirmation',
+      ]),
+    );
+    let response = this.sendRequest('POST', 'client', {formData});
     return response;
   }
 

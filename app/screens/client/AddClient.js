@@ -22,7 +22,7 @@ import InputBox from '../../components/InputBox';
 import {CheckBox} from 'react-native-elements';
 import HR from '../../components/HR';
 import SimpleDropdown from '../../components/SimpleDropdown';
-
+import {isEmailValid, showErrorPopup} from '../../util/utils';
 import {
   View,
   Text,
@@ -33,23 +33,145 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
+  Alert,
 } from 'react-native';
+import OverlaySpinner from '../../components/OverlaySpinner';
+import {connect} from 'react-redux';
+import {addClient} from '../../redux/reducers/clients';
+import ButtonDefault from '../../components/ButtonDefault';
 const arrDataDesignation = ['Pending', 'Accepted', 'Rejected'];
 
-export default class AddClient extends PureComponent {
+class AddClient extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
       isRememberMe: false,
+      showLoading: false,
+      clientname: '',
+      first3letters: '',
+      mphId: '',
+      trading: '',
+      vatReg: '',
+      comRegNum: '',
+      targetTech: '',
+      email: '',
+      currency: '',
+      description: '',
+      add1: '',
+      add2: '',
+      city: '',
+      country: '',
+      postalCode: '',
+      phone: '',
+      firstName: '',
+      surName: '',
+      contactEmail: '',
+      contAdd1: '',
+      contAdd2: '',
+      contCity: '',
+      contCountry: '',
+      contPostalCode: '',
+      contPhone: '',
+      contMobile: '',
     };
   }
   componentDidMount = () => {
     //this.props.navigation.navigate('Cart')
   };
 
+  addEditClient = () => {
+    const {
+      clientname,
+      first3letters,
+      mphId,
+      trading,
+      vatReg,
+      comRegNum,
+      targetTech,
+      email,
+      currency,
+      description,
+      add1,
+      add2,
+      city,
+      country,
+      postalCode,
+      phone,
+      firstName,
+      surName,
+      contactEmail,
+      contAdd1,
+      contAdd2,
+      contCity,
+      contCountry,
+      contPostalCode,
+      contPhone,
+      contMobile,
+    } = this.state;
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .addClient(
+          clientname,
+          first3letters,
+          mphId,
+          trading,
+          vatReg,
+          comRegNum,
+          targetTech,
+          email,
+          currency,
+          description,
+          add1,
+          add2,
+          city,
+          country,
+          postalCode,
+          phone,
+          firstName,
+          surName,
+          contactEmail,
+          contAdd1,
+          contAdd2,
+          contCity,
+          contCountry,
+          contPostalCode,
+          contPhone,
+          contMobile,
+        )
+        .then((response) => {
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+          } else {
+            if (response.validation_errors) {
+              showErrorPopup(response.validation_errors);
+            } else {
+              showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  };
+
   render() {
-    const {items, isRememberMe} = this.state;
+    const {items, isRememberMe, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -273,7 +395,9 @@ export default class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({email: value})}
+                    onChangeText={(value) =>
+                      this.setState({contactEmail: value})
+                    }
                   />
                 </View>
 
@@ -285,7 +409,7 @@ export default class AddClient extends PureComponent {
                     maxLength={50}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({add1: value})}
+                    onChangeText={(value) => this.setState({contAdd1: value})}
                   />
                 </View>
 
@@ -297,7 +421,7 @@ export default class AddClient extends PureComponent {
                     maxLength={50}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({add2: value})}
+                    onChangeText={(value) => this.setState({contAdd2: value})}
                   />
                 </View>
 
@@ -307,7 +431,7 @@ export default class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({city: value})}
+                    onChangeText={(value) => this.setState({contCity: value})}
                   />
                 </View>
 
@@ -317,7 +441,9 @@ export default class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({country: value})}
+                    onChangeText={(value) =>
+                      this.setState({contCountry: value})
+                    }
                   />
                 </View>
 
@@ -328,7 +454,9 @@ export default class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({postalCode: value})}
+                    onChangeText={(value) =>
+                      this.setState({contPostalCode: value})
+                    }
                   />
                 </View>
                 <View style={commonStyles.space}>
@@ -337,7 +465,7 @@ export default class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({phone: value})}
+                    onChangeText={(value) => this.setState({contPhone: value})}
                   />
                 </View>
 
@@ -347,7 +475,7 @@ export default class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({mobile: value})}
+                    onChangeText={(value) => this.setState({contMobile: value})}
                   />
                 </View>
                 <View style={commonStyles.space}>
@@ -689,8 +817,18 @@ export default class AddClient extends PureComponent {
                 </View>
               </ExpandCollapseLayout>
             </View>
+            <ButtonDefault onPress={() => this.addEditClient('EditQuote')}>
+              SAVE
+            </ButtonDefault>
           </View>
         </ScrollView>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -774,3 +912,13 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(10),
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  addClient,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddClient);

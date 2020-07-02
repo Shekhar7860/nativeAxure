@@ -17,6 +17,9 @@ import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import HR from '../../components/HR';
+import OverlaySpinner from '../../components/OverlaySpinner';
+import {getClientsList} from '../../redux/reducers/clients';
+
 import {
   View,
   Text,
@@ -27,18 +30,53 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
+import {connect} from 'react-redux';
 
-export default class AllClients extends Component {
+class AllClients extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      acceptedItems: [1, 2, 3, 4],
-      pendingItems: [1],
-      rejectedItems: [1],
+      acceptedItems: [],
+      pendingItems: [],
+      rejectedItems: [],
+      showLoading: false,
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    this.setState({showLoading: true});
+    this.props
+      .getClientsList()
+      .then((response) => {
+        console.group('responseAll', response);
+        this.setState({showLoading: false});
+        if (response.code === 200) {
+          this.setState({items: response.data.items});
+
+          for (var i = 0; i <= response.data.items.length; i++) {
+            console.group('ddd', response.data.items[i].is_active);
+            if (response.data.items[i].is_active == 1) {
+              this.state.acceptedItems.push(response.data.items[i]);
+            } else {
+              this.state.rejectedItems.push(response.data.items[i]);
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        this.setState({showLoading: false});
+        if (error.code === 'unauthorized') {
+          showErrorPopup(
+            "Couldn't validate those credentials.\nPlease try again",
+          );
+        } else {
+        }
+      });
+    console.group(this.state.acceptedItems, 'ssjsjsj');
+    this.setState({
+      acceptedItems: this.state.acceptedItems,
+      rejectedItems: this.state.rejectedItems,
+    });
   };
 
   openScreen = (screen, param) => {
@@ -60,18 +98,24 @@ export default class AllClients extends Component {
           />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>Denmark HQ</Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£1494.00</Text>
+            <Text style={styles.amountText}>£{item.grand_total}</Text>
           </View>
         </View>
       </TouchableOpacity>
     );
   };
   render() {
-    const {acceptedItems, pendingItems, rejectedItems} = this.state;
+    console.group('stts', this.state.acceptedItems);
+    const {
+      acceptedItems,
+      pendingItems,
+      rejectedItems,
+      showLoading,
+    } = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -103,7 +147,7 @@ export default class AllClients extends Component {
           </TouchableOpacity>
           <FlatList
             style={styles.parentFlatList}
-            data={pendingItems}
+            data={acceptedItems}
             extraData={this.state}
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) => this.listItem(item, index, 'ACTIVE')}
@@ -125,6 +169,13 @@ export default class AllClients extends Component {
             renderItem={({item, index}) =>
               this.listItem(item, index, 'INACTIVE')
             }
+          />
+          <OverlaySpinner
+            cancelable
+            visible={showLoading}
+            color={WHITE}
+            textContent="Please wait..."
+            textStyle={{color: WHITE}}
           />
         </TouchableOpacity>
       </SafeAreaView>
@@ -213,3 +264,13 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getClientsList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllClients);

@@ -30,7 +30,12 @@ import InputBox from '../../components/InputBox';
 import ExpandCollapseLayout from '../../components/ExpandCollapseLayout';
 import HR from '../../components/HR';
 import ButtonWithImage from '../../components/ButtonWithImage';
+import ButtonDefault from '../../components/ButtonDefault';
+import OverlaySpinner from '../../components/OverlaySpinner';
 import {CheckBox} from 'react-native-elements';
+import {connect} from 'react-redux';
+import {addQuote} from '../../redux/reducers/quotes';
+
 import {
   View,
   Text,
@@ -44,24 +49,20 @@ import {
 } from 'react-native';
 const arrDataMethod = ['Method 1', 'Method 2', 'Method 3'];
 
-export default class AddQuoteClient extends PureComponent {
+class AddQuoteClient extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
       isRememberMe: false,
       quoteField: '',
+      quoteId: '',
+      showLoading: false,
     };
   }
   componentDidMount = () => {
     if (this.props.route.params) {
-      console.log(
-        'routeParams',
-        this.props.route.params.clientData.quoteDetail,
-      );
-      this.setState({
-        quoteField: this.props.route.params.clientData.quoteDetail,
-      });
+      console.log('ssss', this.props.route.params.selected);
     }
   };
 
@@ -87,9 +88,11 @@ export default class AddQuoteClient extends PureComponent {
     );
   };
 
+  addEditQuote = () => {};
+
   calculateCost = () => {};
   render() {
-    const {items, isRememberMe, quoteField} = this.state;
+    const {items, isRememberMe, quoteField, quoteId, showLoading} = this.state;
     console.log('id,', quoteField.id);
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -127,7 +130,7 @@ export default class AddQuoteClient extends PureComponent {
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
               onChangeText={(value) => this.setState({quote: value})}
-              value={quoteField.id}
+              value={quoteId}
             />
 
             <View style={commonStyles.space}>
@@ -158,6 +161,7 @@ export default class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({mphId: value})}
+                value={quoteField.mph_id}
               />
             </View>
 
@@ -168,6 +172,7 @@ export default class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({poPreference: value})}
+                value={quoteField.po_reference}
               />
             </View>
 
@@ -178,6 +183,7 @@ export default class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({type: value})}
+                value={quoteField.type}
               />
             </View>
 
@@ -210,6 +216,7 @@ export default class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({status: value})}
+                value={quoteField.status}
               />
             </View>
 
@@ -538,7 +545,17 @@ export default class AddQuoteClient extends PureComponent {
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) => this.listItem(item, index)}
             />
+            <ButtonDefault onPress={() => this.addEditQuote('EditQuote')}>
+              SAVE
+            </ButtonDefault>
           </View>
+          <OverlaySpinner
+            cancelable
+            visible={showLoading}
+            color={WHITE}
+            textContent="Please wait..."
+            textStyle={{color: WHITE}}
+          />
         </ScrollView>
       </SafeAreaView>
     );
@@ -652,3 +669,13 @@ const styles = ScaledSheet.create({
     fontWeight: 'normal',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  addQuote,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddQuoteClient);

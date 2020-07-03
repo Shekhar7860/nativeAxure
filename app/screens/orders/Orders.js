@@ -19,6 +19,9 @@ import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import HR from '../../components/HR';
+import {connect} from 'react-redux';
+import {getOrdersList} from '../../redux/reducers/orders';
+import OverlaySpinner from '../../components/OverlaySpinner';
 import {
   View,
   Text,
@@ -29,17 +32,109 @@ import {
   FlatList,
   ScrollView,
   Dimensions,
+  Alert,
 } from 'react-native';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
 
-export default class Orders extends Component {
+class Orders extends Component {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      showLoading: false,
+      shippedItems: [],
+      acceptedItems: [],
+      partiallyShippedItems: [],
+      completedItems: [],
+      cancelledItems: [],
+      shippedItemsCount: 0,
+      acceptedItemsCount: 0,
+      partiallyShippedItemsCount: 0,
+      completedItemsCount: 0,
+      cancelledItemsCount: 0,
+      shippedItemsTotal: 0,
+      acceptedItemsTotal: 0,
+      partiallyShippedItemsTotal: 0,
+      completedItemsTotal: 0,
+      cancelledItemsTotal: 0,
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .getOrdersList()
+        .then((response) => {
+          console.group('responseOrders', response);
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            let shippedSum = 0;
+            let acceptedSum = 0;
+            let partiallyShippedSum = 0;
+            let completedSum = 0;
+            let cancelledSum = 0;
+
+            for (var i = 0; i < response.data.items.length; i++) {
+              if (response.data.items[i].status == 'Shipped') {
+                this.state.shippedItems.push(response.data.items[i]);
+                shippedSum += response.data.items[i].grand_total;
+              } else if (response.data.items[i].status == 'Accepted') {
+                console.group();
+                acceptedSum += response.data.items[i].grand_total;
+                this.state.acceptedItems.push(
+                  response.data.items[i].grand_total,
+                );
+              } else if (response.data.items[i].status == 'Partially_Shipped') {
+                partiallyShippedSum += response.data.items[i].grand_total;
+                this.state.partiallyShippedItems.push(
+                  response.data.items[i].grand_total,
+                );
+              } else if (response.data.items[i].status == 'Completed') {
+                completedSum += response.data.items[i].grand_total;
+                this.state.completedItems.push(
+                  response.data.items[i].grand_total,
+                );
+              } else {
+                cancelledSum += response.data.items[i].grand_total;
+                this.state.cancelledItems.push(
+                  response.data.items[i].grand_total,
+                );
+              }
+            }
+            //  alert(pendingSum);
+            this.setState({
+              shippedItemsCount: this.state.shippedItems.length,
+              acceptedItemsCount: this.state.acceptedItems.length,
+              partiallyShippedItemsCount: this.state.partiallyShippedItems
+                .length,
+              completedItemsCount: this.state.completedItems.length,
+              cancelledItemsCount: this.state.cancelledItems.length,
+              shippedItemsTotal: shippedSum,
+              acceptedItemsTotal: acceptedSum,
+              partiallyShippedItemsTotal: partiallyShippedSum,
+              completedItemsTotal: completedSum,
+              cancelledItemsTotal: cancelledSum,
+            });
+            this.setState({items: response.data.items});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
   };
 
   addQuote = () => {
@@ -72,7 +167,20 @@ export default class Orders extends Component {
     );
   };
   render() {
-    const {items} = this.state;
+    const {
+      items,
+      showLoading,
+      shippedItemsCount,
+      acceptedItemsCount,
+      partiallyShippedItemsCount,
+      completedItemsCount,
+      cancelledItemsCount,
+      shippedItemsTotal,
+      acceptedItemsTotal,
+      partiallyShippedItemsTotal,
+      completedItemsTotal,
+      cancelledItemsTotal,
+    } = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -97,42 +205,49 @@ export default class Orders extends Component {
             <View style={{height: Dimensions.get('window').height}}>
               <CardWithIcon
                 color={ORANGE_COLOR}
-                count={1}
+                count={shippedItemsCount}
                 status={'Shipped'}
-                amount={'£1494.00'}
+                amount={shippedItemsTotal}
                 onPress={this.openQuote}
               />
               <CardWithIcon
                 color={APP_MAIN_GREEN}
-                count={1}
+                count={acceptedItemsCount}
                 status={'Accepted'}
-                amount={'£4482.00'}
+                amount={acceptedItemsTotal}
                 onPress={this.onClickListen}
               />
               <CardWithIcon
                 color={CARD_DARK_BLUE}
-                count={1}
+                count={partiallyShippedItemsCount}
                 status={'Partially Shipped'}
-                amount={'£2274.00'}
+                amount={partiallyShippedItemsTotal}
                 onPress={this.onClickListen}
               />
               <CardWithIcon
                 color={APP_MAIN_BLUE}
-                count={0}
+                count={completedItemsCount}
                 status={'Completed'}
-                amount={'£0.00'}
+                amount={completedItemsTotal}
                 onPress={this.onClickListen}
               />
               <CardWithIcon
                 color={APP_MAIN_COLOR}
-                count={0}
+                count={cancelledItemsCount}
                 status={'Cancelled'}
-                amount={'£0.00'}
+                amount={cancelledItemsTotal}
                 onPress={this.onClickListen}
               />
             </View>
           </ScrollView>
         </TouchableOpacity>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -211,3 +326,13 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getOrdersList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Orders);

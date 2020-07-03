@@ -102,7 +102,7 @@ class AllClients extends Component {
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£{item.grand_total}</Text>
+            <Text style={styles.amountText}></Text>
           </View>
         </View>
       </TouchableOpacity>

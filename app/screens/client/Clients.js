@@ -26,6 +26,7 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
@@ -41,28 +42,34 @@ class Clients extends PureComponent {
     };
   }
   componentDidMount = () => {
-    this.setState({showLoading: true});
-    this.props
-      .getClientsList()
-      .then((response) => {
-        console.group('response', response);
-        this.setState({showLoading: false});
-        if (response.code === 200) {
-          this.setState({items: response.data.items});
-        }
-      })
-      .catch((error) => {
-        this.setState({showLoading: false});
-        if (error.code === 'unauthorized') {
-          showErrorPopup(
-            "Couldn't validate those credentials.\nPlease try again",
-          );
-        } else {
-          showErrorPopup(
-            'There was an unexpected error.\nPlease wait a few minutes and try again.',
-          );
-        }
-      });
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .getClientsList()
+        .then((response) => {
+          console.group('response', response);
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            this.setState({items: response.data.items});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
   };
 
   openScreen = (screen, param) => {
@@ -75,7 +82,9 @@ class Clients extends PureComponent {
         style={styles.rowItem}
         onPress={() => this.openScreen('Client', item)}>
         <View style={styles.bottomQuotesRow}>
-          <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
+          <View
+            style={item.is_active == 1 ? styles.dotBlue : styles.dotGreen}
+          />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
             <Text style={styles.labelText}>{item.name}</Text>

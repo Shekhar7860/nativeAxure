@@ -74,17 +74,15 @@ class AllProducts extends Component {
     //this.props.navigation.navigate('Cart')
   };
 
-  addQuote = () => {
-    this.props.navigation.navigate('AddQuote');
-  };
-
-  openQuote = () => {
-    this.props.navigation.navigate('Quote');
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {productData: param});
   };
 
   listItem = (item, index) => {
     return (
-      <TouchableOpacity style={styles.rowItem}>
+      <TouchableOpacity
+        style={styles.rowItem}
+        onPress={() => this.openScreen('AddProduct', item)}>
         <View style={styles.bottomQuotesRow}>
           <View style={styles.dotGreen} />
           <View style={{width: '5%'}} />

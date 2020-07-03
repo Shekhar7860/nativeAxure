@@ -118,7 +118,10 @@ class Client extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <TouchableOpacity onPress={() => this.openScreen('EditClient')}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.openScreen('EditClient', {clientDetail: client})
+                  }>
                   <Image source={TASK} style={commonStyles.icon} />
                 </TouchableOpacity>
               </View>

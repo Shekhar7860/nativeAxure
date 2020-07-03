@@ -47,9 +47,11 @@ class AddQuote extends PureComponent {
     this.state = {
       items: [1, 2, 3, 4],
       clientItems: [],
+      clientIds: [],
       type: '',
       client: '',
       status: '',
+      clientId: '',
     };
   }
   componentDidMount = () => {
@@ -65,9 +67,11 @@ class AddQuote extends PureComponent {
             this.setState({items: response.data.items});
             for (var i = 0; i <= response.data.items.length; i++) {
               this.state.clientItems.push(response.data.items[i].name);
+              this.state.clientIds.push(response.data.items[i].id);
             }
           }
           this.setState({clientItems: this.state.clientItems});
+          this.setState({clientIds: this.state.clientIds});
         })
         .catch((error) => {
           this.setState({showLoading: false});
@@ -87,7 +91,7 @@ class AddQuote extends PureComponent {
 
   openScreen = (screen) => {
     var data = {
-      client: this.state.client,
+      clientId: this.state.clientId,
       type: this.state.type,
       status: this.state.status,
     };
@@ -100,6 +104,7 @@ class AddQuote extends PureComponent {
     } else if (type == 'status') {
       this.setState({status: arrDataStatus[val]});
     } else {
+      this.setState({clientId: this.state.clientIds[val]});
       this.setState({client: this.state.clientItems[val]});
     }
   };

@@ -10,6 +10,7 @@ import {
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
+  Alert,
 } from '../../constants/colors';
 import {USER} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -50,56 +51,66 @@ class Quotes extends Component {
     };
   }
   componentDidMount = () => {
-    this.setState({showLoading: true});
-    this.props
-      .getQuotesList()
-      .then((response) => {
-        console.group('response', response);
-        this.setState({showLoading: false});
-        if (response.code === 200) {
-          let pendingSum = 0;
-          let acceptedSum = 0;
-          let rejectedSum = 0;
-          let arr = response.data.items
-            .slice(Math.max(response.data.items.length - 5, 1))
-            .reverse();
-          this.setState({items: arr});
-          for (var i = 0; i < response.data.items.length; i++) {
-            if (response.data.items[i].status == 'Pending') {
-              this.state.pendingItems.push(response.data.items[i]);
-              pendingSum += response.data.items[i].grand_total;
-            } else if (response.data.items[i].status == 'Accepted') {
-              console.group();
-              acceptedSum += response.data.items[i].grand_total;
-              this.state.acceptedItems.push(response.data.items[i].grand_total);
-            } else {
-              rejectedSum += response.data.items[i].grand_total;
-              this.state.rejectedItems.push(response.data.items[i].grand_total);
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .getQuotesList()
+        .then((response) => {
+          console.group('response', response);
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            let pendingSum = 0;
+            let acceptedSum = 0;
+            let rejectedSum = 0;
+            let arr = response.data.items
+              .slice(Math.max(response.data.items.length - 5, 1))
+              .reverse();
+            this.setState({items: arr});
+            for (var i = 0; i < response.data.items.length; i++) {
+              if (response.data.items[i].status == 'Pending') {
+                this.state.pendingItems.push(response.data.items[i]);
+                pendingSum += response.data.items[i].grand_total;
+              } else if (response.data.items[i].status == 'Accepted') {
+                console.group();
+                acceptedSum += response.data.items[i].grand_total;
+                this.state.acceptedItems.push(
+                  response.data.items[i].grand_total,
+                );
+              } else {
+                rejectedSum += response.data.items[i].grand_total;
+                this.state.rejectedItems.push(
+                  response.data.items[i].grand_total,
+                );
+              }
             }
+            //  alert(pendingSum);
+            this.setState({
+              pendingItemsCount: this.state.pendingItems.length,
+              acceptedItemsCount: this.state.acceptedItems.length,
+              rejectedItemsCount: this.state.rejectedItems.length,
+              pendingItemsTotal: pendingSum,
+              acceptedItemsTotal: acceptedSum,
+              rejectedItemsTotal: rejectedSum,
+            });
           }
-          //  alert(pendingSum);
-          this.setState({
-            pendingItemsCount: this.state.pendingItems.length,
-            acceptedItemsCount: this.state.acceptedItems.length,
-            rejectedItemsCount: this.state.rejectedItems.length,
-            pendingItemsTotal: pendingSum,
-            acceptedItemsTotal: acceptedSum,
-            rejectedItemsTotal: rejectedSum,
-          });
-        }
-      })
-      .catch((error) => {
-        this.setState({showLoading: false});
-        if (error.code === 'unauthorized') {
-          showErrorPopup(
-            "Couldn't validate those credentials.\nPlease try again",
-          );
-        } else {
-          showErrorPopup(
-            'There was an unexpected error.\nPlease wait a few minutes and try again.',
-          );
-        }
-      });
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
   };
 
   openScreen = (screen, param) => {
@@ -112,7 +123,15 @@ class Quotes extends Component {
         style={styles.rowItem}
         onPress={() => this.openScreen('Quote', item)}>
         <View style={styles.bottomQuotesRow}>
-          <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
+          <View
+            style={
+              item.status == 'Pending'
+                ? styles.dotBlue
+                : item.status == 'Accepted'
+                ? styles.dotGreen
+                : styles.dotPink
+            }
+          />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
             <Text style={styles.labelText}>{item.name}</Text>
@@ -241,6 +260,13 @@ const styles = ScaledSheet.create({
     width: moderateScale(12),
     borderRadius: moderateScale(6),
     backgroundColor: APP_MAIN_GREEN,
+  },
+  dotPink: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: APP_MAIN_COLOR,
   },
   rowContent: {
     flexDirection: 'row',

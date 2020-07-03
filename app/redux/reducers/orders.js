@@ -1,18 +1,16 @@
 import API from '../../services/api';
 
-const SET_QUOTES_LIST = 'QUOTES_LIST';
-const ADD_QUOTE_SUCCESS = 'ADD_QUOTE_SUCCESS';
+const SET_ORDERS_LIST = 'ORDERS_LIST';
 
-const setQuotesList = (value) => ({type: SET_QUOTES_LIST, value});
-const addQuoteSuccess = (value) => ({type: ADD_QUOTE_SUCCESS, value});
+const setOrdersList = (value) => ({type: SET_ORDERS_LIST, value});
 
-export const getQuotesList = () => {
+export const getOrdersList = () => {
   return (dispatch) => {
-    return API.getQuotesList().then((response) => {
+    return API.getOrdersList().then((response) => {
       console.log('response', response);
       if (response.code === 200) {
         if (response.data) {
-          dispatch(setQuotesList(response.data));
+          dispatch(setOrdersList(response.data));
         }
       }
       return response;
@@ -20,15 +18,7 @@ export const getQuotesList = () => {
   };
 };
 
-export const getQuoteDetails = (quoteID) => {
-  return (dispatch) => {
-    return API.getQuoteDetails(quoteID).then((response) => {
-      return response;
-    });
-  };
-};
-
-export const addQuote = (
+export const addOrder = (
   client_id,
   type,
   status,
@@ -108,8 +98,8 @@ const INITAIL_STATE = {
 
 export default function reducer(state = INITAIL_STATE, action) {
   switch (action.type) {
-    case SET_QUOTES_LIST:
-      return {...state, quotesList: action.value};
+    case SET_ORDERS_LIST:
+      return {...state, ordersList: action.value};
     case ADD_QUOTE_SUCCESS:
       return {...state, addQuote: action.value};
     default:

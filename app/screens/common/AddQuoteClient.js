@@ -29,6 +29,7 @@ import CardWithIcon from '../../components/CardWithIcon';
 import InputBox from '../../components/InputBox';
 import ExpandCollapseLayout from '../../components/ExpandCollapseLayout';
 import HR from '../../components/HR';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
 import ButtonWithImage from '../../components/ButtonWithImage';
 import ButtonDefault from '../../components/ButtonDefault';
 import OverlaySpinner from '../../components/OverlaySpinner';
@@ -57,12 +58,51 @@ class AddQuoteClient extends PureComponent {
       isRememberMe: false,
       quoteField: '',
       quoteId: '',
+      clientId: '',
+      quoteTitle: '',
+      quoteCode: '',
+      mphId: '',
+      poPreference: '',
+      paymentCurrency: '',
+      paymentTerm: '',
+      paymentVat: '',
+      shippingFirstName: '',
+      shippingLastName: '',
+      shippingEmail: '',
+      shippingCost: '',
+      shippingAdd1: '',
+      shippingAdd2: '',
+      shippingCity: '',
+      shippingCountry: '',
+      shippingPostalCode: '',
+      billingcompanyName: '',
+      billingfirstName: '',
+      billingLastName: '',
+      billingEmail: '',
+      billingCity: '',
+      billingCountry: '',
+      billingPostalCode: '',
+      terms: '',
+      type: '',
+      status: '',
       showLoading: false,
+      quoteDetail: '',
     };
   }
   componentDidMount = () => {
     if (this.props.route.params) {
-      console.log('ssss', this.props.route.params.selected);
+      if (this.props.route.params.selected !== undefined) {
+        this.setState({
+          clientId: this.props.route.params.selected.clientId,
+          type: this.props.route.params.selected.type,
+          status: this.props.route.params.selected.status,
+        });
+      }
+      if (this.props.route.params.clientData !== undefined) {
+        this.setState({
+          quoteDetail: this.props.route.params.clientData.quoteDetail,
+        });
+      }
     }
   };
 
@@ -88,12 +128,108 @@ class AddQuoteClient extends PureComponent {
     );
   };
 
-  addEditQuote = () => {};
+  addEditQuote = () => {
+    const {
+      clientId,
+      type,
+      status,
+      quoteId,
+      quoteTitle,
+      quoteCode,
+      mphId,
+      poPreference,
+      paymentCurrency,
+      paymentTerm,
+      paymentVat,
+      billingcompanyName,
+      billingfirstName,
+      billingLastName,
+      billingEmail,
+      billingAdd1,
+      billingAdd2,
+      billingCity,
+      billingCountry,
+      billingPostalCode,
+      shippingCost,
+      shippingFirstName,
+      shippingLastName,
+      shippingEmail,
+      shippingAdd1,
+      shippingAdd2,
+      shippingCity,
+      shippingCountry,
+      shippingPostalCode,
+      terms,
+    } = this.state;
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .addQuote(
+          clientId,
+          type,
+          status,
+          quoteId,
+          quoteTitle,
+          quoteCode,
+          mphId,
+          poPreference,
+          paymentCurrency,
+          paymentTerm,
+          paymentVat,
+          billingcompanyName,
+          billingfirstName,
+          billingLastName,
+          billingEmail,
+          billingAdd1,
+          billingAdd2,
+          billingCity,
+          billingCountry,
+          billingPostalCode,
+          shippingCost,
+          shippingFirstName,
+          shippingLastName,
+          shippingEmail,
+          shippingAdd1,
+          shippingAdd2,
+          shippingCity,
+          shippingCountry,
+          shippingPostalCode,
+          terms,
+        )
+        .then((response) => {
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+          } else {
+            if (response.validation_errors) {
+              showErrorPopup(response.validation_errors);
+            } else {
+              showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  };
 
   calculateCost = () => {};
   render() {
-    const {items, isRememberMe, quoteField, quoteId, showLoading} = this.state;
-    console.log('id,', quoteField.id);
+    const {items, isRememberMe, quoteDetail, quoteId, showLoading} = this.state;
+    console.group('bnbbb', quoteDetail);
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
         <Header
@@ -129,8 +265,8 @@ class AddQuoteClient extends PureComponent {
               placeHolder=""
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
-              onChangeText={(value) => this.setState({quote: value})}
-              value={quoteId}
+              onChangeText={(value) => this.setState({quoteId: value})}
+              value={quoteDetail.code}
             />
 
             <View style={commonStyles.space}>
@@ -140,6 +276,7 @@ class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({quoteTitle: value})}
+                value={quoteDetail.name}
               />
             </View>
 
@@ -150,7 +287,7 @@ class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({quoteCode: value})}
-                value={quoteField.code}
+                value={quoteDetail.code}
               />
             </View>
 
@@ -161,7 +298,7 @@ class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({mphId: value})}
-                value={quoteField.mph_id}
+                value={quoteDetail.mph_id}
               />
             </View>
 
@@ -172,7 +309,7 @@ class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({poPreference: value})}
-                value={quoteField.po_reference}
+                value={quoteDetail.po_reference}
               />
             </View>
 
@@ -183,7 +320,7 @@ class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({type: value})}
-                value={quoteField.type}
+                value={quoteDetail.type}
               />
             </View>
 
@@ -216,7 +353,7 @@ class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({status: value})}
-                value={quoteField.status}
+                value={quoteDetail.status}
               />
             </View>
 
@@ -227,7 +364,9 @@ class AddQuoteClient extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({currency: value})}
+                  onChangeText={(value) =>
+                    this.setState({paymentCurrency: value})
+                  }
                 />
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Payment Term</Text>
@@ -246,7 +385,7 @@ class AddQuoteClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({vat: value})}
+                    onChangeText={(value) => this.setState({paymentVat: value})}
                   />
                 </View>
                 <View style={commonStyles.space}>
@@ -309,7 +448,9 @@ class AddQuoteClient extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({companyName: value})}
+                  onChangeText={(value) =>
+                    this.setState({billingcompanyName: value})
+                  }
                 />
 
                 <View style={commonStyles.space}>
@@ -318,7 +459,9 @@ class AddQuoteClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({firstName: value})}
+                    onChangeText={(value) =>
+                      this.setState({billingfirstName: value})
+                    }
                   />
                 </View>
 
@@ -328,7 +471,9 @@ class AddQuoteClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({lastName: value})}
+                    onChangeText={(value) =>
+                      this.setState({billinglastName: value})
+                    }
                   />
                 </View>
 
@@ -338,7 +483,9 @@ class AddQuoteClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({email: value})}
+                    onChangeText={(value) =>
+                      this.setState({billingEmail: value})
+                    }
                   />
                 </View>
 
@@ -350,7 +497,9 @@ class AddQuoteClient extends PureComponent {
                     maxLength={50}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({add1: value})}
+                    onChangeText={(value) =>
+                      this.setState({billingAdd1: value})
+                    }
                   />
                 </View>
 
@@ -362,7 +511,9 @@ class AddQuoteClient extends PureComponent {
                     maxLength={50}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({add2: value})}
+                    onChangeText={(value) =>
+                      this.setState({billingAdd2: value})
+                    }
                   />
                 </View>
 
@@ -372,7 +523,9 @@ class AddQuoteClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({city: value})}
+                    onChangeText={(value) =>
+                      this.setState({billingCity: value})
+                    }
                   />
                 </View>
 
@@ -382,102 +535,9 @@ class AddQuoteClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({country: value})}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Postal Code/Zip Code</Text>
-                  <InputBox
-                    maxLength={6}
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({postalCode: value})}
-                  />
-                </View>
-
-                <Text style={styles.topLabelText}>Shipping</Text>
-
-                <Text style={styles.labelText}>Company Name</Text>
-                <InputBox
-                  placeHolder=""
-                  boxStyle={styles.inputBoxStyle}
-                  inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({companyName2: value})}
-                />
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>First Name</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({firstName2: value})}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Last Name</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({lastName2: value})}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Email</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({email2: value})}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Address 1</Text>
-                  <InputBox
-                    placeHolder=""
-                    maxLines={5}
-                    maxLength={50}
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({add3: value})}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Address 2</Text>
-                  <InputBox
-                    placeHolder=""
-                    maxLines={5}
-                    maxLength={50}
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({add4: value})}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>City</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({city2: value})}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({country2: value})}
+                    onChangeText={(value) =>
+                      this.setState({billingCountry: value})
+                    }
                   />
                 </View>
 
@@ -489,7 +549,120 @@ class AddQuoteClient extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) =>
-                      this.setState({postalCode2: value})
+                      this.setState({billingPostalCode: value})
+                    }
+                  />
+                </View>
+
+                <Text style={styles.topLabelText}>Shipping</Text>
+
+                <Text style={styles.labelText}>Company Name</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) =>
+                    this.setState({shippingCompanyName: value})
+                  }
+                />
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>First Name</Text>
+                  <InputBox
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingFirstName: value})
+                    }
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Last Name</Text>
+                  <InputBox
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingLastName: value})
+                    }
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Email</Text>
+                  <InputBox
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingEmail: value})
+                    }
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Address 1</Text>
+                  <InputBox
+                    placeHolder=""
+                    maxLines={5}
+                    maxLength={50}
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingAdd1: value})
+                    }
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Address 2</Text>
+                  <InputBox
+                    placeHolder=""
+                    maxLines={5}
+                    maxLength={50}
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingAdd2: value})
+                    }
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>City</Text>
+                  <InputBox
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingCity: value})
+                    }
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Country</Text>
+                  <InputBox
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingCountry: value})
+                    }
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Postal Code/Zip Code</Text>
+                  <InputBox
+                    maxLength={6}
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingPostalCode: value})
                     }
                   />
                 </View>
@@ -510,7 +683,7 @@ class AddQuoteClient extends PureComponent {
                     ...styles.inputBoxStyle2,
                   }}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({note: value})}
+                  onChangeText={(value) => this.setState({terms: value})}
                 />
               </ExpandCollapseLayout>
             </View>

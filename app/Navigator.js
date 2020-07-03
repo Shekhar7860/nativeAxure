@@ -85,6 +85,7 @@ function ProductStackNavigator() {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="ProductsStack" component={RecentProducts} />
       <Stack.Screen name="AllProducts" component={AllProducts} />
+      <Stack.Screen name="AddProduct" component={AddProduct} />
     </Stack.Navigator>
   );
 }

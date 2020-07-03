@@ -50,12 +50,36 @@ export default class Api {
   static addQuote(userData = {}) {
     const formData = clearQuery(
       pick(userData, [
-        'first_name',
-        'last_name',
-        'email',
-        'mobile',
-        'password',
-        'password_confirmation',
+        'client_id',
+        'type',
+        'status',
+        'code',
+        'name',
+        'Code',
+        'mph_id',
+        'po_reference',
+        'currency',
+        'price_beta',
+        'vat_percentage',
+        'billing_company_name',
+        'billing_first_name',
+        'billing_last_name',
+        'billing_email',
+        'billing_address1',
+        'billing_address2',
+        'billing_city',
+        'billing_country',
+        'billing_zip_code',
+        'shipping_cost',
+        'shipping_first_name',
+        'shipping_last_name',
+        'shipping_email',
+        'shipping_address1',
+        'shipping_address2',
+        'shipping_city',
+        'shipping_country_name',
+        'shipping_zip_code',
+        'terms',
       ]),
     );
     let response = this.sendRequest('POST', 'quotes', {formData});
@@ -65,12 +89,30 @@ export default class Api {
   static addClient(userData = {}) {
     const formData = clearQuery(
       pick(userData, [
-        'first_name',
-        'last_name',
+        'name',
+        'name_prefix',
+        'mph_id',
+        'trading_as',
+        'vat_registration_no',
+        'company_registration_no',
+        'target_technology',
         'email',
-        'mobile',
-        'password',
-        'password_confirmation',
+        'currency',
+        'company_description',
+        'address1',
+        'address2',
+        'city',
+        'country_name',
+        'zip_code',
+        'contact1_first_name',
+        'contact1_last_name',
+        'contact1_email',
+        'contact1_address1',
+        'contact1_address2',
+        'contact1_city',
+        'contact1_country_name',
+        'contact1_phone',
+        'contact1_mobile',
       ]),
     );
     let response = this.sendRequest('POST', 'client', {formData});
@@ -114,6 +156,11 @@ export default class Api {
 
   static getProductsList() {
     let response = this.sendRequest('GET', 'products');
+    return response;
+  }
+
+  static getOrdersList() {
+    let response = this.sendRequest('GET', 'orders');
     return response;
   }
 

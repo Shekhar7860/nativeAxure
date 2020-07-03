@@ -29,6 +29,7 @@ import {
   ScrollView,
 } from 'react-native';
 import {connect} from 'react-redux';
+import OverlaySpinner from '../../components/OverlaySpinner';
 
 class AllQuotes extends Component {
   constructor(props) {
@@ -37,6 +38,7 @@ class AllQuotes extends Component {
       acceptedItems: [1, 2, 3, 4],
       pendingItems: [],
       rejectedItems: [1],
+      showLoading: false,
     };
   }
   componentDidMount = () => {
@@ -51,11 +53,15 @@ class AllQuotes extends Component {
       }
     }
     console.log('this', this.state.pendingItems);
-    this.setState({
-      pendingItems: this.state.pendingItems,
-      acceptedItems: this.state.acceptedItems,
-      rejectedItems: this.state.rejectedItems,
-    });
+    this.setState({showLoading: true});
+    setTimeout(() => {
+      this.setState({
+        showLoading: false,
+        pendingItems: this.state.pendingItems,
+        acceptedItems: this.state.acceptedItems,
+        rejectedItems: this.state.rejectedItems,
+      });
+    }, 2000);
     // this.props.navigation.navigate('Cart')
   };
 
@@ -89,7 +95,12 @@ class AllQuotes extends Component {
     );
   };
   render() {
-    const {acceptedItems, pendingItems, rejectedItems} = this.state;
+    const {
+      acceptedItems,
+      pendingItems,
+      rejectedItems,
+      showLoading,
+    } = this.state;
 
     return (
       <KeyboardAwareScrollView style={commonStyles.ketboardAvoidingContainer}>
@@ -168,6 +179,13 @@ class AllQuotes extends Component {
             />
           </TouchableOpacity>
         </KeyboardAwareScrollView>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </KeyboardAwareScrollView>
     );
   }

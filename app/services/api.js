@@ -119,6 +119,44 @@ export default class Api {
     return response;
   }
 
+  static addQuoteItem(userData = {}) {
+    const formData = clearQuery(
+      pick(userData, [
+        'client_id',
+        'mph_id',
+        'po_reference',
+        'status',
+        'id',
+        'name',
+        'currency',
+        'last_status',
+        'shipping_method_id',
+        'shipping_cost',
+        'vat_percentage',
+      'billing_company_name',
+        'billing_first_name',
+        'billing_last_name',
+        'billing_email',
+        'billing_address1',
+        'billing_address2',
+        'billing_city',
+        'billing_country',
+        'billing_zip_code',
+        'shipping_first_name',
+        'shipping_last_name',
+        'shipping_email',
+        'shipping_address1',
+        'shipping_address2',
+        'shipping_city',
+        'shipping_country_name',
+        'shipping_zip_code',
+        'terms',
+      ]),
+    );
+    let response = this.sendRequest('POST', 'quote-items', {formData});
+    return response;
+  }
+
   static addOrder(userData = {}) {
     const formData = clearQuery(
       pick(userData, [

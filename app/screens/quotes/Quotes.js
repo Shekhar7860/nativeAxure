@@ -59,7 +59,7 @@ class Quotes extends Component {
       this.props
         .getQuotesList()
         .then((response) => {
-          console.group('response', response);
+          console.log('quotes', response);
           this.setState({showLoading: false});
           if (response.code === 200) {
             let pendingSum = 0;
@@ -74,7 +74,6 @@ class Quotes extends Component {
                 this.state.pendingItems.push(response.data.items[i]);
                 pendingSum += response.data.items[i].grand_total;
               } else if (response.data.items[i].status == 'Accepted') {
-                console.group();
                 acceptedSum += response.data.items[i].grand_total;
                 this.state.acceptedItems.push(
                   response.data.items[i].grand_total,

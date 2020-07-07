@@ -25,6 +25,7 @@ import BaseScreen from '../../components/BaseScreen';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {StackActions} from '@react-navigation/native';
 import {getClientsList} from '../../redux/reducers/clients';
+import {getProductsList} from '../../redux/reducers/products';
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
@@ -80,6 +81,27 @@ class Home extends PureComponent {
           } else {
           }
         });
+        this.props
+          .getProductsList()
+          .then((response) => {
+            console.group('response', response);
+            this.setState({showLoading: false});
+            if (response.code === 200) {
+              this.setState({items: response.data.items});
+            }
+          })
+          .catch((error) => {
+            this.setState({showLoading: false});
+            if (error.code === 'unauthorized') {
+              showErrorPopup(
+                "Couldn't validate those credentials.\nPlease try again",
+              );
+            } else {
+              showErrorPopup(
+                'There was an unexpected error.\nPlease wait a few minutes and try again.',
+              );
+            }
+          });
     } else {
       Alert.alert('', 'No Internet Connection');
     }
@@ -172,6 +194,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getClientsList,
+  getProductsList
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

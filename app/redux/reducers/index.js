@@ -5,6 +5,7 @@ import netInfo from './netInfo';
 import clients from './clients';
 import quotes from './quotes';
 import users from './users';
+import products from './products';
 
 const INITIAL_STATE = {};
 
@@ -16,6 +17,7 @@ export default function (state = INITIAL_STATE, action) {
 		netInfo: netInfo(state.netInfo, action),
 		quotes: quotes(state.quotes, action),
 		users: users(state.users, action),
-		clients: clients(state.clients, action)
+		clients: clients(state.clients, action),
+		products: products(state.products, action)
 	};
 }

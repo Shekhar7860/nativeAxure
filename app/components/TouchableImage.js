@@ -26,9 +26,9 @@ class TouchableImage extends PureComponent {
 
   render() {
     const {image, imageStyle} = this.props;
-    console.log(image, 'image');
+    //console.log(image, 'image');
     {
-      console.log(this.checkURI(image));
+      //console.log(this.checkURI(image));
     }
     return (
       <TouchableOpacity

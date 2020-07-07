@@ -19,11 +19,17 @@ import {
   FlatList,
   BackHandler,
   Linking,
+  Alert
 } from 'react-native';
 import BaseScreen from '../../components/BaseScreen';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {StackActions} from '@react-navigation/native';
-export default class Chat extends PureComponent {
+import {getClientsList} from '../../redux/reducers/clients';
+import {connect} from 'react-redux';
+import OverlaySpinner from '../../components/OverlaySpinner';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
+import {WHITE} from '../../constants/colors';
+class Home extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,6 +41,7 @@ export default class Chat extends PureComponent {
         {image: SLIDE_5},
         {image: SLIDE_6},
       ],
+      showLoading : false
     };
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
@@ -51,6 +58,31 @@ export default class Chat extends PureComponent {
       'hardwareBackPress',
       this.handleBackButtonClick,
     );
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading : true})
+      this.props
+        .getClientsList()
+        .then((response) => {
+          console.group('response', response);
+          if (response.code === 200) {
+            this.setState({showLoading : false})
+          }
+
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
   };
 
   componentWillUnmount() {
@@ -91,7 +123,7 @@ export default class Chat extends PureComponent {
   };
 
   render() {
-    const {imagesList} = this.state;
+    const {imagesList, showLoading} = this.state;
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
         <Header
@@ -107,6 +139,13 @@ export default class Chat extends PureComponent {
           extraData={this.state}
           keyExtractor={(item, index) => '' + index}
           renderItem={({item, index}) => this.getImageItem(item, index)}
+        />
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
         />
       </SafeAreaView>
     );
@@ -125,3 +164,14 @@ const styles = ScaledSheet.create({
     width: moderateScale(310),
   },
 });
+
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getClientsList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

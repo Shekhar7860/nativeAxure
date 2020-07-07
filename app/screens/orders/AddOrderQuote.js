@@ -21,6 +21,8 @@ import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import InputBox from '../../components/InputBox';
 import HR from '../../components/HR';
+import ButtonDefault from '../../components/ButtonDefault';
+import OverlaySpinner from '../../components/OverlaySpinner';
 import {
   View,
   Text,
@@ -32,15 +34,54 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
+import {connect} from 'react-redux';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
+import {addOrder} from '../../redux/reducers/orders';
 
-export default class AddOrderQuote extends PureComponent {
+class AddOrderQuote extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      orderId : "",
+      orderTitle : '',
+      quoteCurrency : '',
+      shippingMethod : '',
+      shippingCost : '',
+      vatPercentage : 0,
+      billingcompanyName : "",
+      billingfirstName : "",
+      billingLastName : "",
+      billingEmail: "",
+      billingAdd1: "",
+      billingAdd2: "",
+      billingCity: "",
+      billingCountry: "",
+      billingPostalCode: "",
+      shippingFirstName: "",
+      shippingLastName: "",
+      shippingEmail: "",
+      shippingAdd1: "",
+      shippingAdd2: "",
+      shippingCity: "",
+      shippingCountry: "",
+      shippingPostalCode: "",
+      terms: "",
+      showLoading : false
     };
   }
   componentDidMount = () => {
+      if (this.props.route.params) {
+        console.log('sdddsd', this.props.route.params)
+        if (this.props.route.params.selected !== undefined) {
+          this.setState({
+            clientId: this.props.route.params.selected.clientId,
+            mphId: this.props.route.params.selected.mphId,
+            status: this.props.route.params.selected.status,
+            poReference : this.props.route.params.selected.poReference
+          });
+        }
+      }
     //this.props.navigation.navigate('Cart')
   };
 
@@ -62,15 +103,111 @@ export default class AddOrderQuote extends PureComponent {
     );
   };
 
+  addEditOrder = () => {
+    const {
+      clientId,
+      mphId,
+      poReference,
+      status,
+      orderId,
+      orderTitle,
+      quoteCurrency,
+      shippingMethod,
+      vatPercentage,
+      paymentTerm,
+      billingcompanyName,
+      billingfirstName,
+      billingLastName,
+      billingEmail,
+      billingAdd1,
+      billingAdd2,
+      billingCity,
+      billingCountry,
+      billingPostalCode,
+      shippingCost,
+      shippingFirstName,
+      shippingLastName,
+      shippingEmail,
+      shippingAdd1,
+      shippingAdd2,
+      shippingCity,
+      shippingCountry,
+      shippingPostalCode,
+      terms,
+    } = this.state;
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .addOrder(
+          clientId,
+          mphId,
+          poReference,
+          orderId,
+          status,
+          orderTitle,
+          quoteCurrency,
+          paymentTerm,
+          shippingMethod,
+          shippingCost,
+          vatPercentage,
+          billingcompanyName,
+          billingfirstName,
+          billingLastName,
+          billingEmail,
+          billingAdd1,
+          billingAdd2,
+          billingCity,
+          billingCountry,
+          billingPostalCode,
+          shippingFirstName,
+          shippingLastName,
+          shippingEmail,
+          shippingAdd1,
+          shippingAdd2,
+          shippingCity,
+          shippingCountry,
+          shippingPostalCode,
+          terms
+        )
+        .then((response) => {
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+          } else {
+            if (response.validation_errors) {
+              showErrorPopup(response.validation_errors);
+            } else {
+              showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  };
+
   render() {
-    const {items} = this.state;
+    const {items, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
-          title="QUOTE"
+          title="ORDER"
           leftImage={BACK}
         />
         <TouchableOpacity style={commonStyles.content}>
@@ -223,7 +360,7 @@ export default class AddOrderQuote extends PureComponent {
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({companyName: value})}
+                onChangeText={(value) => this.setState({billingcompanyName: value})}
               />
 
               <View style={commonStyles.space}>
@@ -232,7 +369,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({firstName: value})}
+                  onChangeText={(value) => this.setState({billingfirstName: value})}
                 />
               </View>
 
@@ -242,7 +379,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({lastName: value})}
+                  onChangeText={(value) => this.setState({billinglastName: value})}
                 />
               </View>
 
@@ -252,7 +389,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({email: value})}
+                  onChangeText={(value) => this.setState({billingEmail: value})}
                 />
               </View>
 
@@ -264,7 +401,7 @@ export default class AddOrderQuote extends PureComponent {
                   maxLength={50}
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({add1: value})}
+                  onChangeText={(value) => this.setState({billingAdd1: value})}
                 />
               </View>
 
@@ -276,7 +413,7 @@ export default class AddOrderQuote extends PureComponent {
                   maxLength={50}
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({add2: value})}
+                  onChangeText={(value) => this.setState({billingAdd2: value})}
                 />
               </View>
 
@@ -286,7 +423,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({city: value})}
+                  onChangeText={(value) => this.setState({billingCity: value})}
                 />
               </View>
 
@@ -296,7 +433,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({country: value})}
+                  onChangeText={(value) => this.setState({billingCountry: value})}
                 />
               </View>
 
@@ -307,7 +444,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({postalCode: value})}
+                  onChangeText={(value) => this.setState({billingPostalCode: value})}
                 />
               </View>
 
@@ -318,7 +455,7 @@ export default class AddOrderQuote extends PureComponent {
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({companyName2: value})}
+                onChangeText={(value) => this.setState({shippingCompanyName: value})}
               />
 
               <View style={commonStyles.space}>
@@ -327,7 +464,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({firstName2: value})}
+                  onChangeText={(value) => this.setState({shippingfirstName: value})}
                 />
               </View>
 
@@ -337,7 +474,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({lastName2: value})}
+                  onChangeText={(value) => this.setState({shippinglastName: value})}
                 />
               </View>
 
@@ -347,7 +484,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({email2: value})}
+                  onChangeText={(value) => this.setState({shippingemail: value})}
                 />
               </View>
 
@@ -359,7 +496,7 @@ export default class AddOrderQuote extends PureComponent {
                   maxLength={50}
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({add3: value})}
+                  onChangeText={(value) => this.setState({shippingAdd1: value})}
                 />
               </View>
 
@@ -371,7 +508,7 @@ export default class AddOrderQuote extends PureComponent {
                   maxLength={50}
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({add4: value})}
+                  onChangeText={(value) => this.setState({shippingAdd2: value})}
                 />
               </View>
 
@@ -381,7 +518,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({city2: value})}
+                  onChangeText={(value) => this.setState({shippingCity: value})}
                 />
               </View>
 
@@ -391,7 +528,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({country2: value})}
+                  onChangeText={(value) => this.setState({shippingCountry: value})}
                 />
               </View>
 
@@ -402,7 +539,7 @@ export default class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({postalCode2: value})}
+                  onChangeText={(value) => this.setState({shippingPostalCode: value})}
                 />
               </View>
             </ExpandCollapseLayout>
@@ -472,8 +609,18 @@ export default class AddOrderQuote extends PureComponent {
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) => this.listItem(item, index)}
             />
+            <ButtonDefault onPress={() => this.addEditOrder()}>
+              SAVE
+            </ButtonDefault>
           </View>
         </ScrollView>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -564,3 +711,13 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  addOrder,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddOrderQuote);

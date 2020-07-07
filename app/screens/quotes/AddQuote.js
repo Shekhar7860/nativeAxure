@@ -70,8 +70,7 @@ class AddQuote extends PureComponent {
               this.state.clientIds.push(response.data.items[i].id);
             }
           }
-          this.setState({clientItems: this.state.clientItems});
-          this.setState({clientIds: this.state.clientIds});
+          this.setState({clientItems: this.state.clientItems, clientIds: this.state.clientIds});
         })
         .catch((error) => {
           this.setState({showLoading: false});

@@ -1,19 +1,18 @@
 import API from '../../services/api';
 
-const SET_ORDERS_LIST = 'ORDERS_LIST';
-const ADD_ORDER_SUCCESS = 'ADD_ORDER_SUCCESS';
+const SET_USERS_LIST = 'USERS_LIST';
+const ADD_USER_SUCCESS = 'ADD_USER_SUCCESS';
 
+const setUSERSList = (value) => ({type: SET_USERS_LIST, value});
+const addUSERSuccess = (value) => ({type: ADD_USER_SUCCESS, value});
 
-const addOrderSuccess = (value) => ({type: ADD_ORDER_SUCCESS, value});
-const setOrdersList = (value) => ({type: SET_ORDERS_LIST, value});
-
-export const getOrdersList = () => {
+export const getUsersList = () => {
   return (dispatch) => {
-    return API.getOrdersList().then((response) => {
-       console.log('response', response);
+    return API.getUsersList().then((response) => {
+      console.log('response', response);
       if (response.code === 200) {
         if (response.data) {
-          dispatch(setOrdersList(response.data));
+          dispatch(setUSERSList(response.data));
         }
       }
       return response;
@@ -21,17 +20,25 @@ export const getOrdersList = () => {
   };
 };
 
-export const addOrder = (
+export const getUSERDetails = (USERID) => {
+  return (dispatch) => {
+    return API.getUSERDetails(USERID).then((response) => {
+      return response;
+    });
+  };
+};
+
+export const addUSER = (
   client_id,
+  type,
+  status,
+  code,
+  name,
+  Code,
   mph_id,
   po_reference,
-  id,
-  status,
-  name,
   currency,
-  last_status,
-  shipping_method_id,
-  shipping_cost,
+  price_beta,
   vat_percentage,
   billing_company_name,
   billing_first_name,
@@ -42,6 +49,7 @@ export const addOrder = (
   billing_city,
   billing_country,
   billing_zip_code,
+  shipping_cost,
   shipping_first_name,
   shipping_last_name,
   shipping_email,
@@ -53,17 +61,17 @@ export const addOrder = (
   terms,
 ) => {
   return (dispatch) => {
-    return API.addOrder({
+    return API.addUSER({
       client_id,
+      type,
+      status,
+      code,
+      name,
+      Code,
       mph_id,
       po_reference,
-      status,
-      id,
-      name,
       currency,
-      last_status,
-      shipping_method_id,
-      shipping_cost,
+      price_beta,
       vat_percentage,
       billing_company_name,
       billing_first_name,
@@ -74,6 +82,7 @@ export const addOrder = (
       billing_city,
       billing_country,
       billing_zip_code,
+      shipping_cost,
       shipping_first_name,
       shipping_last_name,
       shipping_email,
@@ -86,23 +95,23 @@ export const addOrder = (
     }).then((response) => {
       if (response.code === 200) {
         if (response.data) {
-          dispatch(addOrderSuccess(response.data));
+          dispatch(addUSERSuccess(response.data));
         }
       }
       return response;
     });
   };
 };
-const INITIAL_STATE = {
-  ordersList: [],
+const INITAIL_STATE = {
+  usersList: [],
 };
 
-export default function reducer(state = INITIAL_STATE, action) {
+export default function reducer(state = INITAIL_STATE, action) {
   switch (action.type) {
-    case SET_ORDERS_LIST:
-      return {...state, ordersList: action.value};
-    case ADD_ORDER_SUCCESS:
-      return {...state, addOrder: action.value};
+    case SET_USERS_LIST:
+      return {...state, usersList: action.value};
+    case ADD_USER_SUCCESS:
+      return {...state, addUSER: action.value};
     default:
       return state;
   }

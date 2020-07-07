@@ -37,15 +37,19 @@ export default class AddOrderQuote extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      items: [1, 2, 3, 4],
+      userData : {}
     };
   }
   componentDidMount = () => {
+    if (this.props.route.params) {
+      console.log('here are params', this.props.route.params)
+      this.setState({userData : this.props.route.params.userData})
+    }
     //this.props.navigation.navigate('Cart')
   };
 
   render() {
-    const {items} = this.state;
+    const {items, userData} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -65,6 +69,7 @@ export default class AddOrderQuote extends PureComponent {
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
               onChangeText={(value) => this.setState({email: value})}
+              value={userData.email}
             />
 
             <View style={commonStyles.space}>
@@ -74,6 +79,7 @@ export default class AddOrderQuote extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({firstName: value})}
+                value={userData.first_name}
               />
             </View>
 
@@ -84,6 +90,7 @@ export default class AddOrderQuote extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({surname: value})}
+                value={userData.last_name}
               />
             </View>
 

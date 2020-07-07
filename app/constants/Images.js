@@ -25,3 +25,4 @@ export const TASK = require('../images/task.png');
 export const DOWN_ARROW = require('../images/down_arrow.png');
 export const USER_PHONE = require('../images/PHONELIST.png');
 export const CHAT_PIC = require('../images/profile-pic.png');
+export const leftArrow = require('../images/left-chevron.png');

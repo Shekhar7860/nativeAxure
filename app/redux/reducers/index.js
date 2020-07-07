@@ -2,8 +2,9 @@ import sessionReducer from './session';
 import login from './loginReducer';
 import chat from './chatReducer';
 import netInfo from './netInfo';
-import clientsReducer from './clients';
+import clients from './clients';
 import quotes from './quotes';
+import users from './users';
 
 const INITIAL_STATE = {};
 
@@ -14,5 +15,7 @@ export default function (state = INITIAL_STATE, action) {
 		chat: chat(state.chat, action),
 		netInfo: netInfo(state.netInfo, action),
 		quotes: quotes(state.quotes, action),
+		users: users(state.users, action),
+		clients: clients(state.clients, action)
 	};
 }

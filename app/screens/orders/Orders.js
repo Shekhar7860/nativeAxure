@@ -67,7 +67,7 @@ class Orders extends Component {
       this.props
         .getOrdersList()
         .then((response) => {
-          console.group('responseOrders', response);
+        //  console.group('responseOrders', response);
           this.setState({showLoading: false});
           if (response.code === 200) {
             let shippedSum = 0;
@@ -81,7 +81,6 @@ class Orders extends Component {
                 this.state.shippedItems.push(response.data.items[i]);
                 shippedSum += response.data.items[i].grand_total;
               } else if (response.data.items[i].status == 'Accepted') {
-                console.group();
                 acceptedSum += response.data.items[i].grand_total;
                 this.state.acceptedItems.push(
                   response.data.items[i].grand_total,

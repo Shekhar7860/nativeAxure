@@ -28,6 +28,14 @@ export const getClientDetails = (clientID) => {
   };
 };
 
+export const searchClient = (VAL) => {
+  return (dispatch) => {
+    return API.searchClient(VAL).then((response) => {
+      return response;
+    });
+  };
+};
+
 export const addClient = (
   name,
   name_prefix,
@@ -104,7 +112,7 @@ const INITAIL_STATE = {
 export default function reducer(state = INITAIL_STATE, action) {
   switch (action.type) {
     case SET_CLIENTS_LIST:
-      return {...state, clentsList: action.value};
+      return {...state, clientsList: action.value};
     case ADD_CLIENT_SUCCESS:
       return {...state, addQuote: action.value};
     default:

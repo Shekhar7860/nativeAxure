@@ -9,8 +9,7 @@ import {
   NOTIFICATION_COUNT_BG_COLOR,
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
-  APP_MAIN_COLOR,
-  Alert,
+  APP_MAIN_COLOR
 } from '../../constants/colors';
 import {USER} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -25,12 +24,13 @@ import OverlaySpinner from '../../components/OverlaySpinner';
 import {
   View,
   Text,
+  Alert,
   Button,
   SafeAreaView,
   Image,
   TouchableOpacity,
   FlatList,
-  ScrollView,
+  ScrollView
 } from 'react-native';
 
 class Quotes extends Component {
@@ -48,6 +48,7 @@ class Quotes extends Component {
       pendingItemsTotal: 0,
       acceptedItemsTotal: 0,
       rejectedItemsTotal: 0,
+      quoteCurrency : ""
     };
   }
   componentDidMount = () => {

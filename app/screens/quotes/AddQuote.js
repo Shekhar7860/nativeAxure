@@ -36,10 +36,13 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
-import {isEmailValid, showErrorPopup} from '../../util/utils';
 const arrDataType = ['Partner'];
-const arrDataStatus = ['Pending', 'Accepted', 'Rejected'];
+const arrDataStatus = ['Pending'];
 import {getClientsList} from '../../redux/reducers/clients';
+import {addQuote} from '../../redux/reducers/quotes';
+import Toast from 'react-native-simple-toast';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
+import OverlaySpinner from '../../components/OverlaySpinner';
 
 class AddQuote extends PureComponent {
   constructor(props) {
@@ -52,6 +55,7 @@ class AddQuote extends PureComponent {
       client: '',
       status: '',
       clientId: '',
+      showLoading : false,
     };
   }
   componentDidMount = () => {
@@ -62,7 +66,7 @@ class AddQuote extends PureComponent {
       this.props
         .getClientsList()
         .then((response) => {
-          console.group('response', response);
+          console.log('clientssss', response);
           if (response.code === 200) {
             this.setState({items: response.data.items});
             for (var i = 0; i <= response.data.items.length; i++) {
@@ -89,12 +93,61 @@ class AddQuote extends PureComponent {
   };
 
   openScreen = (screen) => {
-    var data = {
-      clientId: this.state.clientId,
-      type: this.state.type,
-      status: this.state.status,
-    };
-    this.props.navigation.navigate(screen, {selected: data});
+
+    const {
+      clientId,
+      type,
+      status
+    } = this.state;
+  //  console.log('selected', clientId, status, type)
+    if(clientId !== "" && status !== "" && type !== "")
+    {
+    const {
+      clientId,
+      type,
+    } = this.state;
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .addQuote(
+          this.props.userInfo.reseller_id,
+          clientId,
+          type
+        )
+        .then((response) => {
+          if (response.code === 200) {
+            this.setState({showLoading: false});
+            Toast.show(response.message)
+            this.props.navigation.navigate(screen, {quoteData: response.data})
+          } else {
+            if (response.validation_errors) {
+              showErrorPopup(response.validation_errors);
+            } else {
+              showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  }
+  else {
+  Alert.alert('', 'Please Select Fields');
+  }
+
   };
 
   selectData = (val, type) => {
@@ -110,7 +163,7 @@ class AddQuote extends PureComponent {
 
   render() {
     console.log('hhhh', this.state.clientitems);
-    const {items, clientItems} = this.state;
+    const {items, clientItems, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -189,6 +242,13 @@ class AddQuote extends PureComponent {
             </ButtonDefault>
           </View>
         </ScrollView>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -265,11 +325,13 @@ const styles = ScaledSheet.create({
 });
 
 const mapStateToProps = (state) => ({
+  userInfo: state.session.userInfo,
   online: state.netInfo.online,
 });
 
 const mapDispatchToProps = {
   getClientsList,
+  addQuote
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddQuote);

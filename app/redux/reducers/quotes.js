@@ -2,9 +2,14 @@ import API from '../../services/api';
 
 const SET_QUOTES_LIST = 'QUOTES_LIST';
 const ADD_QUOTE_SUCCESS = 'ADD_QUOTE_SUCCESS';
+const UPDATE_QUOTE_SUCCESS = 'UPDATE_QUOTE_SUCCESS';
+const ADD_QUOTE_ITEM_SUCCESS = 'ADD_QUOTE_ITEM_SUCCESS';
 
 const setQuotesList = (value) => ({type: SET_QUOTES_LIST, value});
 const addQuoteSuccess = (value) => ({type: ADD_QUOTE_SUCCESS, value});
+const updateQuoteSuccess = (value) => ({type: UPDATE_QUOTE_SUCCESS, value});
+const addQuoteItemSuccess = (value) => ({type: ADD_QUOTE_ITEM_SUCCESS, value});
+
 
 export const getQuotesList = () => {
   return (dispatch) => {
@@ -28,70 +33,86 @@ export const getQuoteDetails = (quoteID) => {
   };
 };
 
-export const addQuote = (
-  client_id,
+export const updateQuote = (
+  quoteId,
   type,
   status,
   code,
+  terms,
   name,
-  Code,
-  mph_id,
   po_reference,
   currency,
-  price_beta,
   vat_percentage,
+  shipping_cost,
   billing_company_name,
   billing_first_name,
   billing_last_name,
   billing_email,
-  billing_address1,
-  billing_address2,
+  billing_add1,
+  billing_add2,
   billing_city,
   billing_country,
   billing_zip_code,
-  shipping_cost,
+  shipping_company_name,
   shipping_first_name,
   shipping_last_name,
   shipping_email,
-  shipping_address1,
-  shipping_address2,
+  shipping_add1,
+  shipping_add2,
   shipping_city,
-  shipping_country_name,
-  shipping_zip_code,
-  terms,
+  shipping_country,
+  shipping_zip_code
 ) => {
   return (dispatch) => {
-    return API.addQuote({
-      client_id,
+    return API.updateQuote(quoteId, {
       type,
       status,
       code,
+      terms,
       name,
-      Code,
-      mph_id,
       po_reference,
       currency,
-      price_beta,
       vat_percentage,
+      shipping_cost,
       billing_company_name,
       billing_first_name,
       billing_last_name,
       billing_email,
-      billing_address1,
-      billing_address2,
+      billing_add1,
+      billing_add2,
       billing_city,
       billing_country,
       billing_zip_code,
-      shipping_cost,
+      shipping_company_name,
       shipping_first_name,
       shipping_last_name,
       shipping_email,
-      shipping_address1,
-      shipping_address2,
+      shipping_add1,
+      shipping_add2,
       shipping_city,
-      shipping_country_name,
-      shipping_zip_code,
-      terms,
+      shipping_country,
+      shipping_zip_code
+    }).then((response) => {
+      if (response.code === 200) {
+        if (response.data) {
+          dispatch(updateQuoteSuccess(response.data));
+        }
+      }
+      return response;
+    });
+  };
+};
+
+export const addQuote = (
+  reseller_id,
+  client_id,
+  type,
+) => {
+  return (dispatch) => {
+    return API.addQuote({
+      reseller_id,
+      client_id,
+      type
     }).then((response) => {
       if (response.code === 200) {
         if (response.data) {
@@ -102,6 +123,36 @@ export const addQuote = (
     });
   };
 };
+
+export const addQuoteItem = (
+  quote_id,
+  product_id,
+  quantity
+) => {
+  return (dispatch) => {
+    return API.addQuoteItem({
+      quote_id,
+      product_id,
+      quantity
+    }).then((response) => {
+      if (response.code === 200) {
+        if (response.data) {
+          dispatch(addQuoteItemSuccess(response.data));
+        }
+      }
+      return response;
+    });
+  };
+};
+
+export const deleteQuoteItem = (quoteItemID) => {
+  return (dispatch) => {
+    return API.deleteQuoteItem(quoteItemID).then((response) => {
+      return response;
+    });
+  };
+};
+
 const INITAIL_STATE = {
   quotesList: [],
 };
@@ -112,6 +163,10 @@ export default function reducer(state = INITAIL_STATE, action) {
       return {...state, quotesList: action.value};
     case ADD_QUOTE_SUCCESS:
       return {...state, addQuote: action.value};
+    case UPDATE_QUOTE_SUCCESS:
+    return {...state,updateQuote: action.value};
+    case ADD_QUOTE_ITEM_SUCCESS:
+        return {...state, addQuoteItem: action.value};
     default:
       return state;
   }

@@ -35,7 +35,9 @@ class InputBox extends Component {
       placeHolderTextColor,
       maxLength,
       value,
+      keyboardType
     } = this.props;
+   // console.log('jsjsjjs', keyboardType)
     return (
       <Input
         {...this.props}
@@ -49,6 +51,7 @@ class InputBox extends Component {
         inputContainerStyle={styles.inputContainerStyle}
         rightIcon={{type: 'feather', name: rightIcon}}
         value={value}
+        keyboardType={keyboardType}
       />
     );
   }

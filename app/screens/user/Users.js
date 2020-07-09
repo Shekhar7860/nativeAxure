@@ -11,7 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER} from '../../constants/Images';
+import {USER, leftArrow} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
@@ -26,17 +26,72 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  Alert
 } from 'react-native';
+import {connect} from 'react-redux';
+import OverlaySpinner from '../../components/OverlaySpinner';
+import {getUsersList} from '../../redux/reducers/users';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
 
-export default class Users extends Component {
+class Users extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: [1, 2, 3],
+      items: [],
+      showLoading : false,
+      activeUsersCount: 0,
+      inActiveUsersCount: 0,
+      activeUsers : [],
+      inActiveUsers : []
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .getUsersList()
+        .then((response) => {
+          console.log('response', response);
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+
+            let arr = response.data.items
+              .slice(Math.max(response.data.items.length - 5, 1))
+              .reverse();
+            this.setState({items: arr});
+            for (var i = 0; i < response.data.items.length; i++) {
+              if (response.data.items[i].is_active == 1) {
+                this.state.activeUsers.push(response.data.items[i]);
+              } else {
+                this.state.inActiveUsers.push(
+                  response.data.items[i].grand_total,
+                );
+              }
+            }
+            //  alert(pendingSum);
+            this.setState({
+              activeUsersCount: this.state.activeUsers.length,
+              inActiveUsersCount: this.state.inActiveUsers.length
+            });
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
   };
 
   openScreen = (screen, param) => {
@@ -45,23 +100,23 @@ export default class Users extends Component {
 
   listItem = (item, index) => {
     return (
-      <TouchableOpacity style={styles.rowItem}>
+      <TouchableOpacity style={styles.rowItem} >
         <View style={styles.bottomQuotesRow}>
-          <View style={!index == 0 ? styles.dotRed : styles.dotGreen} />
+          <View style={!item.is_active == 1 ? styles.dotRed : styles.dotGreen} />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>test@mphgroup.co.uk</Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
-          <View style={{width: '20%'}} />
-          <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£1494.00</Text>
+          <View style={{width: '35%'}} />
+          <View style={{width: '10%'}}>
+            <Image source={leftArrow} style={commonStyles.icon}/>
           </View>
         </View>
       </TouchableOpacity>
     );
   };
   render() {
-    const {items} = this.state;
+    const {items, showLoading, activeUsersCount, inActiveUsersCount} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -87,7 +142,7 @@ export default class Users extends Component {
             color={APP_MAIN_GREEN}
             count={''}
             status={''}
-            amount={'2 Active'}
+            amount={activeUsersCount + ' ' + 'Active'}
             amountStyle={styles.amountStyle}
             onPress={this.onClickListen}
           />
@@ -95,7 +150,7 @@ export default class Users extends Component {
             color={APP_MAIN_COLOR}
             count={''}
             status={''}
-            amount={'1 InActive'}
+            amount={inActiveUsersCount + ' ' +  'InActive'}
             amountStyle={styles.amountStyle}
             onPress={this.onClickListen}
           />
@@ -121,6 +176,13 @@ export default class Users extends Component {
             renderItem={({item, index}) => this.listItem(item, index)}
           />
         </TouchableOpacity>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -205,3 +267,12 @@ const styles = ScaledSheet.create({
     color: WHITE,
   },
 });
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getUsersList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Users);

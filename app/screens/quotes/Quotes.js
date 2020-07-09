@@ -9,8 +9,7 @@ import {
   NOTIFICATION_COUNT_BG_COLOR,
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
-  APP_MAIN_COLOR,
-  Alert,
+  APP_MAIN_COLOR
 } from '../../constants/colors';
 import {USER} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -25,12 +24,13 @@ import OverlaySpinner from '../../components/OverlaySpinner';
 import {
   View,
   Text,
+  Alert,
   Button,
   SafeAreaView,
   Image,
   TouchableOpacity,
   FlatList,
-  ScrollView,
+  ScrollView
 } from 'react-native';
 
 class Quotes extends Component {
@@ -48,6 +48,7 @@ class Quotes extends Component {
       pendingItemsTotal: 0,
       acceptedItemsTotal: 0,
       rejectedItemsTotal: 0,
+      quoteCurrency : ""
     };
   }
   componentDidMount = () => {
@@ -58,7 +59,7 @@ class Quotes extends Component {
       this.props
         .getQuotesList()
         .then((response) => {
-          console.group('response', response);
+          console.log('quotes', response);
           this.setState({showLoading: false});
           if (response.code === 200) {
             let pendingSum = 0;
@@ -73,7 +74,6 @@ class Quotes extends Component {
                 this.state.pendingItems.push(response.data.items[i]);
                 pendingSum += response.data.items[i].grand_total;
               } else if (response.data.items[i].status == 'Accepted') {
-                console.group();
                 acceptedSum += response.data.items[i].grand_total;
                 this.state.acceptedItems.push(
                   response.data.items[i].grand_total,
@@ -121,7 +121,7 @@ class Quotes extends Component {
     return (
       <TouchableOpacity
         style={styles.rowItem}
-        onPress={() => this.openScreen('Quote', item)}>
+        >
         <View style={styles.bottomQuotesRow}>
           <View
             style={

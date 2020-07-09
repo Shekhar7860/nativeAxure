@@ -80,7 +80,7 @@ class Quote extends PureComponent {
   };
 
   openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
+    this.props.navigation.navigate(screen, {quoteData: param});
   };
 
   render() {
@@ -115,7 +115,7 @@ class Quote extends PureComponent {
               <View style={styles.lastTextWidth}>
                 <TouchableOpacity
                   onPress={() =>
-                    this.openScreen('EditQuote', {quoteDetail: quote})
+                    this.openScreen('EditQuote', quote)
                   }>
                   <Image source={TASK} style={commonStyles.icon} />
                 </TouchableOpacity>

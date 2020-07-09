@@ -50,39 +50,107 @@ export default class Api {
   static addQuote(userData = {}) {
     const formData = clearQuery(
       pick(userData, [
+        'reseller_id',
         'client_id',
-        'type',
-        'status',
-        'code',
-        'name',
-        'Code',
-        'mph_id',
-        'po_reference',
-        'currency',
-        'price_beta',
-        'vat_percentage',
-        'billing_company_name',
-        'billing_first_name',
-        'billing_last_name',
-        'billing_email',
-        'billing_address1',
-        'billing_address2',
-        'billing_city',
-        'billing_country',
-        'billing_zip_code',
-        'shipping_cost',
-        'shipping_first_name',
-        'shipping_last_name',
-        'shipping_email',
-        'shipping_address1',
-        'shipping_address2',
-        'shipping_city',
-        'shipping_country_name',
-        'shipping_zip_code',
-        'terms',
+        'type'
       ]),
     );
     let response = this.sendRequest('POST', 'quotes', {formData});
+    return response;
+  }
+
+  static updateQuote(ID, userData = {}) {
+    console.log('quoteId is', ID)
+    const formData = clearQuery(
+      pick(userData, [
+        'type',
+        'status',
+        'code',
+        'terms',
+        'name',
+        'po_reference',
+        'currency',
+        'vat_percentage',
+        'shipping_cost',        
+         'billing_company_name',
+        'billing_first_name',
+        'billing_last_name',
+        'billing_email',
+        'billing_add1',
+        'billing_add2',
+        'billing_city',
+        'billing_country',
+        'billing_zip_code',
+        'shipping_company_name',
+        'shipping_first_name',
+        'shipping_last_name',
+        'shipping_email',
+        'shipping_add1',
+        'shipping_add2',
+        'shipping_city',
+        'shipping_country',
+        'shipping_zip_code',
+        
+      ]),
+    );
+    let response = this.sendRequest('PATCH', `quotes/${ID}`, {formData});
+    return response;
+  }
+
+  static updateClient(ID, userData = {}) {
+    console.log('clientId is', ID)
+    const formData = clearQuery(
+      pick(userData, [
+        'name',
+        'name_prefix',
+        'mph_id',
+        'trading_as',
+        'vat_registration_no',
+        'company_registration_no',
+        'target_technology',
+        'email',
+        'currency',
+        'company_description',
+        'address1',
+        'address2',
+        'city',
+        'country_name',
+        'phone',
+        'zip_code',
+        'contact1_first_name',
+        'contact1_last_name',
+        'contact1_email',
+        'contact1_address1',
+        'contact1_address2',
+        'contact1_city',
+        'contact1_country_name',
+        'contact1_phone',
+        'contact1_zip_code',
+        'contact1_mobile',
+        'bank_name',
+        'bank_sort_code',
+        'bank_account_no',
+        'bank_address',
+        'financial_year_end',
+        'anticipated_credit_limit',
+        'holding_company',
+        'trading_address',
+        'trading_phone',
+        'trading_fax',
+        'trading_registeration_no',
+        'trading_registeration_date',
+        'trading_vat_registeration_no',
+        'trade_reference_name',
+        'trade_reference_address',
+        'trade_reference_phone',
+        'trade_reference_fax',
+        'trade_reference_contact_name',
+        'trade_reference_banker_name',
+        'trade_reference_banker_address',
+        'trade_reference_banker_account_no'
+      ]),
+    );
+    let response = this.sendRequest('PATCH', `clients/${ID}`, {formData});
     return response;
   }
 
@@ -103,6 +171,7 @@ export default class Api {
         'address2',
         'city',
         'country_name',
+        'phone',
         'zip_code',
         'contact1_first_name',
         'contact1_last_name',
@@ -112,12 +181,93 @@ export default class Api {
         'contact1_city',
         'contact1_country_name',
         'contact1_phone',
+        'contact1_zip_code',
         'contact1_mobile',
+        'bank_name',
+        'bank_sort_code',
+        'bank_account_no',
+        'bank_address',
+        'financial_year_end',
+        'anticipated_credit_limit',
+        'holding_company',
+        'trading_address',
+        'trading_phone',
+        'trading_fax',
+        'trading_registeration_no',
+        'trading_registeration_date',
+        'trading_vat_registeration_no',
+        'trade_reference_name',
+        'trade_reference_address',
+        'trade_reference_phone',
+        'trade_reference_fax',
+        'trade_reference_contact_name',
+        'trade_reference_banker_name',
+        'trade_reference_banker_address',
+        'trade_reference_banker_account_no',
+        'website',
+        'note'
       ]),
     );
-    let response = this.sendRequest('POST', 'client', {formData});
+    let response = this.sendRequest('POST', 'clients', {formData});
     return response;
   }
+
+  static addQuoteItem(userData = {}) {
+    const formData = clearQuery(
+      pick(userData, [
+        'quote_id',
+        'product_id',
+        'quantity'
+      ]),
+    );
+    let response = this.sendRequest('POST', 'quote-items', {formData});
+    return response;
+  }
+
+  static deleteQuoteItem(ID) {
+    let response = this.sendRequest('DELETE', `quote-items/${ID}`);
+    return response;
+  }
+
+
+  static addOrder(userData = {}) {
+    const formData = clearQuery(
+      pick(userData, [
+        'client_id',
+        'mph_id',
+        'po_reference',
+        'status',
+        'id',
+        'name',
+        'currency',
+        'last_status',
+        'shipping_method_id',
+        'shipping_cost',
+        'vat_percentage',
+      'billing_company_name',
+        'billing_first_name',
+        'billing_last_name',
+        'billing_email',
+        'billing_address1',
+        'billing_address2',
+        'billing_city',
+        'billing_country',
+        'billing_zip_code',
+        'shipping_first_name',
+        'shipping_last_name',
+        'shipping_email',
+        'shipping_address1',
+        'shipping_address2',
+        'shipping_city',
+        'shipping_country_name',
+        'shipping_zip_code',
+        'terms',
+      ]),
+    );
+    let response = this.sendRequest('POST', 'orders', {formData});
+    return response;
+  }
+
 
   static updateProfilePicture(apptData = {}) {
     console.group('inside api');
@@ -131,6 +281,16 @@ export default class Api {
 
   static getUserInfo() {
     let response = this.sendRequest('GET', 'user');
+    return response;
+  }
+
+  static getUsersList() {
+    let response = this.sendRequest('GET', 'users');
+    return response;
+  }
+
+  static getUserDetail(ID) {
+    let response = this.sendRequest('GET', `users/${ID}`);
     return response;
   }
 
@@ -161,6 +321,11 @@ export default class Api {
 
   static getOrdersList() {
     let response = this.sendRequest('GET', 'orders');
+    return response;
+  }
+
+  static searchClient(VAL) {
+    let response = this.sendRequest('GET', `clients?key=${VAL}`);
     return response;
   }
 
@@ -214,13 +379,16 @@ export default class Api {
 
         switch (res.status) {
           case 200: {
+            if(data.code !== 422)
+            {
             if (data.status === 'fail') {
               throw {
-                request: {url, data: requestBody},
+                request: {url, data: body},
                 response: data,
                 ...data,
               };
             }
+          }
             return data;
           }
           case 401:
@@ -230,6 +398,13 @@ export default class Api {
               request: {url, data: requestBody},
               response: data,
             };
+            case 422:
+              throw {
+                code: 'unauthorized',
+                status: res.status,
+                request: {url, data: requestBody},
+                response: data,
+              };
           default:
             throw {
               code: 'unknown',
@@ -273,13 +448,7 @@ export default class Api {
         let data = response;
         switch (response.status) {
           case 200: {
-            if (data.status === 'fail') {
-              throw {
-                request: {url, data: body},
-                response: data,
-                ...data,
-              };
-            }
+            
             return data;
           }
           case 401:

@@ -36,15 +36,28 @@ import {
 const arrDataType = ['Partner', 'Client', 'User'];
 const arrDataClient = ['Anil', 'Akram', 'Sagar', 'Sanjeev'];
 const arrDataStatus = ['Pending', 'Accepted', 'Rejected'];
-export default class AddOrder extends PureComponent {
+import {connect} from 'react-redux';
+class AddOrder extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      clientItems: [],
+      clientIds: [],
+      clientId : '',
+      mphId : '',
+      poPreference : '',
+      status : ''
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    console.log('here r clients', this.props.clients)
+    for(var i = 0; i< this.props.clients.items.length; i++) {
+      console.log('skskks')
+     this.state.clientItems.push(this.props.clients.items[i].name);
+     this.state.clientIds.push(this.props.clients.items[i].id);
+    }
+    this.setState({clientItems: this.state.clientItems, clientIds: this.state.clientIds});
   };
 
   addClientQuote = () => {
@@ -52,11 +65,22 @@ export default class AddOrder extends PureComponent {
   };
 
   openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
+    var data = {
+      clientId: this.state.clientId,
+      mphId: this.state.mphId,
+      poreference : this.state.poreference,
+      status: this.state.status,
+    };
+    this.props.navigation.navigate(screen, {selected: data});
+  };
+
+  selectData = (val) => {
+      this.setState({clientId: this.state.clientIds[val]});
+      this.setState({client: this.state.clientItems[val]});
   };
 
   render() {
-    const {items} = this.state;
+    const {items, clientItems} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -103,10 +127,11 @@ export default class AddOrder extends PureComponent {
             <SimpleDropdown
               placeHolder="Please select client"
               style={styles.dropDownStyle}
-              drowdownArray={arrDataClient}
+              drowdownArray={clientItems}
               dropDownWidth={'85%'}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
               isIconVisible={true}
+              onSelect={(value) => this.selectData(value)}
             />
             <View>
               <Text style={styles.labelText}>MPH ID</Text>
@@ -224,3 +249,12 @@ const styles = ScaledSheet.create({
     borderBottomColor: LINE_COLOR,
   },
 });
+
+
+const mapStateToProps = (state) => ({
+  clients: state.clients.clientsList,
+});
+
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddOrder);

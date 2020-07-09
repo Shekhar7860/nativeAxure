@@ -85,7 +85,7 @@ class AllClients extends Component {
 
   listItem = (item, index, status) => {
     return (
-      <TouchableOpacity style={styles.rowItem}>
+      <TouchableOpacity style={styles.rowItem} onPress={() => this.openScreen('Client', item)}>
         <View style={styles.bottomQuotesRow}>
           <View
             style={

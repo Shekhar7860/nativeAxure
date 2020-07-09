@@ -11,12 +11,13 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER, rightArrow, BACK} from '../../constants/Images';
+import {USER, leftArrow, BACK} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import HR from '../../components/HR';
+import {connect} from 'react-redux';
 import {
   View,
   Text,
@@ -28,26 +29,38 @@ import {
   ScrollView,
 } from 'react-native';
 
-export default class AllUsers extends Component {
+
+class AllUsers extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      acceptedItems: [1, 2, 3, 4],
-      pendingItems: [1, 2],
-      rejectedItems: [1],
+      activeUsers: [],
+      inActiveUsers: []
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+  console.group('allusers', this.props.users);
+  for (var i = 0; i < this.props.users.items.length; i++) {
+    if (this.props.users.items[i].is_active == 1) {
+      this.state.activeUsers.push(this.props.users.items[i]);
+    } else  {
+      this.state.inActiveUsers.push(this.props.users.items[i]);
+    }
+  }
+
+  this.setState({
+    activeUsers: this.state.activeUsers,
+    inActiveUsers: this.state.inActiveUsers
+  });
   };
 
   openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
+    this.props.navigation.navigate(screen, {userData: param});
   };
 
   listItem = (item, index, status) => {
     return (
-      <TouchableOpacity style={styles.rowItem}>
+      <TouchableOpacity style={styles.rowItem} onPress={() => this.openScreen('UserDetail', item)}>
         <View style={styles.bottomQuotesRow}>
           <View
             style={
@@ -60,18 +73,18 @@ export default class AllUsers extends Component {
           />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>test@mphgroup.co.in</Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
           <View style={{width: '35%'}} />
           <View style={{width: '5%'}}>
-            <Image source={rightArrow} style={commonStyles.icon} />
+            <Image source={leftArrow} style={commonStyles.icon} />
           </View>
         </View>
       </TouchableOpacity>
     );
   };
   render() {
-    const {acceptedItems, pendingItems, rejectedItems} = this.state;
+    const {activeUsers, inActiveUsers} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -103,7 +116,7 @@ export default class AllUsers extends Component {
           </TouchableOpacity>
           <FlatList
             style={styles.parentFlatList}
-            data={pendingItems}
+            data={activeUsers}
             extraData={this.state}
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) => this.listItem(item, index, 'ACTIVE')}
@@ -119,7 +132,7 @@ export default class AllUsers extends Component {
 
           <FlatList
             style={styles.parentFlatList}
-            data={rejectedItems}
+            data={inActiveUsers}
             extraData={this.state}
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) =>
@@ -213,3 +226,11 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => ({
+  users: state.users.usersList,
+});
+
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllUsers);

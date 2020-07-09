@@ -71,7 +71,7 @@ class AllQuotes extends Component {
 
   listItem = (item, index, status) => {
     return (
-      <TouchableOpacity style={styles.rowItem}>
+      <TouchableOpacity style={styles.rowItem} onPress={() => this.openScreen('Quote', item)}>
         <View style={styles.bottomQuotesRow}>
           <View
             style={

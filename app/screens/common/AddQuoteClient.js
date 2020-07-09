@@ -17,6 +17,7 @@ import {
   BACK,
   TASK,
   DRAWER_MENU,
+  CROSS,
   rightArrow,
 } from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -35,7 +36,8 @@ import ButtonDefault from '../../components/ButtonDefault';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {CheckBox} from 'react-native-elements';
 import {connect} from 'react-redux';
-import {addQuote} from '../../redux/reducers/quotes';
+import {updateQuote, addQuoteItem, deleteQuoteItem} from '../../redux/reducers/quotes';
+import Toast from 'react-native-simple-toast';
 
 import {
   View,
@@ -47,14 +49,17 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
+  Alert
 } from 'react-native';
-const arrDataMethod = ['Method 1', 'Method 2', 'Method 3'];
+const arrDataMethod = ['FedEx', 'FedEx1Day@Fright', 'FedEx2Day@', 'FedEx2Day@ A.M', 'FedEx2Day@ Frieght', 'FedEx3Day@ Frieght', 'FedEx Europe First International Priority@', 'FedEx Express Saver@', 'FedEx First Overnight@', 'FedEx First@Frieght','FedEx Frieght', 'FedEx Frieght@Economy', 'FedEx Frieght@Priority',  'FedEx Ground@', 'FedEx Home Delivery@', 'FedEx International Economy@', 'FedEx International Economy@Frieght', 'FedEx International Priority@', 'FedEx International Priority@Frieght', 'FedEx International Priority@Frieght', 'FedEx SmartPost@', 'FedEx StandardOvernight@', 'Flsmidth'];
 
 class AddQuoteClient extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      items: [1, 2, 3, 4],
+      items: [],
+      products : [],
+      prices : [],
       isRememberMe: false,
       quoteField: '',
       quoteId: '',
@@ -75,7 +80,7 @@ class AddQuoteClient extends PureComponent {
       shippingCity: '',
       shippingCountry: '',
       shippingPostalCode: '',
-      billingcompanyName: '',
+      billingCompanyName: '',
       billingfirstName: '',
       billingLastName: '',
       billingEmail: '',
@@ -87,62 +92,214 @@ class AddQuoteClient extends PureComponent {
       status: '',
       showLoading: false,
       quoteDetail: '',
+      item : 0,
+      productSum : 0,
+      shipping : 0.00,
+      vat : 0.00,
+      quoteData : { client : {}},
+      userquoteId : "",
+      clientName : ""
     };
   }
   componentDidMount = () => {
     if (this.props.route.params) {
-      if (this.props.route.params.selected !== undefined) {
-        this.setState({
-          clientId: this.props.route.params.selected.clientId,
-          type: this.props.route.params.selected.type,
-          status: this.props.route.params.selected.status,
-        });
+      console.log('params', this.props.route.params);
+      if (this.props.route.params.quoteData !== undefined) {
+      this.setState({quoteData : this.props.route.params.quoteData})
+      var id = this.props.route.params.quoteData.id;
+      // as input value does not show integer, so connverting to string
+      this.setState({quoteId : id.toString(), userquoteId : id, quoteTitle : this.props.route.params.quoteData.name, poPreference : this.props.route.params.quoteData.po_reference, type : this.props.route.params.quoteData.type, status : this.props.route.params.quoteData.status,
+      paymentCurrency : this.props.route.params.quoteData.currency, paymentVat : this.props.route.params.quoteData.vat_percentage, shippingCost : this.props.route.params.shipping_cost, billingCompanyName :  this.props.route.params.billing_company_name, billingFirstName : this.props.route.params.billing_first_name,
+      billingLastName : this.props.route.params.billing_last_name,   billingEmail : this.props.route.params.billing_email,   billingCountry : this.props.route.params.billing_country,   billingCity : this.props.route.params.billing_city,   billingPostalCode : this.props.route.params.billing_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name,
+      shippingFirstName : this.props.route.params.shipping_first_name, billingAdd1 : this.props.route.params.billing_add1, billingAdd2 : this.props.route.params.billing_add2, shippingAdd1 : this.props.route.params.shipping_add1, shippingAdd2 : this.props.route.params.shipping_add2,
+      shippingLastName : this.props.route.params.shipping_last_name,   shippingEmail : this.props.route.params.shipping_email,   shippingCountry : this.props.route.params.shipping_country,   shippingCity : this.props.route.params.shipping_city,   shippingPostalCode : this.props.route.params.shipping_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name
+    })
+    // this.setState({quoteId : id.toString(), userquoteId : id})
+    if (this.props.route.params.quoteData.client !== undefined) {
+      this.setState({
+        clientName: this.props.route.params.quoteData.client.name,
+      });
+    }
       }
-      if (this.props.route.params.clientData !== undefined) {
-        this.setState({
-          quoteDetail: this.props.route.params.clientData.quoteDetail,
-        });
-      }
+
+    }
+    console.log('soosos', this.props.products)
+    // adding products into array
+    for (var i = 0; i < this.props.products.items.length; i++) {
+      this.state.products.push(this.props.products.items[i].name);
+      this.state.prices.push({'price_gbp' : this.props.products.items[i].price_gbp, 'sku' : this.props.products.items[i].sku, product_id :this.props.products.items[i].id,  qty : 1})
     }
   };
+
+  selectData = (val) => {
+//   console.log('products', this.state.products[val], 'prices', this.state.prices[val]);
+      //creating an copy and pushing array
+
+    for (var i = 0; i < this.state.items.length; i++) {
+      console.log('fired', this.state.items[i].name)
+        if (this.state.items[i].name === this.state.products[val]) {
+            this.state.items[i].qty++;
+            this.setState({
+           items: [...this.state.items]
+           })
+           this.addQuoteItem(this.state.prices[val].product_id, 1, val, false)
+           return;                       // exit loop and function
+        }
+      }
+    //  console.log('ajjaj', this.state.items)
+      this.addQuoteItem(this.state.prices[val].product_id, 1, val, true)
+
+
+  };
+
+
+addTotal = () => {
+  var sum=0;
+  for (var i =0; i < this.state.items.length; i++) {
+  var num =  this.multiply(this.state.items[i].price_gbp, this.state.items[i].qty)
+  sum += num;
+    }
+    console.log('suuus', sum)
+    this.setState({productSum : sum})
+  return '£' + sum;
+
+}
+
+addQuoteItem = (product_id, qty, val, status) => {
+  this.props
+    .addQuoteItem(
+      this.state.userquoteId,
+      product_id,
+      qty
+    )
+    .then((response) => {
+      if (response.code === 200) {
+      //  console.log('responseQuoteItem', response)
+        if(status){
+        var newArray = this.state.items.slice(); // Create a copy
+        newArray.push({name:this.state.products[val], price_gbp : this.state.prices[val].price_gbp, sku :  this.state.prices[val].sku, qty : this.state.prices[val].qty, product_id :  this.state.prices[val].product_id});
+        this.setState({ items: newArray })}
+      } else {
+        if (response.validation_errors) {
+          showErrorPopup(response.validation_errors);
+        } else {
+         showErrorPopup(response.message);
+        }
+      }
+    })
+    .catch((error) => {
+      this.setState({showLoading: false});
+      if (error.code === 'unauthorized') {
+        showErrorPopup(
+          "Couldn't validate those credentials.\nPlease try again",
+        );
+      } else {
+        showErrorPopup(
+          'There was an unexpected error.\nPlease wait a few minutes and try again.',
+        );
+      }
+    });
+}
+  removeItem = (val) => {
+    Alert.alert('', 'Are you sure to delete this item?', [
+      {
+        text: 'No',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes',
+        onPress: () => this.delete(val),
+      },
+    ]);
+
+  }
+  total = () => {
+    const {productSum, shipping, vat} = this.state;
+    console.log('productSum', productSum)
+    return parseInt(productSum) + parseInt(shipping) + parseInt(vat)
+
+  }
+
+  delete = (val) => {
+    this.props
+      .deleteQuoteItem(val.product_id)
+      .then((response) => {
+        console.log('deleteQuoteresponse', response);
+        if (response.code === 200) {
+              this.setState(prevState => {
+              const items = prevState.items.filter(item => item.name !== val.name);
+              return { items };
+          });
+        }
+
+      })
+      .catch((error) => {
+        this.setState({showLoading: false});
+        if (error.code === 'unauthorized') {
+          showErrorPopup(
+            "Couldn't validate those credentials.\nPlease try again",
+          );
+        } else {
+        }
+      });
+
+  }
+
 
   openScreen = (screen, param) => {
     this.props.navigation.navigate(screen, {clientData: param});
   };
+  multiply = (price, quantity) => {
+
+    return price*quantity
+
+  }
 
   listItem = (item, index) => {
+    // console.log(item.name, 'skskks')
     return (
       <TouchableOpacity style={styles.rowItem}>
-        <View style={styles.bottomQuotesRow}>
-          <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
-          <View style={{width: '5%'}} />
-          <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>Yantra Test Reseller</Text>
+        {item.name ?
+        <View style={styles.quotesRow}>
+          <View style={styles.listWidth}>
+           <Text style={styles.listRowText}>{item.sku}</Text>
+         </View>
+          <View style={styles.listWidth}>
+            <Text style={styles.listRowText}>{item.name}</Text>
           </View>
-          <View style={{width: '20%'}} />
-          <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£1494.00</Text>
+          <View style={styles.listWidth}>
+            <Text style={styles.listRowText}>{item.price_gbp}</Text>
           </View>
+          <View style={styles.listWidth}>
+            <Text style={styles.listRowText}>{item.qty}</Text>
+          </View>
+          <View style={styles.listWidth}>
+            <Text style={styles.listRowText}>{'£' + this.multiply(item.price_gbp, item.qty)}</Text>
+          </View>
+
+          <TouchableOpacity style={{width: '10%'}} onPress={()=> this.removeItem(item)}>
+            <Image source={CROSS} style={commonStyles.smallIcon}/>
+          </TouchableOpacity>
         </View>
+      : null}
       </TouchableOpacity>
     );
   };
 
-  addEditQuote = () => {
+  updateQuote = () => {
     const {
-      clientId,
+      quoteId,
       type,
       status,
-      quoteId,
-      quoteTitle,
       quoteCode,
-      mphId,
+      terms,
+      quoteTitle,
       poPreference,
       paymentCurrency,
-      paymentTerm,
       paymentVat,
-      billingcompanyName,
-      billingfirstName,
+      shippingCost,
+      billingCompanyName,
+      billingFirstName,
       billingLastName,
       billingEmail,
       billingAdd1,
@@ -150,7 +307,7 @@ class AddQuoteClient extends PureComponent {
       billingCity,
       billingCountry,
       billingPostalCode,
-      shippingCost,
+      shippingCompanyName,
       shippingFirstName,
       shippingLastName,
       shippingEmail,
@@ -158,28 +315,26 @@ class AddQuoteClient extends PureComponent {
       shippingAdd2,
       shippingCity,
       shippingCountry,
-      shippingPostalCode,
-      terms,
+      shippingPostalCode
     } = this.state;
     const {online} = this.props;
 
     if (online) {
       this.setState({showLoading: true});
       this.props
-        .addQuote(
-          clientId,
+        .updateQuote(
+          quoteId,
           type,
           status,
-          quoteId,
-          quoteTitle,
           quoteCode,
-          mphId,
+          terms,
+          quoteTitle,
           poPreference,
           paymentCurrency,
-          paymentTerm,
           paymentVat,
-          billingcompanyName,
-          billingfirstName,
+          shippingCost,
+          billingCompanyName,
+          billingFirstName,
           billingLastName,
           billingEmail,
           billingAdd1,
@@ -187,7 +342,7 @@ class AddQuoteClient extends PureComponent {
           billingCity,
           billingCountry,
           billingPostalCode,
-          shippingCost,
+          shippingCompanyName,
           shippingFirstName,
           shippingLastName,
           shippingEmail,
@@ -195,12 +350,13 @@ class AddQuoteClient extends PureComponent {
           shippingAdd2,
           shippingCity,
           shippingCountry,
-          shippingPostalCode,
-          terms,
+          shippingPostalCode
         )
         .then((response) => {
-          this.setState({showLoading: false});
+          console.log(response, 'update')
           if (response.code === 200) {
+            this.setState({showLoading: false});
+            Toast.show(response.message)
           } else {
             if (response.validation_errors) {
               showErrorPopup(response.validation_errors);
@@ -217,7 +373,7 @@ class AddQuoteClient extends PureComponent {
             );
           } else {
             showErrorPopup(
-              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+              'Please Add Product First',
             );
           }
         });
@@ -228,8 +384,8 @@ class AddQuoteClient extends PureComponent {
 
   calculateCost = () => {};
   render() {
-    const {items, isRememberMe, quoteDetail, quoteId, showLoading} = this.state;
-    console.group('bnbbb', quoteDetail);
+    const {items, clientName, quoteTitle,shippingCost, poPreference,paymentCurrency, paymentVat, billingCompanyName, billingFirstName, billingLastName, billingCountry, billingCity, billingPostalCode, billingAdd1, billingAdd2, shippingCity, shippingCountry, shippingAdd2, shippingAdd1, shippingLastName, shippingFirstName,  type, status, isRememberMe, quoteDetail, quoteId, showLoading, products, shipping, vat, quoteData, shippingCompanyName, shippingPostalCode} = this.state;
+
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
         <Header
@@ -263,10 +419,11 @@ class AddQuoteClient extends PureComponent {
             <Text style={styles.labelText}>Quote #</Text>
             <InputBox
               placeHolder=""
+              disabled
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
               onChangeText={(value) => this.setState({quoteId: value})}
-              value={quoteDetail.code}
+              value={quoteId}
             />
 
             <View style={commonStyles.space}>
@@ -276,18 +433,19 @@ class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({quoteTitle: value})}
-                value={quoteDetail.name}
+                value={quoteTitle}
               />
             </View>
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Quote Number/Code</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({quoteCode: value})}
-                value={quoteDetail.code}
+                value={quoteData.code}
               />
             </View>
 
@@ -295,10 +453,11 @@ class AddQuoteClient extends PureComponent {
               <Text style={styles.labelText}>MPH ID</Text>
               <InputBox
                 placeHolder=""
+                disabled
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({mphId: value})}
-                value={quoteDetail.mph_id}
+                value={quoteData.mph_id}
               />
             </View>
 
@@ -309,18 +468,19 @@ class AddQuoteClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({poPreference: value})}
-                value={quoteDetail.po_reference}
+                value={poPreference}
               />
             </View>
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Type</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({type: value})}
-                value={quoteDetail.type}
+                value={type}
               />
             </View>
 
@@ -339,21 +499,24 @@ class AddQuoteClient extends PureComponent {
                 </Text>
               </View>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({client: value})}
+                onChangeText={(value) => this.setState({clientName: value})}
+                value={clientName}
               />
             </View>
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Status</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({status: value})}
-                value={quoteDetail.status}
+                value={status}
               />
             </View>
 
@@ -367,6 +530,7 @@ class AddQuoteClient extends PureComponent {
                   onChangeText={(value) =>
                     this.setState({paymentCurrency: value})
                   }
+                  value={paymentCurrency}
                 />
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Payment Term</Text>
@@ -377,6 +541,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({paymentTerm: value})
                     }
+                    value={quoteData.terms}
                   />
                 </View>
                 <View style={commonStyles.space}>
@@ -386,6 +551,7 @@ class AddQuoteClient extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({paymentVat: value})}
+                    value={paymentVat}
                   />
                 </View>
                 <View style={commonStyles.space}>
@@ -412,6 +578,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({shippingCost: value})
                     }
+                    value={shippingCost}
                   />
                 </View>
 
@@ -423,7 +590,7 @@ class AddQuoteClient extends PureComponent {
                     style={commonStyles.otherButtons}
                     textStyle={commonStyles.otherButtonText}
                     rightImage={rightArrow}>
-                    Calculate Cost
+                    Get Rates
                   </ButtonWithImage>
                 </View>
               </ExpandCollapseLayout>
@@ -449,8 +616,9 @@ class AddQuoteClient extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) =>
-                    this.setState({billingcompanyName: value})
+                    this.setState({billingCompanyName: value})
                   }
+                  value={billingCompanyName}
                 />
 
                 <View style={commonStyles.space}>
@@ -460,8 +628,9 @@ class AddQuoteClient extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) =>
-                      this.setState({billingfirstName: value})
+                      this.setState({billingFirstName: value})
                     }
+                      value={billingFirstName}
                   />
                 </View>
 
@@ -472,8 +641,9 @@ class AddQuoteClient extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) =>
-                      this.setState({billinglastName: value})
+                      this.setState({billingLastName: value})
                     }
+                    value={billingLastName}
                   />
                 </View>
 
@@ -486,6 +656,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({billingEmail: value})
                     }
+                    value={quoteData.billing_email}
                   />
                 </View>
 
@@ -500,6 +671,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({billingAdd1: value})
                     }
+                    value={billingAdd1}
                   />
                 </View>
 
@@ -514,6 +686,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({billingAdd2: value})
                     }
+                    value={billingAdd2}
                   />
                 </View>
 
@@ -526,6 +699,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({billingCity: value})
                     }
+                    value={billingCity}
                   />
                 </View>
 
@@ -538,6 +712,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({billingCountry: value})
                     }
+                    value={billingCountry}
                   />
                 </View>
 
@@ -551,10 +726,14 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({billingPostalCode: value})
                     }
+                    value={billingPostalCode}
                   />
                 </View>
 
+
+                <View style={commonStyles.space}>
                 <Text style={styles.topLabelText}>Shipping</Text>
+               </View>
 
                 <Text style={styles.labelText}>Company Name</Text>
                 <InputBox
@@ -564,6 +743,7 @@ class AddQuoteClient extends PureComponent {
                   onChangeText={(value) =>
                     this.setState({shippingCompanyName: value})
                   }
+                  value={shippingCompanyName}
                 />
 
                 <View style={commonStyles.space}>
@@ -575,6 +755,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({shippingFirstName: value})
                     }
+                    value={shippingFirstName}
                   />
                 </View>
 
@@ -587,6 +768,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({shippingLastName: value})
                     }
+                    value={shippingLastName}
                   />
                 </View>
 
@@ -599,6 +781,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({shippingEmail: value})
                     }
+                    value={quoteData.shipping_email}
                   />
                 </View>
 
@@ -613,6 +796,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({shippingAdd1: value})
                     }
+                    value={shippingAdd1}
                   />
                 </View>
 
@@ -627,6 +811,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({shippingAdd2: value})
                     }
+                    value={shippingAdd2}
                   />
                 </View>
 
@@ -639,6 +824,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({shippingCity: value})
                     }
+                    value={shippingCity}
                   />
                 </View>
 
@@ -651,6 +837,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({shippingCountry: value})
                     }
+                    value={shippingCountry}
                   />
                 </View>
 
@@ -664,6 +851,7 @@ class AddQuoteClient extends PureComponent {
                     onChangeText={(value) =>
                       this.setState({shippingPostalCode: value})
                     }
+                    value={shippingPostalCode}
                   />
                 </View>
               </ExpandCollapseLayout>
@@ -684,7 +872,9 @@ class AddQuoteClient extends PureComponent {
                   }}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({terms: value})}
+                  value={quoteData.terms}
                 />
+
               </ExpandCollapseLayout>
             </View>
 
@@ -698,9 +888,6 @@ class AddQuoteClient extends PureComponent {
                   <Text style={styles.listRowText}>PRODUCT</Text>
                 </View>
                 <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>UNIT PRICE</Text>
-                </View>
-                <View style={styles.listWidth}>
                   <Text style={styles.listRowText}>BUY PRICE</Text>
                 </View>
                 <View style={styles.listWidth}>
@@ -709,6 +896,7 @@ class AddQuoteClient extends PureComponent {
                 <View style={styles.listWidth}>
                   <Text style={styles.listRowText}>TOTAL</Text>
                 </View>
+                <View style={{width:'10%'}}/>
               </TouchableOpacity>
             </View>
             <FlatList
@@ -718,18 +906,89 @@ class AddQuoteClient extends PureComponent {
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) => this.listItem(item, index)}
             />
-            <ButtonDefault onPress={() => this.addEditQuote('EditQuote')}>
+            <View style={commonStyles.space}>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidthFull}>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>SubTotal</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>{this.addTotal()}</Text>
+                </View>
+                <View style={{width:'10%'}}/>
+              </TouchableOpacity>
+            </View>
+            <View style={commonStyles.space}>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidthFull}>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>Shipping</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>£{shipping}</Text>
+                </View>
+                <View style={{width:'10%'}}/>
+              </TouchableOpacity>
+            </View>
+            <View style={commonStyles.space}>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidthFull}>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>VAT(0%)</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>£{vat}</Text>
+                </View>
+                <View style={{width:'10%'}}/>
+              </TouchableOpacity>
+            </View>
+            <View style={commonStyles.space}>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidthFull}>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>Total</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>£{this.total()}</Text>
+                </View>
+                <View style={{width:'10%'}}/>
+              </TouchableOpacity>
+            </View>
+            <View style={commonStyles.space}>
+              <Text style={styles.topLabelText}>Add a product</Text>
+
+            </View>
+            <View style={commonStyles.space}>
+            <SimpleDropdown
+              placeHolder="Add Product"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={products}
+            onSelect={(value) => this.selectData(value)}
+              dropDownWidth={'85%'}
+              imageStyle={{
+                marginTop: moderateScale(10),
+                ...commonStyles.icon,
+              }}
+              isIconVisible={true}
+            />
+          </View>
+
+            <ButtonDefault onPress={() => this.updateQuote('EditQuote')}>
               SAVE
             </ButtonDefault>
           </View>
-          <OverlaySpinner
-            cancelable
-            visible={showLoading}
-            color={WHITE}
-            textContent="Please wait..."
-            textStyle={{color: WHITE}}
-          />
         </ScrollView>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -777,6 +1036,13 @@ const styles = ScaledSheet.create({
     marginHorizontal: moderateScale(10),
     marginTop: moderateScale(10),
     justifyContent: 'space-between',
+  },
+  quotesRow2: {
+    flexDirection: 'row',
+    width: '100%',
+    marginHorizontal: moderateScale(10),
+    marginTop: moderateScale(10),
+    justifyContent: 'space-around',
   },
   button: {
     backgroundColor: DARK_BLUE,
@@ -841,14 +1107,20 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(8),
     fontWeight: 'normal',
   },
+  listWidthFull : {
+    width : '48%'
+  }
 });
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
+  products : state.products.productsList
 });
 
 const mapDispatchToProps = {
-  addQuote,
+  updateQuote,
+  addQuoteItem,
+  deleteQuoteItem
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddQuoteClient);

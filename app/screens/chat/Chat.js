@@ -10,9 +10,19 @@ import {
   CHAT_PIC,
   DRAWER_MENU,
 } from '../../constants/Images';
-import {View, Text, Button, SafeAreaView, FlatList, Image} from 'react-native';
+import {
+  View,
+  Text,
+  Button,
+  SafeAreaView,
+  FlatList,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import {APP_MAIN_BLUE} from '../../constants/colors';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
+import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
+// import {Freshchat, FreshchatConfig} from 'react-native-freshchat-sdk';
 
 export default class Chat extends PureComponent {
   constructor(props) {
@@ -22,26 +32,25 @@ export default class Chat extends PureComponent {
     };
   }
   componentDidMount = () => {
+    // var freshchatConfig = new FreshchatConfig(
+    //   FRESH_CHAT_APP_ID,
+    //   FRESH_CHAT_ID_APP_KEY,
+    // );
+    // Freshchat.init(freshchatConfig);
     //this.props.navigation.navigate('Cart')
   };
 
-  openScreen = (index) => {
-    if (index == 0) {
-      this.props.navigation.navigate('Quotes');
-    } else {
-      this.props.navigation.navigate('Resource');
-    }
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   getChatItem = (item, index) => {
     return (
       <View style={styles.rowItem}>
-        <View style={styles.chatRow}>
-          <TouchableImage
-            image={CHAT_PIC}
-            imageStyle={styles.chatImage}
-            onPress={() => this.openScreen(index)}
-          />
+        <TouchableOpacity
+          style={styles.chatRow}
+          onPress={() => this.openScreen('ChatScreen', 'Jane')}>
+          <TouchableImage image={CHAT_PIC} imageStyle={styles.chatImage} />
 
           <View style={styles.textColumn}>
             <Text style={styles.name}>Jenet Fowler </Text>
@@ -54,7 +63,7 @@ export default class Chat extends PureComponent {
           </View>
 
           <View style={{width: '5%'}} />
-        </View>
+        </TouchableOpacity>
       </View>
     );
   };

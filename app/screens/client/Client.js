@@ -28,16 +28,57 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
+import {getClientDetails} from '../../redux/reducers/clients';
+import OverlaySpinner from '../../components/OverlaySpinner';
+import {connect} from 'react-redux';
 
-export default class Client extends PureComponent {
+class Client extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      clientId: '',
+      client: {},
+      showLoading: false,
     };
   }
   componentDidMount = () => {
+    if (this.props.route.params) {
+      this.setState({clientId: this.props.route.params.clientData.id});
+      this.getClientDetails(this.props.route.params.clientData.id);
+    }
+
     //this.props.navigation.navigate('Cart')
+  };
+
+  getClientDetails = (id) => {
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .getClientDetails(id)
+        .then((response) => {
+          console.group('response', response);
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            this.setState({client: response.data});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
   };
 
   openScreen = (screen, param) => {
@@ -45,7 +86,7 @@ export default class Client extends PureComponent {
   };
 
   render() {
-    const {items} = this.state;
+    const {items, client, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -77,7 +118,10 @@ export default class Client extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <TouchableOpacity onPress={() => this.openScreen('EditClient')}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.openScreen('EditClient', {clientDetail: client})
+                  }>
                   <Image source={TASK} style={commonStyles.icon} />
                 </TouchableOpacity>
               </View>
@@ -91,7 +135,7 @@ export default class Client extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.amountText}>55</Text>
+                <Text style={styles.amountText}>{client.id}</Text>
               </View>
             </View>
 
@@ -103,7 +147,7 @@ export default class Client extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.amountText}>Denmark HQ</Text>
+                <Text style={styles.amountText}>{client.name}</Text>
               </View>
             </View>
 
@@ -115,7 +159,7 @@ export default class Client extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.amountText}>dev@domain.com</Text>
+                <Text style={styles.amountText}>{client.email}</Text>
               </View>
             </View>
 
@@ -127,7 +171,7 @@ export default class Client extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.dateText}>9876543210</Text>
+                <Text style={styles.dateText}>{client.phone}</Text>
               </View>
             </View>
 
@@ -163,7 +207,7 @@ export default class Client extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.dateText}>22-05-2020 14:28:57</Text>
+                <Text style={styles.dateText}>{client.updated_at}</Text>
               </View>
             </View>
 
@@ -180,6 +224,13 @@ export default class Client extends PureComponent {
             </View>
           </View>
         </View>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -267,3 +318,13 @@ const styles = ScaledSheet.create({
     width: '30%',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getClientDetails,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Client);

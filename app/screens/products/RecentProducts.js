@@ -28,16 +28,50 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
+import {getProductsList} from '../../redux/reducers/products';
+import {connect} from 'react-redux';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
+import OverlaySpinner from '../../components/OverlaySpinner';
 
-export default class RecentProducts extends Component {
+class RecentProducts extends Component {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2],
+      showLoading: false,
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .getProductsList()
+        .then((response) => {
+          console.group('response', response);
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            let arr = response.data.items
+              .slice(Math.max(response.data.items.length - 5, 1))
+              .reverse(); // for showing last 5 elements of array
+            this.setState({items: arr});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
   };
 
   addQuote = () => {
@@ -48,6 +82,10 @@ export default class RecentProducts extends Component {
     this.props.navigation.navigate('Quote');
   };
 
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
+  };
+
   listItem = (item, index) => {
     return (
       <TouchableOpacity style={styles.rowItem}>
@@ -55,16 +93,14 @@ export default class RecentProducts extends Component {
           <View style={styles.dotGreen} />
           <View style={{width: '5%'}} />
           <View style={{width: '95%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>
-              WorkBand (HMT-1 Premium Design Mounting Options)
-            </Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
         </View>
       </TouchableOpacity>
     );
   };
   render() {
-    const {items} = this.state;
+    const {items, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -92,7 +128,9 @@ export default class RecentProducts extends Component {
             </View>
             <View style={{width: '10%'}} />
             <View style={{width: '30%'}}>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => this.openScreen('AllProducts')}>
                 <Text style={styles.seeText}>SEE ALL</Text>
               </TouchableOpacity>
             </View>
@@ -105,6 +143,13 @@ export default class RecentProducts extends Component {
             renderItem={({item, index}) => this.listItem(item, index)}
           />
         </TouchableOpacity>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -183,3 +228,13 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getProductsList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(RecentProducts);

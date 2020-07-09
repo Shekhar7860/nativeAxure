@@ -54,7 +54,9 @@ openScreen = (screenName, props) => {
   if (
     screenName == 'Clients' ||
     screenName == 'Quotes' ||
-    screenName == 'Users'
+    screenName == 'Users' ||
+    screenName == 'Orders' ||
+    screenName == 'Products'
   ) {
     props.navigation.navigate(screenName);
   } else if (screenName == 'Logout') {
@@ -72,32 +74,38 @@ openScreen = (screenName, props) => {
 };
 
 openImagePicker = (setProfilePic, props) => {
-  const options = {
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-  };
+  const {online} = props;
 
-  ImagePicker.showImagePicker(options, (response) => {
-    console.group('Response is the data  '+ JSON.stringify(response));
+  if (online) {
+    const options = {
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
 
-    if (response.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (response.error) {
-      console.log('ImagePicker Error: ', response.error);
-    } else if (response.customButton) {
-      console.log('User tapped custom button: ', response.customButton);
-    } else {
-      const source = {uri: response.uri};
-      setProfilePic(response.uri);
+    ImagePicker.showImagePicker(options, (response) => {
+      //console.group('Response = ', response);
 
-      let image = {uri: response.uri, name: 'image.jpg', type: 'image/jpeg'};
-      profilePicApi(image, props);
-      // You can also display the image using data:
-      // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-    }
-  });
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const source = {uri: response.uri};
+        setProfilePic(response.uri);
+
+        let image = {uri: response.uri, name: 'image.jpg', type: 'image/jpeg'};
+        profilePicApi(image, props);
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+      }
+    });
+  } else {
+    Alert.alert('', 'No Internet Connection');
+  }
 };
 
 getRowItem = (item, index, props) => {

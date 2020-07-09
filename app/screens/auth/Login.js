@@ -10,6 +10,7 @@ import {
   Image,
   Alert,
   Text,
+  Linking,
 } from 'react-native';
 import BaseScreen from '../../components/BaseScreen';
 import {rightArrow} from '../../constants/Images';
@@ -122,6 +123,10 @@ class Login extends Component {
     }
   };
 
+  openUrl = (url) => {
+    Linking.openURL(url);
+  };
+
   render() {
     const {showLoading, isRememberMe, username, password} = this.state;
     let isShowStatusBar = Platform.OS === 'android';
@@ -179,7 +184,12 @@ class Login extends Component {
               LOGIN
             </ButtonWithImage>
           </View>
-          <ClickableText textStyle={styles.registerText} isBoldText={true}>
+          <ClickableText
+            textStyle={styles.registerText}
+            isBoldText={true}
+            onPress={() =>
+              this.openUrl('https://mphgroup.uk/beta/become-a-partner')
+            }>
             REGISTER
           </ClickableText>
         </View>

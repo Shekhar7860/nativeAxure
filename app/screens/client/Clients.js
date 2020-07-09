@@ -26,16 +26,51 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  Alert,
 } from 'react-native';
+import {connect} from 'react-redux';
+import OverlaySpinner from '../../components/OverlaySpinner';
+import {getClientsList} from '../../redux/reducers/clients';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
 
-export default class Clients extends PureComponent {
+class Clients extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [{name: 'DenMark HQ'}, {name: 'Yantra Dev'}],
+      showLoading: false,
     };
   }
-  componentDidMount = () => {};
+  componentDidMount = () => {
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .getClientsList()
+        .then((response) => {
+          console.group('response', response);
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            this.setState({items: response.data.items});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  };
 
   openScreen = (screen, param) => {
     this.props.navigation.navigate(screen, {clientData: param});
@@ -47,7 +82,9 @@ export default class Clients extends PureComponent {
         style={styles.rowItem}
         onPress={() => this.openScreen('Client', item)}>
         <View style={styles.bottomQuotesRow}>
-          <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
+          <View
+            style={item.is_active == 1 ? styles.dotBlue : styles.dotGreen}
+          />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
             <Text style={styles.labelText}>{item.name}</Text>
@@ -61,7 +98,7 @@ export default class Clients extends PureComponent {
     );
   };
   render() {
-    const {items} = this.state;
+    const {items, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -104,6 +141,13 @@ export default class Clients extends PureComponent {
             renderItem={({item, index}) => this.listItem(item, index)}
           />
         </View>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -182,3 +226,13 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getClientsList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Clients);

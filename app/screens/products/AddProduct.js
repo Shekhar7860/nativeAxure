@@ -36,14 +36,19 @@ export default class AddProduct extends PureComponent {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      productDetail: '',
     };
   }
   componentDidMount = () => {
+    if (this.props.route.params) {
+      // console.group('pyyyy', this.props.route.params);
+      this.setState({productDetail: this.props.route.params.productData});
+    }
     //this.props.navigation.navigate('Cart')
   };
 
   render() {
-    const {items} = this.state;
+    const {items, productDetail} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -70,6 +75,7 @@ export default class AddProduct extends PureComponent {
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
               onChangeText={(value) => this.setState({vendor: value})}
+              value={productDetail.uuid}
             />
 
             <View style={commonStyles.space}>
@@ -79,6 +85,7 @@ export default class AddProduct extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({productName: value})}
+                value={productDetail.name}
               />
             </View>
 
@@ -89,6 +96,7 @@ export default class AddProduct extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({url: value})}
+                value={productDetail.url}
               />
             </View>
 
@@ -99,6 +107,7 @@ export default class AddProduct extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({model: value})}
+                value={productDetail.model}
               />
             </View>
 
@@ -109,6 +118,7 @@ export default class AddProduct extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({sku: value})}
+                value={productDetail.sku}
               />
             </View>
 
@@ -119,6 +129,7 @@ export default class AddProduct extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({mphCode: value})}
+                value={productDetail.code}
               />
             </View>
 
@@ -129,6 +140,7 @@ export default class AddProduct extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({currency: value})}
+                value={productDetail.currency}
               />
             </View>
 
@@ -139,6 +151,7 @@ export default class AddProduct extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({price: value})}
+                value={productDetail.price}
               />
             </View>
           </View>

@@ -8,6 +8,7 @@ import {
   LIGHTEST_GRAY,
   APP_MAIN_BLUE_COLOR,
   RED,
+  LINE_COLOR,
 } from '../constants/colors';
 
 const BADGE_WIDTH_HEIGHT = 8;
@@ -115,6 +116,16 @@ const commonStyles = ScaledSheet.create({
   },
   redColor: {
     color: RED,
+  },
+  dropDownStyle: {
+    marginHorizontal: moderateScale(20),
+    marginTop: moderateScale(-20),
+    flexDirection: 'row',
+    borderBottomWidth: moderateScale(1),
+    borderBottomColor: LINE_COLOR,
+  },
+  topMargin: {
+    marginTop: moderateScale(30),
   },
 });
 

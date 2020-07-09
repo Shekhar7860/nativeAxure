@@ -44,6 +44,24 @@ export default class AddOrderQuote extends PureComponent {
     //this.props.navigation.navigate('Cart')
   };
 
+  listItem = (item, index) => {
+    return (
+      <TouchableOpacity style={styles.rowItem}>
+        <View style={styles.bottomQuotesRow}>
+          <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
+          <View style={{width: '5%'}} />
+          <View style={{width: '50%', justifyContent: 'center'}}>
+            <Text style={styles.labelText}>Yantra Test Reseller</Text>
+          </View>
+          <View style={{width: '20%'}} />
+          <View style={{width: '25%'}}>
+            <Text style={styles.amountText}>£1494.00</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     const {items} = this.state;
 
@@ -146,9 +164,314 @@ export default class AddOrderQuote extends PureComponent {
               />
             </View>
 
-            <ExpandCollapseLayout title="+ Payment & Shopping"></ExpandCollapseLayout>
+            <ExpandCollapseLayout title="+ Payment & Shopping">
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Quote Currency</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) =>
+                    this.setState({quoteCurrency: value})
+                  }
+                />
+              </View>
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Payment Term </Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({paymentTerm: value})}
+                />
+              </View>
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Shipping Method</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) =>
+                    this.setState({shippingMethod: value})
+                  }
+                />
+              </View>
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Shipping Cost</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({shippingCost: value})}
+                />
+              </View>
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>VAT Percentage</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) =>
+                    this.setState({vatPercentage: value})
+                  }
+                />
+              </View>
+            </ExpandCollapseLayout>
+            <ExpandCollapseLayout title="+ Addresses">
+              <Text style={styles.labelText}>Company Name</Text>
+              <InputBox
+                placeHolder=""
+                boxStyle={styles.inputBoxStyle}
+                inputStyle={styles.input}
+                onChangeText={(value) => this.setState({companyName: value})}
+              />
 
-            <ExpandCollapseLayout title="+ Billing & Shopping Address"></ExpandCollapseLayout>
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>First Name</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({firstName: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Last Name</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({lastName: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Email</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({email: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Address 1</Text>
+                <InputBox
+                  placeHolder=""
+                  maxLines={5}
+                  maxLength={50}
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({add1: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Address 2</Text>
+                <InputBox
+                  placeHolder=""
+                  maxLines={5}
+                  maxLength={50}
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({add2: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>City</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({city: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Country</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({country: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Postal Code/Zip Code</Text>
+                <InputBox
+                  maxLength={6}
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({postalCode: value})}
+                />
+              </View>
+
+              <Text style={styles.topLabelText}>Shipping</Text>
+
+              <Text style={styles.labelText}>Company Name</Text>
+              <InputBox
+                placeHolder=""
+                boxStyle={styles.inputBoxStyle}
+                inputStyle={styles.input}
+                onChangeText={(value) => this.setState({companyName2: value})}
+              />
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>First Name</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({firstName2: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Last Name</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({lastName2: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Email</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({email2: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Address 1</Text>
+                <InputBox
+                  placeHolder=""
+                  maxLines={5}
+                  maxLength={50}
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({add3: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Address 2</Text>
+                <InputBox
+                  placeHolder=""
+                  maxLines={5}
+                  maxLength={50}
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({add4: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>City</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({city2: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Country</Text>
+                <InputBox
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({country2: value})}
+                />
+              </View>
+
+              <View style={commonStyles.space}>
+                <Text style={styles.labelText}>Postal Code/Zip Code</Text>
+                <InputBox
+                  maxLength={6}
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) => this.setState({postalCode2: value})}
+                />
+              </View>
+            </ExpandCollapseLayout>
+
+            <ExpandCollapseLayout title="+ Terms & Conditions">
+              <Text style={styles.topLabelText}>Terms & Conditions</Text>
+            </ExpandCollapseLayout>
+
+            <View style={commonStyles.space}>
+              <Text style={styles.topLabelText}>List Of Items</Text>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>REF/SKU</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>PRODUCT</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>UNIT PRICE</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>BUY PRICE</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>QTY</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>TOTAL</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              style={styles.parentFlatList}
+              data={items}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) => this.listItem(item, index)}
+            />
+
+            <View style={commonStyles.space}>
+              <Text style={styles.topLabelText}>Invoices</Text>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>NO.</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>TITLE</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>DUE DATE</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>STATUS</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>%</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>PAYABLE</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              style={styles.parentFlatList}
+              data={items}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) => this.listItem(item, index)}
+            />
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -223,5 +546,21 @@ const styles = ScaledSheet.create({
   input: {
     fontWeight: 'normal',
     fontSize: moderateScale(10),
+  },
+  listWidth: {
+    width: '16%',
+  },
+  listRowText: {
+    fontSize: moderateScale(8),
+    fontWeight: 'normal',
+  },
+  parentFlatList: {
+    marginTop: moderateScale(10),
+  },
+  bottomQuotesRow: {
+    flexDirection: 'row',
+    marginHorizontal: moderateScale(10),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -135,7 +135,148 @@ export default class AddOrderQuote extends PureComponent {
             </View>
 
             <View style={commonStyles.space}>
-              <ExpandCollapseLayout title="+ Contact"></ExpandCollapseLayout>
+              <Text style={styles.labelText}>Email Verified At</Text>
+              <InputBox
+                placeHolder=""
+                boxStyle={styles.inputBoxStyle}
+                inputStyle={styles.input}
+                onChangeText={(value) => this.setState({emailVerified: value})}
+              />
+            </View>
+
+            <View style={commonStyles.space}>
+              <ExpandCollapseLayout title="+ Contact">
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Address 1</Text>
+                  <InputBox
+                    placeHolder=""
+                    maxLines={5}
+                    maxLength={50}
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({add1: value})}
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Address 2</Text>
+                  <InputBox
+                    placeHolder=""
+                    maxLines={5}
+                    maxLength={50}
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({add2: value})}
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>City</Text>
+                  <InputBox
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({city: value})}
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Country</Text>
+                  <InputBox
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({country: value})}
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Postal Code/Zip Code</Text>
+                  <InputBox
+                    maxLength={6}
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({postalCode: value})}
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Phone</Text>
+                  <InputBox
+                    maxLength={6}
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({phone: value})}
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Mobile</Text>
+                  <InputBox
+                    maxLength={6}
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({mobile: value})}
+                  />
+                </View>
+              </ExpandCollapseLayout>
+            </View>
+            <View style={commonStyles.space}>
+              <ExpandCollapseLayout title="+ Activity Summary">
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>First Login At</Text>
+                  <InputBox
+                    placeHolder=""
+                    maxLines={5}
+                    maxLength={50}
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({firstLogin: value})}
+                  />
+                </View>
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Last Login At</Text>
+                  <InputBox
+                    placeHolder=""
+                    maxLines={5}
+                    maxLength={50}
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({lastLogin: value})}
+                  />
+                </View>
+              </ExpandCollapseLayout>
+            </View>
+            <View style={commonStyles.space}>
+              <ExpandCollapseLayout title="+ Token">
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Auth Token</Text>
+                  <InputBox
+                    placeHolder=""
+                    maxLines={5}
+                    maxLength={50}
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({authToken: value})}
+                  />
+                </View>
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Device Token</Text>
+                  <InputBox
+                    placeHolder=""
+                    maxLines={5}
+                    maxLength={50}
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({deviceToken: value})
+                    }
+                  />
+                </View>
+              </ExpandCollapseLayout>
             </View>
           </View>
         </ScrollView>

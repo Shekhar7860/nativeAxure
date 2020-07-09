@@ -22,6 +22,8 @@ import ButtonDefault from '../../components/ButtonDefault';
 import ContainerSearch from '../../components/ContainerSearch';
 import InputBox from '../../components/InputBox';
 import HR from '../../components/HR';
+import {connect} from 'react-redux';
+import ExpandCollapseLayout from '../../components/ExpandCollapseLayout';
 import {
   View,
   Text,
@@ -32,27 +34,84 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
+  Alert,
 } from 'react-native';
-const arrDataType = ['Partner', 'Client', 'User'];
-const arrDataClient = ['Anil', 'Akram', 'Sagar', 'Sanjeev'];
+import {isEmailValid, showErrorPopup} from '../../util/utils';
+const arrDataType = ['Partner'];
 const arrDataStatus = ['Pending', 'Accepted', 'Rejected'];
-export default class AddQuote extends PureComponent {
+import {getClientsList} from '../../redux/reducers/clients';
+
+class AddQuote extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      clientItems: [],
+      clientIds: [],
+      type: '',
+      client: '',
+      status: '',
+      clientId: '',
     };
   }
   componentDidMount = () => {
+    const {username, password, isRememberMe} = this.state;
+    const {online} = this.props;
+
+    if (online) {
+      this.props
+        .getClientsList()
+        .then((response) => {
+          console.group('response', response);
+          if (response.code === 200) {
+            this.setState({items: response.data.items});
+            for (var i = 0; i <= response.data.items.length; i++) {
+              this.state.clientItems.push(response.data.items[i].name);
+              this.state.clientIds.push(response.data.items[i].id);
+            }
+          }
+          this.setState({clientItems: this.state.clientItems});
+          this.setState({clientIds: this.state.clientIds});
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+
     //this.props.navigation.navigate('Cart')
   };
 
-  openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
+  openScreen = (screen) => {
+    var data = {
+      clientId: this.state.clientId,
+      type: this.state.type,
+      status: this.state.status,
+    };
+    this.props.navigation.navigate(screen, {selected: data});
+  };
+
+  selectData = (val, type) => {
+    if (type == 'type') {
+      this.setState({type: arrDataType[val]});
+    } else if (type == 'status') {
+      this.setState({status: arrDataStatus[val]});
+    } else {
+      this.setState({clientId: this.state.clientIds[val]});
+      this.setState({client: this.state.clientItems[val]});
+    }
   };
 
   render() {
-    const {items} = this.state;
+    console.log('hhhh', this.state.clientitems);
+    const {items, clientItems} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -86,11 +145,12 @@ export default class AddQuote extends PureComponent {
             <Text style={styles.labelText}>Type</Text>
             <SimpleDropdown
               placeHolder="Please select type"
-              style={styles.dropDownStyle}
+              style={commonStyles.dropDownStyle}
               drowdownArray={arrDataType}
               dropDownWidth={'85%'}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
               isIconVisible={true}
+              onSelect={(value) => this.selectData(value, 'type')}
             />
             <View style={{flexDirection: 'row'}}>
               <Text style={styles.labelText}>Client</Text>
@@ -101,27 +161,28 @@ export default class AddQuote extends PureComponent {
                   marginTop: moderateScale(20),
                   color: APP_MAIN_BLUE,
                 }}>
-                {' '}
                 + Add New{' '}
               </Text>
             </View>
             <SimpleDropdown
               placeHolder="Please select client"
-              style={styles.dropDownStyle}
-              drowdownArray={arrDataClient}
+              style={commonStyles.dropDownStyle}
+              drowdownArray={clientItems}
               dropDownWidth={'85%'}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
               isIconVisible={true}
+              onSelect={(value) => this.selectData(value, 'client')}
             />
 
             <Text style={styles.labelText}>Status</Text>
             <SimpleDropdown
               placeHolder="Please select status"
-              style={styles.dropDownStyle}
+              style={commonStyles.dropDownStyle}
               drowdownArray={arrDataStatus}
               dropDownWidth={'85%'}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
               isIconVisible={true}
+              onSelect={(value) => this.selectData(value, 'status')}
             />
 
             <ButtonDefault onPress={() => this.openScreen('EditQuote')}>
@@ -202,11 +263,14 @@ const styles = ScaledSheet.create({
     fontWeight: 'normal',
     fontSize: moderateScale(10),
   },
-  dropDownStyle: {
-    marginHorizontal: moderateScale(20),
-    marginTop: moderateScale(-20),
-    flexDirection: 'row',
-    borderBottomWidth: moderateScale(1),
-    borderBottomColor: LINE_COLOR,
-  },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getClientsList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddQuote);

@@ -37,14 +37,22 @@ export default class EditClient extends PureComponent {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      clientDetail: {},
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    if (this.props.route.params) {
+      if (this.props.route.params.clientData !== undefined) {
+        console.log('djdjdjd', this.props.route.params);
+        this.setState({
+          clientDetail: this.props.route.params.clientData.clientDetail,
+        });
+      }
+    }
   };
 
   render() {
-    const {items} = this.state;
+    const {items, clientDetail} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -81,6 +89,7 @@ export default class EditClient extends PureComponent {
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
               onChangeText={(value) => this.setState({clientname: value})}
+              value={clientDetail.name}
             />
 
             <View style={commonStyles.space}>
@@ -92,6 +101,7 @@ export default class EditClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({first3letters: value})}
+                value={clientDetail.name_prefix}
               />
             </View>
 
@@ -102,6 +112,7 @@ export default class EditClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({mphId: value})}
+                value={clientDetail.mph_id}
               />
             </View>
 
@@ -112,6 +123,7 @@ export default class EditClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({trading: value})}
+                value={clientDetail.trading_as}
               />
             </View>
 
@@ -122,6 +134,7 @@ export default class EditClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({vatReg: value})}
+                value={clientDetail.vat_registeration_no}
               />
             </View>
 
@@ -132,6 +145,7 @@ export default class EditClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({comRegNum: value})}
+                value={clientDetail.company_registeration_no}
               />
             </View>
 
@@ -142,6 +156,7 @@ export default class EditClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({targetTech: value})}
+                value={clientDetail.company_target_technology}
               />
             </View>
 
@@ -152,6 +167,7 @@ export default class EditClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({email: value})}
+                value={clientDetail.company_email}
               />
             </View>
 
@@ -162,6 +178,7 @@ export default class EditClient extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({currency: value})}
+                value={clientDetail.currency}
               />
             </View>
           </View>

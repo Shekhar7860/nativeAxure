@@ -11,7 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER, BACK, TASK, DRAWER_MENU} from '../../constants/Images';
+import {USER, BACK, TASK, DRAWER_MENU, CROSS} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ClickableText from '../../components/ClickableText';
@@ -33,19 +33,29 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
+  Alert
 } from 'react-native';
 import {connect} from 'react-redux';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
-import {addOrder} from '../../redux/reducers/orders';
+import {updateOrder} from '../../redux/reducers/orders';
+import Toast from 'react-native-simple-toast';
+import SimpleDropdown from '../../components/SimpleDropdown';
 
 class AddOrderQuote extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      items: [1, 2, 3, 4],
+      items: [],
+      invoiceItems: [],
+      userOrderId : "",
       orderId : "",
       orderTitle : '',
+      client : "",
+      mphId : "",
+      poPreference : "",
+      status : "",
       quoteCurrency : '',
+      paymentTerm : "",
       shippingMethod : '',
       shippingCost : '',
       vatPercentage : 0,
@@ -67,56 +77,168 @@ class AddOrderQuote extends PureComponent {
       shippingCountry: "",
       shippingPostalCode: "",
       terms: "",
-      showLoading : false
+      showLoading : false,
+      products : [],
+      prices : [],
+      item : 0,
+      productSum : 0,
+      total : 0,
+      shipping : 0.00,
+      vat : 0.00,
     };
   }
   componentDidMount = () => {
       if (this.props.route.params) {
         console.log('sdddsd', this.props.route.params)
-        if (this.props.route.params.selected !== undefined) {
-          this.setState({
-            clientId: this.props.route.params.selected.clientId,
-            mphId: this.props.route.params.selected.mphId,
-            status: this.props.route.params.selected.status,
-            poReference : this.props.route.params.selected.poReference
-          });
+        if (this.props.route.params.orderData !== undefined) {
+          var id = this.props.route.params.orderData.id;
+          // as input value does not show integer, so connverting to string
+          this.setState({orderId : id.toString(), userOrderId : id, orderTitle : this.props.route.params.orderData.name, poPreference : this.props.route.params.orderData.po_reference, type : this.props.route.params.orderData.type, status : this.props.route.params.orderData.status,
+          client : this.props.route.params.orderData.client.name, mphId : this.props.route.params.orderData.mph_id, paymentTerm : this.props.route.params.orderData.payment_scheme.terms, vatPercentage: this.props.route.params.orderData.vat_percentage,
+          quoteCurrency : this.props.route.params.orderData.currency, paymentVat : this.props.route.params.orderData.vat_percentage, shippingCost : this.props.route.params.orderData.shipping_cost, billingCompanyName :  this.props.route.params.orderData.billing_company_name, billingFirstName : this.props.route.params.orderData.billing_first_name,
+          billingLastName : this.props.route.params.orderData.billing_last_name,   billingEmail : this.props.route.params.orderData.billing_email,   billingCountry : this.props.route.params.orderData.billing_country_name, billingCity : this.props.route.params.orderData.billing_city,   billingPostalCode : this.props.route.params.orderData.billing_zip_code, shippingCompanyName : this.props.route.params.orderData.shipping_company_name,
+          shippingFirstName : this.props.route.params.orderData.shipping_first_name, billingAdd1 : this.props.route.params.orderData.billing_address1, billingAdd2 : this.props.route.params.orderData.billing_address2, shippingAdd1 : this.props.route.params.orderData.shipping_address1, shippingAdd2 : this.props.route.params.orderData.shipping_address2, terms : this.props.route.params.orderData.terms,
+          shippingLastName : this.props.route.params.orderData.shipping_last_name,   shippingEmail : this.props.route.params.orderData.shipping_email,   shippingCountry : this.props.route.params.orderData.shipping_country_name, shippingCity : this.props.route.params.orderData.shipping_city,   shippingPostalCode : this.props.route.params.orderData.shipping_zip_code, shippingCompanyName : this.props.route.params.orderData.shipping_company_name
+        })
         }
+      }
+      console.log('products', this.props.products)
+      //adding products into array
+      for (var i = 0; i < this.props.products.items.length; i++) {
+        this.state.products.push(this.props.products.items[i].name);
+        this.state.prices.push({'price_gbp' : this.props.products.items[i].price_gbp, 'sku' : this.props.products.items[i].sku, product_id :this.props.products.items[i].id,  qty : 1})
       }
     //this.props.navigation.navigate('Cart')
   };
 
-  listItem = (item, index) => {
-    return (
-      <TouchableOpacity style={styles.rowItem}>
-        <View style={styles.bottomQuotesRow}>
-          <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
-          <View style={{width: '5%'}} />
-          <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>Yantra Test Reseller</Text>
-          </View>
-          <View style={{width: '20%'}} />
-          <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£1494.00</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
+  selectData = (val) => {
+  //   console.log('products', this.state.products[val], 'prices', this.state.prices[val]);
+      //creating an copy and pushing array
+
+    for (var i = 0; i < this.state.items.length; i++) {
+      console.log('fired', this.state.items[i].name)
+        if (this.state.items[i].name === this.state.products[val]) {
+            this.state.items[i].qty++;
+            this.setState({
+           items: [...this.state.items]
+           })
+           this.addOrderItem(this.state.prices[val].product_id, 1, val, false)
+           return;                       // exit loop and function
+        }
+      }
+    //  console.log('ajjaj', this.state.items)
+      this.addOrderItem(this.state.prices[val].product_id, 1, val, true)
+
+
   };
 
-  addEditOrder = () => {
+  addTotal = () => {
+    var sum=0;
+    for (var i =0; i < this.state.items.length; i++) {
+    var num =  this.multiply(this.state.items[i].price_gbp, this.state.items[i].qty)
+    sum += num;
+      }
+      console.log('suuus', sum)
+      this.setState({productSum : sum})
+    return '£' + sum;
+
+  }
+
+  addOrderItem = (product_id, qty, val, status) => {
+    if(status){
+    var newArray = this.state.items.slice(); // Create a copy
+    newArray.push({name:this.state.products[val], price_gbp : this.state.prices[val].price_gbp, sku :  this.state.prices[val].sku, qty : this.state.prices[val].qty, product_id :  this.state.prices[val].product_id})
+    this.setState({ items: newArray })}
+
+
+  }
+    removeItem = (val) => {
+      Alert.alert('', 'Are you sure to delete this item?', [
+        {
+          text: 'No',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: () => this.delete(val),
+        },
+      ]);
+
+    }
+    total = () => {
+      const {productSum, shipping, vat} = this.state;
+      console.log('productSum', productSum)
+      var total =  parseInt(productSum) + parseInt(shipping) + parseInt(vat);
+      return total;
+
+    }
+
+    delete = (val) => {
+      this.setState(prevState => {
+      const items = prevState.items.filter(item => item.name !== val.name);
+      return { items };
+  });
+
+
+
+    }
+
+
+    openScreen = (screen, param) => {
+      this.props.navigation.navigate(screen, {clientData: param});
+    };
+    multiply = (price, quantity) => {
+
+      return price*quantity
+
+    }
+
+    listItem = (item, index) => {
+      // console.log(item.name, 'skskks')
+      return (
+        <TouchableOpacity style={styles.rowItem}>
+          {item.name ?
+          <View style={styles.quotesRow}>
+            <View style={styles.listWidth}>
+             <Text style={styles.listRowText}>{item.sku}</Text>
+           </View>
+            <View style={styles.listWidth}>
+              <Text style={styles.listRowText}>{item.name}</Text>
+            </View>
+            <View style={styles.listWidth}>
+              <Text style={styles.listRowText}>{item.price_gbp}</Text>
+            </View>
+            <View style={styles.listWidth}>
+              <Text style={styles.listRowText}>{item.qty}</Text>
+            </View>
+            <View style={styles.listWidth}>
+              <Text style={styles.listRowText}>{'£' + this.multiply(item.price_gbp, item.qty)}</Text>
+            </View>
+
+            <TouchableOpacity style={{width: '10%'}} onPress={()=> this.removeItem(item)}>
+              <Image source={CROSS} style={commonStyles.smallIcon}/>
+            </TouchableOpacity>
+          </View>
+        : null}
+        </TouchableOpacity>
+      );
+    };
+
+
+  updateOrder = () => {
+    console.log('city. ', this.state.billingCity)
     const {
-      clientId,
+      userOrderId,
       mphId,
       poReference,
       status,
-      orderId,
       orderTitle,
       quoteCurrency,
       shippingMethod,
       vatPercentage,
       paymentTerm,
-      billingcompanyName,
-      billingfirstName,
+      billingCompanyName,
+      billingFirstName,
       billingLastName,
       billingEmail,
       billingAdd1,
@@ -140,11 +262,10 @@ class AddOrderQuote extends PureComponent {
     if (online) {
       this.setState({showLoading: true});
       this.props
-        .addOrder(
-          clientId,
+        .updateOrder(
+          userOrderId,
           mphId,
           poReference,
-          orderId,
           status,
           orderTitle,
           quoteCurrency,
@@ -152,8 +273,8 @@ class AddOrderQuote extends PureComponent {
           shippingMethod,
           shippingCost,
           vatPercentage,
-          billingcompanyName,
-          billingfirstName,
+          billingCompanyName,
+          billingFirstName,
           billingLastName,
           billingEmail,
           billingAdd1,
@@ -174,6 +295,8 @@ class AddOrderQuote extends PureComponent {
         .then((response) => {
           this.setState({showLoading: false});
           if (response.code === 200) {
+            Toast.show(response.message)
+            this.props.navigation.navigate('OrdersStack')
           } else {
             if (response.validation_errors) {
               showErrorPopup(response.validation_errors);
@@ -200,7 +323,9 @@ class AddOrderQuote extends PureComponent {
   };
 
   render() {
-    const {items, showLoading} = this.state;
+    const {total, subTotal, shipping, vat, invoiceItems,products,items, showLoading, orderId, orderTitle, client, mphId, poPreference, status, quoteCurrency, paymentTerm, shippingCost, vatPercentage,
+    billingAdd1, billingCity, billingAdd2, billingEmail, billingCountry, billingFirstName, billingLastName, billingPostalCode, shippingAdd2, shippingAdd1, shippingFirstName, shippingLastName, shippingCity, shippingCountry,
+  shippingEmail, shippingPostalCode, billingCompanyName, shippingCompanyName, terms} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -234,9 +359,11 @@ class AddOrderQuote extends PureComponent {
             <Text style={styles.labelText}>Order Id</Text>
             <InputBox
               placeHolder=""
+              disabled
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
               onChangeText={(value) => this.setState({orderId: value})}
+              value={orderId}
             />
 
             <View style={commonStyles.space}>
@@ -246,6 +373,7 @@ class AddOrderQuote extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({orderTitle: value})}
+                value={orderTitle}
               />
             </View>
 
@@ -268,6 +396,7 @@ class AddOrderQuote extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({client: value})}
+                value={client}
               />
             </View>
 
@@ -278,6 +407,7 @@ class AddOrderQuote extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({mphId: value})}
+                value={mphId}
               />
             </View>
 
@@ -288,6 +418,7 @@ class AddOrderQuote extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({poPreference: value})}
+                value={poPreference}
               />
             </View>
 
@@ -298,10 +429,12 @@ class AddOrderQuote extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({status: value})}
+                value={status}
               />
             </View>
 
-            <ExpandCollapseLayout title="+ Payment & Shopping">
+            <View style={commonStyles.space}>
+             <ExpandCollapseLayout title="+ Payment & Shopping">
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>Quote Currency</Text>
                 <InputBox
@@ -311,6 +444,7 @@ class AddOrderQuote extends PureComponent {
                   onChangeText={(value) =>
                     this.setState({quoteCurrency: value})
                   }
+                  value={quoteCurrency}
                 />
               </View>
               <View style={commonStyles.space}>
@@ -320,6 +454,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({paymentTerm: value})}
+                  value={paymentTerm}
                 />
               </View>
               <View style={commonStyles.space}>
@@ -340,6 +475,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({shippingCost: value})}
+                  value={shippingCost}
                 />
               </View>
               <View style={commonStyles.space}>
@@ -351,16 +487,20 @@ class AddOrderQuote extends PureComponent {
                   onChangeText={(value) =>
                     this.setState({vatPercentage: value})
                   }
+                  value={vatPercentage}
                 />
               </View>
             </ExpandCollapseLayout>
+            </View>
+            <View style={commonStyles.space}>
             <ExpandCollapseLayout title="+ Addresses">
               <Text style={styles.labelText}>Company Name</Text>
               <InputBox
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({billingcompanyName: value})}
+                onChangeText={(value) => this.setState({billingCompanyName: value})}
+                value={billingCompanyName}
               />
 
               <View style={commonStyles.space}>
@@ -369,7 +509,8 @@ class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({billingfirstName: value})}
+                  onChangeText={(value) => this.setState({billingFirstName: value})}
+                  value={billingFirstName}
                 />
               </View>
 
@@ -379,7 +520,8 @@ class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({billinglastName: value})}
+                  onChangeText={(value) => this.setState({billingLastName: value})}
+                  value={billingLastName}
                 />
               </View>
 
@@ -390,6 +532,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({billingEmail: value})}
+                  value={billingEmail}
                 />
               </View>
 
@@ -402,6 +545,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({billingAdd1: value})}
+                  value={billingAdd1}
                 />
               </View>
 
@@ -414,6 +558,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({billingAdd2: value})}
+                  value={billingAdd2}
                 />
               </View>
 
@@ -424,6 +569,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({billingCity: value})}
+                  value={billingCity}
                 />
               </View>
 
@@ -434,6 +580,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({billingCountry: value})}
+                  value={billingCountry}
                 />
               </View>
 
@@ -445,10 +592,12 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({billingPostalCode: value})}
+                  value={billingPostalCode}
                 />
               </View>
-
-              <Text style={styles.topLabelText}>Shipping</Text>
+              <View style={commonStyles.space}>
+              <Text style={{...styles.topLabelText, marginTop: moderateScale(10)}}>Shipping</Text>
+              </View>
 
               <Text style={styles.labelText}>Company Name</Text>
               <InputBox
@@ -456,6 +605,7 @@ class AddOrderQuote extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({shippingCompanyName: value})}
+                value={shippingCompanyName}
               />
 
               <View style={commonStyles.space}>
@@ -464,7 +614,8 @@ class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({shippingfirstName: value})}
+                  onChangeText={(value) => this.setState({shippingFirstName: value})}
+                  value={shippingFirstName}
                 />
               </View>
 
@@ -474,7 +625,8 @@ class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({shippinglastName: value})}
+                  onChangeText={(value) => this.setState({shippingLastName: value})}
+                  value={shippingLastName}
                 />
               </View>
 
@@ -484,7 +636,8 @@ class AddOrderQuote extends PureComponent {
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({shippingemail: value})}
+                  onChangeText={(value) => this.setState({shippingEmail: value})}
+                  value={shippingEmail}
                 />
               </View>
 
@@ -497,6 +650,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({shippingAdd1: value})}
+                  value={shippingAdd1}
                 />
               </View>
 
@@ -509,6 +663,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({shippingAdd2: value})}
+                  value={shippingAdd2}
                 />
               </View>
 
@@ -519,6 +674,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({shippingCity: value})}
+                  value={shippingCity}
                 />
               </View>
 
@@ -529,6 +685,7 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({shippingCountry: value})}
+                  value={shippingCountry}
                 />
               </View>
 
@@ -540,13 +697,31 @@ class AddOrderQuote extends PureComponent {
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({shippingPostalCode: value})}
+                  value={shippingPostalCode}
                 />
               </View>
             </ExpandCollapseLayout>
-
+          </View>
+            <View style={commonStyles.space}>
             <ExpandCollapseLayout title="+ Terms & Conditions">
-              <Text style={styles.topLabelText}>Terms & Conditions</Text>
+              <Text style={{...styles.topLabelText, marginTop: moderateScale(10)}}>Terms & Conditions</Text>
+              <Text
+                style={{...styles.labelText, marginTop: moderateScale(5)}}>
+                Note
+              </Text>
+              <InputBox
+                placeHolder=""
+                maxLines={5}
+                maxLength={50}
+                boxStyle={{
+                  ...styles.inputBoxStyle2,
+                }}
+                inputStyle={styles.input}
+                onChangeText={(value) => this.setState({terms: value})}
+                value={terms}
+              />
             </ExpandCollapseLayout>
+          </View>
 
             <View style={commonStyles.space}>
               <Text style={styles.topLabelText}>List Of Items</Text>
@@ -578,7 +753,63 @@ class AddOrderQuote extends PureComponent {
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) => this.listItem(item, index)}
             />
+            {items.length !== 0 ?
+            <View>
+            <View style={commonStyles.space}>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidthFull}>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>SubTotal</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>{this.addTotal()}</Text>
+                </View>
+                <View style={{width:'10%'}}/>
+              </TouchableOpacity>
+            </View>
+            <View style={commonStyles.space}>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidthFull}>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>Shipping</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>£{shipping}</Text>
+                </View>
+                <View style={{width:'10%'}}/>
+              </TouchableOpacity>
+            </View>
+            <View style={commonStyles.space}>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidthFull}>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>VAT(0%)</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>£{vat}</Text>
+                </View>
+                <View style={{width:'10%'}}/>
+              </TouchableOpacity>
+            </View>
+            <View style={commonStyles.space}>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={styles.listWidthFull}>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>Total</Text>
+                </View>
+                <View style={styles.listWidth}>
+                  <Text style={styles.listRowText}>£{this.total()}</Text>
+                </View>
+                <View style={{width:'10%'}}/>
+              </TouchableOpacity>
+            </View>
 
+          </View>
+        : null}
             <View style={commonStyles.space}>
               <Text style={styles.topLabelText}>Invoices</Text>
               <TouchableOpacity style={styles.quotesRow}>
@@ -604,12 +835,31 @@ class AddOrderQuote extends PureComponent {
             </View>
             <FlatList
               style={styles.parentFlatList}
-              data={items}
+              data={invoiceItems}
               extraData={this.state}
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) => this.listItem(item, index)}
             />
-            <ButtonDefault onPress={() => this.addEditOrder()}>
+
+            <View style={commonStyles.space}>
+              <Text style={styles.topLabelText}>Add a product</Text>
+            </View>
+            <View style={commonStyles.space}>
+            <SimpleDropdown
+              placeHolder="Add Product"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={products}
+            onSelect={(value) => this.selectData(value)}
+              dropDownWidth={'85%'}
+              imageStyle={{
+                marginTop: moderateScale(10),
+                ...commonStyles.icon,
+              }}
+              isIconVisible={true}
+            />
+          </View>
+
+            <ButtonDefault onPress={() => this.updateOrder()}>
               SAVE
             </ButtonDefault>
           </View>
@@ -701,6 +951,9 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(8),
     fontWeight: 'normal',
   },
+  listWidthFull : {
+    width : '48%'
+  },
   parentFlatList: {
     marginTop: moderateScale(10),
   },
@@ -714,10 +967,11 @@ const styles = ScaledSheet.create({
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
+  products : state.products.productsList
 });
 
 const mapDispatchToProps = {
-  addOrder,
+  updateOrder,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddOrderQuote);

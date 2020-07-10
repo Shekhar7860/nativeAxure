@@ -1,6 +1,7 @@
 import React, {PureComponent} from 'react';
 import Header from '../../components/Header';
 import commonStyles from '../../commonStyles/commonStyles';
+import DateTimePicker from "react-native-modal-datetime-picker";
 import {
   APP_LIGHT_BLUE_COLOR,
   SEMI_TRANSPARENT,
@@ -14,15 +15,14 @@ import {
 } from '../../constants/colors';
 import {USER, BACK, TASK} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
-import AddNewButtonGroup from '../../components/AddNewButtonGroup';
-import ClickableText from '../../components/ClickableText';
-import CardWithIcon from '../../components/CardWithIcon';
 import ExpandCollapseLayout from '../../components/ExpandCollapseLayout';
 import InputBox from '../../components/InputBox';
 import {CheckBox} from 'react-native-elements';
 import HR from '../../components/HR';
 import SimpleDropdown from '../../components/SimpleDropdown';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
+import moment from 'moment';
+import Toast from 'react-native-simple-toast';
 import {
   View,
   Text,
@@ -74,6 +74,31 @@ class AddClient extends PureComponent {
       contPostalCode: '',
       contPhone: '',
       contMobile: '',
+      bankName : '',
+      bankSortCode : '',
+      bankAccountNo : '',
+      bankAddress : '',
+      finYear : 'Select Financial Year End Date',
+      cardLimit : '',
+      holdingCompany : '',
+      tradeAddress : '',
+      tradePhone : '',
+      tradeFax : '',
+      tradeRegNumber: '',
+      tradeRegDate : 'Select Registeration Date',
+      tradeVatRegNumber: '',
+      tradeRefName : '',
+      tradeRefPhone : '',
+      tradeRefAddress : '',
+      tradeRefFax: '',
+      tradeRefContactName : '',
+      tradeRefBankerName : '',
+      tradeRefBankerAddress : '',
+      tradeRefBankerAccountNumber : '',
+      regDatePickerVisible: false,
+      yearDatePickerVisible : false,
+      website : "",
+      note : ""
     };
   }
   componentDidMount = () => {
@@ -108,9 +133,33 @@ class AddClient extends PureComponent {
       contPostalCode,
       contPhone,
       contMobile,
+      bankName,
+      bankSortCode,
+      bankAccountNo,
+      bankAddress,
+      finYear,
+      cardLimit,
+      holdingCompany,
+      tradeAddress,
+      tradePhone,
+      tradeFax,
+      tradeRegNumber,
+      tradeRegDate,
+      tradeVatRegNumber,
+      tradeRefName,
+      tradeRefPhone,
+      tradeRefAddress,
+      tradeRefFax,
+      tradeRefContactName,
+      tradeRefBankerName,
+      tradeRefBankerAddress,
+      tradeRefBankerAccountNumber,
+      website,
+      note
     } = this.state;
     const {online} = this.props;
-
+if(clientname && first3letters && email){
+  if(isEmailValid(email) && isEmailValid(contactEmail)){
     if (online) {
       this.setState({showLoading: true});
       this.props
@@ -141,10 +190,37 @@ class AddClient extends PureComponent {
           contPostalCode,
           contPhone,
           contMobile,
+          bankName,
+          bankSortCode,
+          bankAccountNo,
+          bankAddress,
+          finYear,
+          cardLimit,
+          holdingCompany,
+      tradeAddress,
+      tradePhone,
+      tradeFax,
+      tradeRegNumber,
+      tradeRegDate,
+      tradeVatRegNumber,
+      tradeRefName,
+      tradeRefPhone,
+      tradeRefAddress,
+      tradeRefFax,
+      tradeRefContactName,
+      tradeRefBankerName,
+      tradeRefBankerAddress,
+      tradeRefBankerAccountNumber,
+      website,
+      note
+          
         )
         .then((response) => {
+          console.log('ddd', response)
           this.setState({showLoading: false});
           if (response.code === 200) {
+            Toast.show(response.message)
+            this.props.navigation.navigate('AllClients')
           } else {
             if (response.validation_errors) {
               showErrorPopup(response.validation_errors);
@@ -168,6 +244,47 @@ class AddClient extends PureComponent {
     } else {
       Alert.alert('', 'No Internet Connection');
     }
+  }
+  else {
+    Alert.alert('', 'Enter Valid Email Address');
+  }
+  }
+  else {
+    Alert.alert('', 'Please Enter Valid Details');
+  }
+  };
+  showDateTimePicker = (val) => {
+    if(val == "regDatePickerVisible")
+    {
+    this.setState({ regDatePickerVisible: true })
+    }
+    else {
+     this.setState({ yearDatePickerVisible: true })
+    }
+  };
+ 
+  hideDateTimePicker = (val) => {
+    if(val == "regDatePickerVisible")
+    {
+    this.setState({ regDatePickerVisible: false })
+    }
+    else {
+     this.setState({ yearDatePickerVisible: false})
+    }
+  };
+ 
+  handleDatePicked = (date, val) => {
+    console.log("A date has been picked: ", date);
+    var selectedDate= moment(date).format("MM/DD/YYYY")
+    // console.log('jjs,', selectedDate)
+    if(val == "regDatePickerVisible")
+    {
+    this.setState({ tradeRegDate: selectedDate })
+    }
+    else {
+     this.setState({ finYear: selectedDate})
+    }
+    this.hideDateTimePicker(val);
   };
 
   render() {
@@ -197,6 +314,7 @@ class AddClient extends PureComponent {
                 Prefix (First 3 letters of Name)
               </Text>
               <InputBox
+              maxLength={3}
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
@@ -230,6 +348,7 @@ class AddClient extends PureComponent {
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
+                keyboardType={'numeric'}
                 onChangeText={(value) => this.setState({vatReg: value})}
               />
             </View>
@@ -240,6 +359,7 @@ class AddClient extends PureComponent {
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
+                keyboardType={'numeric'}
                 onChangeText={(value) => this.setState({comRegNum: value})}
               />
             </View>
@@ -272,6 +392,28 @@ class AddClient extends PureComponent {
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({currency: value})}
               />
+            </View>
+
+            <View style={commonStyles.space}>
+              <Text style={styles.labelText}>Website</Text>
+              <InputBox
+                placeHolder=""
+                boxStyle={styles.inputBoxStyle}
+                inputStyle={styles.input}
+                onChangeText={(value) => this.setState({website: value})}
+              />
+            </View>
+
+            <View style={commonStyles.space}>
+              <Text style={styles.labelText}>Note</Text>
+              <InputBox
+                    placeHolder=""
+                    maxLines={5}
+                    maxLength={50}
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({note: value})}
+                  />
             </View>
 
             <View style={commonStyles.space}>
@@ -346,6 +488,7 @@ class AddClient extends PureComponent {
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Postal Code/Zip Code</Text>
                   <InputBox
+                    keyboardType={'numeric'}
                     maxLength={6}
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
@@ -451,6 +594,7 @@ class AddClient extends PureComponent {
                   <Text style={styles.labelText}>Postal Code/Zip Code</Text>
                   <InputBox
                     maxLength={6}
+                    keyboardType={'numeric'}
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
@@ -463,6 +607,8 @@ class AddClient extends PureComponent {
                   <Text style={styles.labelText}>Phone</Text>
                   <InputBox
                     placeHolder=""
+                    keyboardType={'numeric'}
+                    maxLength={10}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({contPhone: value})}
@@ -472,6 +618,8 @@ class AddClient extends PureComponent {
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Mobile</Text>
                   <InputBox
+                   keyboardType={'numeric'}
+                    maxLength={10}
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
@@ -510,6 +658,8 @@ class AddClient extends PureComponent {
                   <Text style={styles.labelText}>Bank Sort Code</Text>
                   <InputBox
                     placeHolder=""
+                    keyboardType={'numeric'}
+                    maxLength={10}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) =>
@@ -522,6 +672,7 @@ class AddClient extends PureComponent {
                   <Text style={styles.labelText}>Bank Account No</Text>
                   <InputBox
                     placeHolder=""
+                    keyboardType={'numeric'}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) =>
@@ -544,17 +695,24 @@ class AddClient extends PureComponent {
                   />
                 </View>
 
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Financial Year End</Text>
-                  <InputBox
+                <TouchableOpacity style={commonStyles.space} onPress={this.showDateTimePicker.bind(this, 'yearDatePickerVisible')}>
+                <Text style={styles.labelText}>Financial Year End</Text>
+                  <Text style={styles.labelText}>{this.state.finYear}</Text>
+                  {/* <InputBox
                     placeHolder=""
                     maxLines={5}
                     maxLength={50}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({finYear: value})}
-                  />
-                </View>
+                  /> */}
+                  <DateTimePicker
+                  maximumDate={new Date()}
+          isVisible={this.state.yearDatePickerVisible}
+          onConfirm={(date) => this.handleDatePicked(date,  'yearDatePickerVisible')}
+          onCancel={this.hideDateTimePicker.bind(this, 'yearDatePickerVisible')}
+        />
+                </TouchableOpacity>
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Anticipated Card Limit</Text>
@@ -599,9 +757,11 @@ class AddClient extends PureComponent {
                   <Text style={styles.labelText}>Phone</Text>
                   <InputBox
                     placeHolder=""
+                    keyboardType={'numeric'}
+                    maxLength={10}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({phone: value})}
+                    onChangeText={(value) => this.setState({tradePhone: value})}
                   />
                 </View>
 
@@ -611,7 +771,7 @@ class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({fax: value})}
+                    onChangeText={(value) => this.setState({tradeFax: value})}
                   />
                 </View>
 
@@ -620,109 +780,45 @@ class AddClient extends PureComponent {
                   <InputBox
                     placeHolder=""
                     maxLines={5}
-                    maxLength={50}
+                    maxLength={10}
+                    keyboardType={'numeric'}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({regNumber: value})}
+                    onChangeText={(value) => this.setState({tradeRegNumber: value})}
                   />
                 </View>
 
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Registration Date</Text>
-                  <InputBox
+                <TouchableOpacity style={commonStyles.space} onPress={this.showDateTimePicker.bind(this, 'regDatePickerVisible')} >
+                  <Text style={styles.labelText}>Registeration Date</Text>
+                  <Text style={styles.labelText}>{this.state.tradeRegDate}</Text>
+                  {/* <InputBox
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({regDate: value})}
-                  />
-                </View>
+                    onChangeText={(value) => this.setState({tradeRegDate: value})}
+                  /> */}
+                  <DateTimePicker
+                  maximumDate={new Date()}
+          isVisible={this.state.regDatePickerVisible}
+          onConfirm={(date) => this.handleDatePicked(date,  'regDatePickerVisible')}
+          onCancel={this.hideDateTimePicker.bind(this, 'regDatePickerVisible')}
+        />
+                </TouchableOpacity>
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>VAT Registration No</Text>
                   <InputBox
                     placeHolder=""
+                    keyboardType={'numeric'}
+                    maxLength={10}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({vatRegNo: value})}
+                    onChangeText={(value) => this.setState({tradeVatRegNo: value})}
                   />
                 </View>
               </ExpandCollapseLayout>
             </View>
-
-            <View style={commonStyles.space}>
-              <ExpandCollapseLayout title="+ Financial Information">
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Bank Name</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({bankName: value})}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Bank Sort Code</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({bankSortCode: value})
-                    }
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Bank Account No</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({bankAccountNo: value})
-                    }
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Bank Address</Text>
-                  <InputBox
-                    placeHolder=""
-                    maxLines={5}
-                    maxLength={50}
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({bankAddress: value})
-                    }
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Financial Year End</Text>
-                  <InputBox
-                    placeHolder=""
-                    maxLines={5}
-                    maxLength={50}
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({finYear: value})}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Anticipated Card Limit</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({cardLimit: value})}
-                  />
-                </View>
-              </ExpandCollapseLayout>
-            </View>
-            <View style={commonStyles.space}>
+                        <View style={commonStyles.space}>
               <ExpandCollapseLayout title="+ Trade Reference">
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Name</Text>
@@ -730,7 +826,7 @@ class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({name: value})}
+                    onChangeText={(value) => this.setState({tradeRefName: value})}
                   />
                 </View>
 
@@ -742,7 +838,7 @@ class AddClient extends PureComponent {
                     maxLength={50}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({address: value})}
+                    onChangeText={(value) => this.setState({tradeRefAddress: value})}
                   />
                 </View>
 
@@ -750,9 +846,11 @@ class AddClient extends PureComponent {
                   <Text style={styles.labelText}>Phone</Text>
                   <InputBox
                     placeHolder=""
+                    keyboardType={'numeric'}
+                    maxLength={10}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({phone2: value})}
+                    onChangeText={(value) => this.setState({tradeRefPhone: value})}
                   />
                 </View>
 
@@ -762,7 +860,7 @@ class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({fax2: value})}
+                    onChangeText={(value) => this.setState({tradeRefFax: value})}
                   />
                 </View>
 
@@ -775,7 +873,7 @@ class AddClient extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) =>
-                      this.setState({contactName: value})
+                      this.setState({tradeRefContactName: value})
                     }
                   />
                 </View>
@@ -786,7 +884,7 @@ class AddClient extends PureComponent {
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({bankerName: value})}
+                    onChangeText={(value) => this.setState({tradeRefBankerName: value})}
                   />
                 </View>
 
@@ -799,7 +897,7 @@ class AddClient extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) =>
-                      this.setState({bankerAddress: value})
+                      this.setState({tradeRefBankerAddress: value})
                     }
                   />
                 </View>
@@ -808,15 +906,21 @@ class AddClient extends PureComponent {
                   <Text style={styles.labelText}>Account Number</Text>
                   <InputBox
                     placeHolder=""
+                    keyboardType={'numeric'}
+                    maxLength={16}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) =>
-                      this.setState({accountNumber: value})
+                      this.setState({tradeRefAccountNumber: value})
                     }
                   />
                 </View>
               </ExpandCollapseLayout>
             </View>
+
+            
+            
+            
             <ButtonDefault onPress={() => this.addEditClient('EditQuote')}>
               SAVE
             </ButtonDefault>

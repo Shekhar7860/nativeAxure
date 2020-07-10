@@ -137,9 +137,9 @@ const Sidebar = (props) => {
             "Couldn't validate those credentials.\nPlease try again",
           );
         } else {
-          showErrorPopup(
-            'There was an unexpected error.\nPlease wait a few minutes and try again.',
-          );
+          // showErrorPopup(
+          //   'There was an unexpected error.\nPlease wait a few minutes and try again.',
+          // );
         }
       });
   };

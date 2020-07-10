@@ -121,7 +121,7 @@ class Quotes extends Component {
     return (
       <TouchableOpacity
         style={styles.rowItem}
-        onPress={() => this.openScreen('Quote', item)}>
+        >
         <View style={styles.bottomQuotesRow}>
           <View
             style={

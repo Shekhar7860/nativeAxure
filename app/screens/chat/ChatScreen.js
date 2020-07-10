@@ -15,13 +15,13 @@ import {
 import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
 import {USER, BACK, TASK} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
-import {GiftedChat} from 'react-native-gifted-chat';
-import {
-  Freshchat,
-  FreshchatConfig,
-  FreshchatMessage,
-  FreshchatUser,
-} from 'react-native-freshchat-sdk';
+// import {GiftedChat} from 'react-native-gifted-chat';
+// import {
+//   Freshchat,
+//   FreshchatConfig,
+//   FreshchatMessage,
+//   FreshchatUser,
+// } from 'react-native-freshchat-sdk';
 
 import {
   View,

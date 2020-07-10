@@ -114,6 +114,7 @@ class AddQuoteClient extends PureComponent {
       shippingFirstName : this.props.route.params.shipping_first_name, billingAdd1 : this.props.route.params.billing_add1, billingAdd2 : this.props.route.params.billing_add2, shippingAdd1 : this.props.route.params.shipping_add1, shippingAdd2 : this.props.route.params.shipping_add2,
       shippingLastName : this.props.route.params.shipping_last_name,   shippingEmail : this.props.route.params.shipping_email,   shippingCountry : this.props.route.params.shipping_country,   shippingCity : this.props.route.params.shipping_city,   shippingPostalCode : this.props.route.params.shipping_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name
     })
+    // this.setState({quoteId : id.toString(), userquoteId : id})
     if (this.props.route.params.quoteData.client !== undefined) {
       this.setState({
         clientName: this.props.route.params.quoteData.client.name,
@@ -356,6 +357,7 @@ addQuoteItem = (product_id, qty, val, status) => {
           if (response.code === 200) {
             this.setState({showLoading: false});
             Toast.show(response.message)
+            this.props.navigation.navigate('AllQuotes')
           } else {
             if (response.validation_errors) {
               showErrorPopup(response.validation_errors);
@@ -383,7 +385,7 @@ addQuoteItem = (product_id, qty, val, status) => {
 
   calculateCost = () => {};
   render() {
-    const {items, clientName,billingCompanyName, quoteTitle,shippingCost, poPreference,paymentCurrency, paymentVat, billing_company_name, billingFirstName, billingLastName, billingCountry, billingCity, billingPostalCode, billingAdd1, billingAdd2, shippingCity, shippingCountry, shippingAdd2, shippingAdd1, shippingLastName, shippingFirstName,  type, status, isRememberMe, quoteDetail, quoteId, showLoading, products, shipping, vat, quoteData, shippingCompanyName, shippingPostalCode} = this.state;
+    const {items, clientName, quoteTitle,shippingCost, poPreference,paymentCurrency, paymentVat, billingCompanyName, billingFirstName, billingLastName, billingCountry, billingCity, billingPostalCode, billingAdd1, billingAdd2, shippingCity, shippingCountry, shippingAdd2, shippingAdd1, shippingLastName, shippingFirstName,  type, status, isRememberMe, quoteDetail, quoteId, showLoading, products, shipping, vat, quoteData, shippingCompanyName, shippingPostalCode} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -484,7 +486,7 @@ addQuoteItem = (product_id, qty, val, status) => {
             </View>
 
             <View style={commonStyles.space}>
-              <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity style={{flexDirection: 'row'}}>
                 <Text style={styles.labelText}>Client</Text>
                 <View style={{width: '2%'}} />
                 <Text
@@ -496,7 +498,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                   {' '}
                   + Add New{' '}
                 </Text>
-              </View>
+              </TouchableOpacity>
               <InputBox
                 disabled
                 placeHolder=""
@@ -905,6 +907,8 @@ addQuoteItem = (product_id, qty, val, status) => {
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) => this.listItem(item, index)}
             />
+            {items.length !== 0 ?
+            <View>
             <View style={commonStyles.space}>
               <TouchableOpacity style={styles.quotesRow}>
                 <View style={styles.listWidthFull}>
@@ -957,9 +961,10 @@ addQuoteItem = (product_id, qty, val, status) => {
                 <View style={{width:'10%'}}/>
               </TouchableOpacity>
             </View>
+          </View>
+          : null}
             <View style={commonStyles.space}>
               <Text style={styles.topLabelText}>Add a product</Text>
-
             </View>
             <View style={commonStyles.space}>
             <SimpleDropdown

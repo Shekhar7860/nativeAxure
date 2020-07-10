@@ -80,7 +80,7 @@ class Clients extends PureComponent {
     return (
       <TouchableOpacity
         style={styles.rowItem}
-        onPress={() => this.openScreen('Client', item)}>
+        >
         <View style={styles.bottomQuotesRow}>
           <View
             style={item.is_active == 1 ? styles.dotBlue : styles.dotGreen}

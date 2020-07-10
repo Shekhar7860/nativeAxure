@@ -32,11 +32,16 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
+  Alert
 } from 'react-native';
+const arrDataStatus = ['Draft'];
 const arrDataType = ['Partner', 'Client', 'User'];
-const arrDataClient = ['Anil', 'Akram', 'Sagar', 'Sanjeev'];
-const arrDataStatus = ['Pending', 'Accepted', 'Rejected'];
+const arrDataClient = ['Anil', 'Akram', 'Sagar', 'Sanjeev'];;
 import {connect} from 'react-redux';
+import {addOrder} from '../../redux/reducers/orders';
+import Toast from 'react-native-simple-toast';
+import {showErrorPopup} from '../../util/utils';
+import OverlaySpinner from '../../components/OverlaySpinner';
 class AddOrder extends PureComponent {
   constructor(props) {
     super(props);
@@ -51,11 +56,17 @@ class AddOrder extends PureComponent {
     };
   }
   componentDidMount = () => {
-    console.log('here r clients', this.props.clients)
+    console.log('reseller_id',this.props.userInfo.reseller_id)
+    const {online} = this.props;
+      if (online) {
     for(var i = 0; i< this.props.clients.items.length; i++) {
       console.log('skskks')
      this.state.clientItems.push(this.props.clients.items[i].name);
      this.state.clientIds.push(this.props.clients.items[i].id);
+    }
+  }
+    else {
+      Alert.alert('', 'No Internet Connection');
     }
     this.setState({clientItems: this.state.clientItems, clientIds: this.state.clientIds});
   };
@@ -65,22 +76,72 @@ class AddOrder extends PureComponent {
   };
 
   openScreen = (screen, param) => {
-    var data = {
-      clientId: this.state.clientId,
-      mphId: this.state.mphId,
-      poreference : this.state.poreference,
-      status: this.state.status,
-    };
-    this.props.navigation.navigate(screen, {selected: data});
+    const {
+      clientId,
+      type,
+      status
+    } = this.state;
+  //  console.log('selected', clientId, status, type)
+    if(clientId !== "" && status !== "" && type !== "")
+    {
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .addOrder(
+          clientId,
+          this.props.userInfo.reseller_id,
+          status
+        )
+        .then((response) => {
+          if (response.code === 200) {
+            this.setState({showLoading: false});
+            Toast.show(response.message)
+            this.props.navigation.navigate(screen, {orderData: response.data})
+          } else {
+            if (response.validation_errors) {
+              showErrorPopup(response.validation_errors);
+            } else {
+              showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  }
+  else {
+  Alert.alert('', 'Please Select Fields');
+  }
+
   };
 
-  selectData = (val) => {
+
+  selectData = (val, type) => {
+    if (type == 'type') {
+      this.setState({type: arrDataType[val]});
+    } else if (type == 'status') {
+      this.setState({status: arrDataStatus[val]});
+    } else {
       this.setState({clientId: this.state.clientIds[val]});
       this.setState({client: this.state.clientItems[val]});
+    }
   };
 
   render() {
-    const {items, clientItems} = this.state;
+    const {items, clientItems, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -131,7 +192,7 @@ class AddOrder extends PureComponent {
               dropDownWidth={'85%'}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
               isIconVisible={true}
-              onSelect={(value) => this.selectData(value)}
+              onSelect={(value) => this.selectData(value, 'client')}
             />
             <View>
               <Text style={styles.labelText}>MPH ID</Text>
@@ -143,7 +204,7 @@ class AddOrder extends PureComponent {
               />
             </View>
 
-            <View>
+            <View style={commonStyles.space}>
               <Text style={styles.labelText}>PO Preference</Text>
               <InputBox
                 placeHolder=""
@@ -153,13 +214,16 @@ class AddOrder extends PureComponent {
               />
             </View>
 
-            <View>
+          <View style={commonStyles.space}>
               <Text style={styles.labelText}>Status</Text>
-              <InputBox
-                placeHolder=""
-                boxStyle={styles.inputBoxStyle}
-                inputStyle={styles.input}
-                onChangeText={(value) => this.setState({status: value})}
+              <SimpleDropdown
+                placeHolder="Please select status"
+                style={commonStyles.dropDownStyle}
+                drowdownArray={arrDataStatus}
+                dropDownWidth={'85%'}
+                imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+                isIconVisible={true}
+                onSelect={(value) => this.selectData(value, 'status')}
               />
             </View>
 
@@ -168,6 +232,13 @@ class AddOrder extends PureComponent {
             </ButtonDefault>
           </View>
         </ScrollView>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -252,9 +323,13 @@ const styles = ScaledSheet.create({
 
 
 const mapStateToProps = (state) => ({
+  userInfo: state.session.userInfo,
   clients: state.clients.clientsList,
+  online: state.netInfo.online,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  addOrder
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddOrder);

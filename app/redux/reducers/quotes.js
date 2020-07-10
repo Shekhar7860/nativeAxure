@@ -91,7 +91,7 @@ export const updateQuote = (
       shipping_add2,
       shipping_city,
       shipping_country,
-      shipping_zip_code
+      shipping_zip_code,
     }).then((response) => {
       if (response.code === 200) {
         if (response.data) {

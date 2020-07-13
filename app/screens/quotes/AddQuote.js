@@ -161,6 +161,10 @@ class AddQuote extends PureComponent {
     }
   };
 
+
+  navigateScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
+  };
   render() {
     console.log('hhhh', this.state.clientitems);
     const {items, clientItems, showLoading} = this.state;
@@ -204,7 +208,7 @@ class AddQuote extends PureComponent {
               isIconVisible={true}
               onSelect={(value) => this.selectData(value, 'type')}
             />
-            <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={{flexDirection: 'row'}}>
               <Text style={styles.labelText}>Client</Text>
               <View style={{width: '2%'}} />
               <Text
@@ -215,7 +219,7 @@ class AddQuote extends PureComponent {
                 }}>
                 + Add New{' '}
               </Text>
-            </View>
+            </TouchableOpacity>
             <SimpleDropdown
               placeHolder="Please select client"
               style={commonStyles.dropDownStyle}

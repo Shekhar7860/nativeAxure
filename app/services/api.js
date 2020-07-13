@@ -71,7 +71,7 @@ export default class Api {
         'po_reference',
         'currency',
         'vat_percentage',
-        'shipping_cost',        
+        'shipping_cost',
          'billing_company_name',
         'billing_first_name',
         'billing_last_name',
@@ -90,7 +90,6 @@ export default class Api {
         'shipping_city',
         'shipping_country',
         'shipping_zip_code',
-        
       ]),
     );
     let response = this.sendRequest('PATCH', `quotes/${ID}`, {formData});
@@ -98,7 +97,7 @@ export default class Api {
   }
 
   static updateClient(ID, userData = {}) {
-    console.log('clientId is', ID)
+  //  console.log('clientId is', ID)
     const formData = clearQuery(
       pick(userData, [
         'name',
@@ -234,24 +233,35 @@ export default class Api {
     const formData = clearQuery(
       pick(userData, [
         'client_id',
+        'reseller_id',
+        'status',
+      ]),
+    );
+    let response = this.sendRequest('POST', 'orders', {formData});
+    return response;
+  }
+
+  static updateOrder(ID, userData = {}) {
+    console.log('this is orderId', ID)
+    const formData = clearQuery(
+      pick(userData, [
         'mph_id',
         'po_reference',
         'status',
-        'id',
         'name',
         'currency',
         'last_status',
         'shipping_method_id',
         'shipping_cost',
         'vat_percentage',
-      'billing_company_name',
+        'billing_company_name',
         'billing_first_name',
         'billing_last_name',
         'billing_email',
         'billing_address1',
         'billing_address2',
         'billing_city',
-        'billing_country',
+        'billing_country_name',
         'billing_zip_code',
         'shipping_first_name',
         'shipping_last_name',
@@ -261,10 +271,11 @@ export default class Api {
         'shipping_city',
         'shipping_country_name',
         'shipping_zip_code',
-        'terms',
+        'terms'
+        
       ]),
     );
-    let response = this.sendRequest('POST', 'orders', {formData});
+    let response = this.sendRequest('PATCH', `orders/${ID}`, {formData});
     return response;
   }
 
@@ -448,7 +459,6 @@ export default class Api {
         let data = response;
         switch (response.status) {
           case 200: {
-            
             return data;
           }
           case 401:
@@ -470,5 +480,5 @@ export default class Api {
       .catch(function (error) {
         console.log('err', error);
       });
-  }
+  }s
 }

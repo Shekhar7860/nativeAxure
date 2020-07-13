@@ -73,7 +73,6 @@ function TabStackNavigator() {
       <Stack.Screen name="Users" component={UsersStackNavigator} />
       <Stack.Screen name="Orders" component={OrdersStackNavigator} />
       <Stack.Screen name="AddQuote" component={AddQuote} />
-      <Stack.Screen name="AddClient" component={AddClient} />
       <Stack.Screen name="Resource" component={ResourceHub} />
       <Stack.Screen name="Products" component={ProductStackNavigator} />
     </Stack.Navigator>
@@ -95,6 +94,7 @@ function ClientStackNavigator() {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="ClientStack" component={Clients} />
       <Stack.Screen name="AllClients" component={AllClients} />
+      <Stack.Screen name="AddClient" component={AddClient} />
       <Stack.Screen name="Client" component={Client} />
       <Stack.Screen name="EditClient" component={EditClient} />
     </Stack.Navigator>

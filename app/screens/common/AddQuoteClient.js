@@ -357,6 +357,7 @@ addQuoteItem = (product_id, qty, val, status) => {
           if (response.code === 200) {
             this.setState({showLoading: false});
             Toast.show(response.message)
+            this.props.navigation.navigate('AllQuotes')
           } else {
             if (response.validation_errors) {
               showErrorPopup(response.validation_errors);
@@ -485,7 +486,7 @@ addQuoteItem = (product_id, qty, val, status) => {
             </View>
 
             <View style={commonStyles.space}>
-              <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity style={{flexDirection: 'row'}}>
                 <Text style={styles.labelText}>Client</Text>
                 <View style={{width: '2%'}} />
                 <Text
@@ -497,7 +498,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                   {' '}
                   + Add New{' '}
                 </Text>
-              </View>
+              </TouchableOpacity>
               <InputBox
                 disabled
                 placeHolder=""
@@ -906,6 +907,8 @@ addQuoteItem = (product_id, qty, val, status) => {
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) => this.listItem(item, index)}
             />
+            {items.length !== 0 ?
+            <View>
             <View style={commonStyles.space}>
               <TouchableOpacity style={styles.quotesRow}>
                 <View style={styles.listWidthFull}>
@@ -958,9 +961,10 @@ addQuoteItem = (product_id, qty, val, status) => {
                 <View style={{width:'10%'}}/>
               </TouchableOpacity>
             </View>
+          </View>
+          : null}
             <View style={commonStyles.space}>
               <Text style={styles.topLabelText}>Add a product</Text>
-
             </View>
             <View style={commonStyles.space}>
             <SimpleDropdown

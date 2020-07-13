@@ -121,6 +121,9 @@ class Home extends PureComponent {
       case 0:
         this.props.navigation.navigate('Quotes');
         break;
+      case 1:
+       this.props.navigation.navigate('Orders');
+      break;
       case 2:
         this.props.navigation.navigate('Users');
         break;

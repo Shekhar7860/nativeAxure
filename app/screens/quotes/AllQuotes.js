@@ -35,9 +35,9 @@ class AllQuotes extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      acceptedItems: [1, 2, 3, 4],
+      acceptedItems: [],
       pendingItems: [],
-      rejectedItems: [1],
+      rejectedItems: [],
       showLoading: false,
     };
   }
@@ -47,12 +47,13 @@ class AllQuotes extends Component {
       if (this.props.quotes.items[i].status == 'Pending') {
         this.state.pendingItems.push(this.props.quotes.items[i]);
       } else if (this.props.quotes.items[i].status == 'Accepted') {
+        console.log('fired', this.props.quotes.items[i] )
         this.state.acceptedItems.push(this.props.quotes.items[i]);
       } else {
         this.state.rejectedItems.push(this.props.quotes.items[i]);
       }
     }
-    console.log('this', this.state.pendingItems);
+    console.log('this', this.state.acceptedItems);
     this.setState({showLoading: true});
     setTimeout(() => {
       this.setState({

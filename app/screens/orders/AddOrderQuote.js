@@ -94,12 +94,18 @@ class AddOrderQuote extends PureComponent {
           var id = this.props.route.params.orderData.id;
           // as input value does not show integer, so connverting to string
           this.setState({orderId : id.toString(), userOrderId : id, orderTitle : this.props.route.params.orderData.name, poPreference : this.props.route.params.orderData.po_reference, type : this.props.route.params.orderData.type, status : this.props.route.params.orderData.status,
-          client : this.props.route.params.orderData.client.name, mphId : this.props.route.params.orderData.mph_id, paymentTerm : this.props.route.params.orderData.payment_scheme.terms, vatPercentage: this.props.route.params.orderData.vat_percentage,
+           mphId : this.props.route.params.orderData.mph_id, vatPercentage: this.props.route.params.orderData.vat_percentage,
           quoteCurrency : this.props.route.params.orderData.currency, paymentVat : this.props.route.params.orderData.vat_percentage, shippingCost : this.props.route.params.orderData.shipping_cost, billingCompanyName :  this.props.route.params.orderData.billing_company_name, billingFirstName : this.props.route.params.orderData.billing_first_name,
           billingLastName : this.props.route.params.orderData.billing_last_name,   billingEmail : this.props.route.params.orderData.billing_email,   billingCountry : this.props.route.params.orderData.billing_country_name, billingCity : this.props.route.params.orderData.billing_city,   billingPostalCode : this.props.route.params.orderData.billing_zip_code, shippingCompanyName : this.props.route.params.orderData.shipping_company_name,
           shippingFirstName : this.props.route.params.orderData.shipping_first_name, billingAdd1 : this.props.route.params.orderData.billing_address1, billingAdd2 : this.props.route.params.orderData.billing_address2, shippingAdd1 : this.props.route.params.orderData.shipping_address1, shippingAdd2 : this.props.route.params.orderData.shipping_address2, terms : this.props.route.params.orderData.terms,
           shippingLastName : this.props.route.params.orderData.shipping_last_name,   shippingEmail : this.props.route.params.orderData.shipping_email,   shippingCountry : this.props.route.params.orderData.shipping_country_name, shippingCity : this.props.route.params.orderData.shipping_city,   shippingPostalCode : this.props.route.params.orderData.shipping_zip_code, shippingCompanyName : this.props.route.params.orderData.shipping_company_name
         })
+        if(this.props.route.params.orderData.client !== undefined){
+          this.setState({client : this.props.route.params.orderData.client.name})
+        }
+        if(this.props.route.params.orderData.payment_scheme !== undefined){
+          this.setState({paymentTerm : this.props.route.params.orderData.payment_scheme.terms})
+        }
         }
       }
       console.log('products', this.props.products)

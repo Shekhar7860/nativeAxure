@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  Linking
 } from 'react-native';
 import commonStyles from '../commonStyles/commonStyles';
 import BoldText from '../components/ClickableText';
@@ -59,6 +60,12 @@ openScreen = (screenName, props) => {
     screenName == 'Products'
   ) {
     props.navigation.navigate(screenName);
+  }
+  else if(screenName == "Resource Hub"){
+    Linking.openURL('https://resourcehub.mphgroup.uk')
+  }
+  else if(screenName == "Upload Orders"){
+    props.navigation.navigate('UploadOrders');
   } else if (screenName == 'Logout') {
     Alert.alert('', 'Are you sure to logout?', [
       {

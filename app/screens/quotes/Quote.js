@@ -29,6 +29,7 @@ import {
   Alert,
 } from 'react-native';
 import {getQuoteDetails} from '../../redux/reducers/quotes';
+import OverlaySpinner from '../../components/OverlaySpinner';
 import {connect} from 'react-redux';
 
 class Quote extends PureComponent {
@@ -38,6 +39,7 @@ class Quote extends PureComponent {
       items: [1, 2, 3, 4],
       quoteId: 0,
       quote: {},
+      showLoading : false
     };
   }
   componentDidMount = () => {
@@ -53,11 +55,12 @@ class Quote extends PureComponent {
   getQuoteDetails = (id) => {
     const {online} = this.props;
     if (online) {
+      this.setState({showLoading: true});
       this.props
         .getQuoteDetails(id)
         .then((response) => {
           console.group('response', response);
-          // this.setState({showLoading: false});
+           this.setState({showLoading: false});
           if (response.code === 200) {
             this.setState({quote: response.data});
           }
@@ -84,7 +87,7 @@ class Quote extends PureComponent {
   };
 
   render() {
-    const {items, quote} = this.state;
+    const {items, quote, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -185,6 +188,13 @@ class Quote extends PureComponent {
             </View>
           </View>
         </View>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }

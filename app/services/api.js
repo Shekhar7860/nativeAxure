@@ -273,7 +273,7 @@ export default class Api {
         'shipping_country_name',
         'shipping_zip_code',
         'terms'
-        
+
       ]),
     );
     let response = this.sendRequest('PATCH', `orders/${ID}`, {formData});
@@ -333,6 +333,11 @@ export default class Api {
 
   static getOrdersList() {
     let response = this.sendRequest('GET', 'orders');
+    return response;
+  }
+
+  static getUploadedOrdersList() {
+    let response = this.sendRequest('GET', 'uploaded-orders');
     return response;
   }
 

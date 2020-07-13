@@ -127,6 +127,11 @@ const commonStyles = ScaledSheet.create({
   topMargin: {
     marginTop: moderateScale(30),
   },
+  noRecordFound : {
+    marginTop : moderateScale(20),
+    textAlign : 'center',
+    fontSize : moderateScale(20)
+  }
 });
 
 export default commonStyles;

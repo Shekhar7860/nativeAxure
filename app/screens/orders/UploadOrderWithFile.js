@@ -31,20 +31,43 @@ import {
   FlatList,
   Dimensions,
 } from 'react-native';
+import {connect} from 'react-redux';
+import {addOrder} from '../../redux/reducers/orders';
+import OverlaySpinner from '../../components/OverlaySpinner';
+import SimpleDropdown from '../../components/SimpleDropdown';
 
-export default class UploadOrderWithFile extends PureComponent {
+ class UploadOrderWithFile extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2, 3, 4],
+      clientItems: [],
+      clientIds: [],
+      clientId : '',
     };
   }
   componentDidMount = () => {
-    //this.props.navigation.navigate('Cart')
+    console.log('reseller_id',this.props.userInfo.reseller_id)
+    const {online} = this.props;
+      if (online) {
+    for(var i = 0; i< this.props.clients.items.length; i++) {
+      console.log('skskks')
+     this.state.clientItems.push(this.props.clients.items[i].name);
+     this.state.clientIds.push(this.props.clients.items[i].id);
+    }
+  }
+    else {
+      Alert.alert('', 'No Internet Connection');
+    }
+    this.setState({clientItems: this.state.clientItems, clientIds: this.state.clientIds});
   };
 
+  selectData = (val, type) => {
+      this.setState({clientId: this.state.clientIds[val]});
+      this.setState({client: this.state.clientItems[val]});
+  };
   render() {
-    const {items} = this.state;
+    const {items, clientItems, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -67,11 +90,20 @@ export default class UploadOrderWithFile extends PureComponent {
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>CLIENT</Text>
-              <InputBox
+              {/* <InputBox
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({client: value})}
+              /> */}
+              <SimpleDropdown
+                placeHolder="Please select client"
+                style={commonStyles.dropDownStyle}
+                drowdownArray={clientItems}
+                dropDownWidth={'85%'}
+                imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+                isIconVisible={true}
+                onSelect={(value) => this.selectData(value, 'client')}
               />
             </View>
 
@@ -92,6 +124,13 @@ export default class UploadOrderWithFile extends PureComponent {
             </View>
           </View>
         </ScrollView>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -172,3 +211,15 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(10),
   },
 });
+
+const mapStateToProps = (state) => ({
+  userInfo: state.session.userInfo,
+  clients: state.clients.clientsList,
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  addOrder
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UploadOrderWithFile);

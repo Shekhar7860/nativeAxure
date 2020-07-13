@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import Header from '../../components/Header';
 import commonStyles from '../../commonStyles/commonStyles';
 import {
@@ -17,6 +17,8 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
+import {connect} from 'react-redux';
+import OverlaySpinner from '../../components/OverlaySpinner';
 import HR from '../../components/HR';
 import {
   View,
@@ -27,83 +29,55 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  Dimensions,
+  Alert,
 } from 'react-native';
 import {getProductsList} from '../../redux/reducers/products';
-import {connect} from 'react-redux';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
-import OverlaySpinner from '../../components/OverlaySpinner';
 
-class RecentProducts extends Component {
+class AllOrders extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      items: [1, 2],
+      items: [1, 2, 3, 4],
       showLoading: false,
     };
   }
   componentDidMount = () => {
-    const {online, products} = this.props;
+    const {online, orders} = this.props;
+    console.log('orders', orders);
     if (online) {
       this.setState({showLoading: true});
       setTimeout(() => {
         this.setState({
           showLoading: false
         });
-        let arr = products.items
-                .slice(Math.max(products.items.length - 5, 1))
-                .reverse();
-        this.setState({items:arr});
+        this.setState({items:orders.items});
       }, 2000);
-      // this.setState({showLoading: true});
-      // this.props
-      //   .getProductsList()
-      //   .then((response) => {
-      //     console.group('response', response);
-      //     this.setState({showLoading: false});
-      //     if (response.code === 200) {
-      //       let arr = response.data.items
-      //         .slice(Math.max(response.data.items.length - 5, 1))
-      //         .reverse(); // for showing last 5 elements of array
-      //       this.setState({items: arr});
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     this.setState({showLoading: false});
-      //     if (error.code === 'unauthorized') {
-      //       showErrorPopup(
-      //         "Couldn't validate those credentials.\nPlease try again",
-      //       );
-      //     } else {
-      //       showErrorPopup(
-      //         'There was an unexpected error.\nPlease wait a few minutes and try again.',
-      //       );
-      //     }
-      //   });
     } else {
       Alert.alert('', 'No Internet Connection');
     }
-  };
-
-  addQuote = () => {
-    this.props.navigation.navigate('AddQuote');
-  };
-
-  openQuote = () => {
-    this.props.navigation.navigate('Quote');
+    //this.props.navigation.navigate('Cart')
   };
 
   openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
+    this.props.navigation.navigate(screen, {orderData: param});
   };
 
   listItem = (item, index) => {
     return (
-      <TouchableOpacity style={styles.rowItem}>
+      <TouchableOpacity
+        style={styles.rowItem}
+        onPress={() => this.openScreen('AddOrderQuote', item)}>
         <View style={styles.bottomQuotesRow}>
-          <View style={styles.dotGreen} />
+          <View style={!item.is_active == 1 ? styles.dotRed : styles.dotGreen}  />
           <View style={{width: '5%'}} />
-          <View style={{width: '95%', justifyContent: 'center'}}>
+          <View style={{width: '50%', justifyContent: 'center'}}>
             <Text style={styles.labelText}>{item.name}</Text>
+          </View>
+          <View style={{width: '20%'}} />
+          <View style={{width: '25%'}}>
+            <Text style={styles.amountText}>£{item.grand_total}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -117,16 +91,11 @@ class RecentProducts extends Component {
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
-          title="PRODUCTS"
+          title="ORDERS"
         />
         <TouchableOpacity style={commonStyles.content}>
           <View style={styles.rowContent}>
-            <View style={{marginLeft: moderateScale(-20)}}>
-              <AddNewButtonGroup
-                color={APP_MAIN_GREEN}
-                onPress={this.addQuote}
-              />
-            </View>
+            <View style={{marginLeft: moderateScale(-20)}}></View>
             <View style={{marginRight: moderateScale(-10)}}>
               <ContainerSearch />
             </View>
@@ -134,24 +103,26 @@ class RecentProducts extends Component {
 
           <TouchableOpacity style={styles.quotesRow}>
             <View style={{width: '60%'}}>
-              <Text style={styles.recentText}>RECENT PRODUCTS</Text>
+              <Text style={styles.recentText}>ALL ORDERS</Text>
             </View>
             <View style={{width: '10%'}} />
-            <View style={{width: '30%'}}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => this.openScreen('AllProducts')}>
-                <Text style={styles.seeText}>SEE ALL</Text>
-              </TouchableOpacity>
-            </View>
+            <View style={{width: '30%'}}></View>
           </TouchableOpacity>
-          <FlatList
-            style={styles.parentFlatList}
-            data={items}
-            extraData={this.state}
-            keyExtractor={(item, index) => '' + index}
-            renderItem={({item, index}) => this.listItem(item, index)}
-          />
+          <ScrollView>
+            <View
+              style={{
+                height: Dimensions.get('window').height,
+                marginBottom: moderateScale(20),
+              }}>
+              <FlatList
+                style={styles.parentFlatList}
+                data={items}
+                extraData={this.state}
+                keyExtractor={(item, index) => '' + index}
+                renderItem={({item, index}) => this.listItem(item, index)}
+              />
+            </View>
+          </ScrollView>
         </TouchableOpacity>
         <OverlaySpinner
           cancelable
@@ -241,11 +212,11 @@ const styles = ScaledSheet.create({
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
-  products : state.products.productsList
+  orders : state.orders.ordersList
 });
 
 const mapDispatchToProps = {
   getProductsList,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecentProducts);
+export default connect(mapStateToProps, mapDispatchToProps)(AllOrders);

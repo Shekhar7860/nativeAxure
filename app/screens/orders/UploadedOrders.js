@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import Header from '../../components/Header';
 import commonStyles from '../../commonStyles/commonStyles';
 import {
@@ -17,6 +17,7 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
+import {connect} from 'react-redux';
 import HR from '../../components/HR';
 import {
   View,
@@ -28,24 +29,53 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
+import {getUploadedOrdersList} from '../../redux/reducers/uploadedOrders';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
+import OverlaySpinner from '../../components/OverlaySpinner';
 
-export default class UploadedOrders extends Component {
+ class UploadedOrders extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [1, 2],
+      showLoading : false
     };
   }
   componentDidMount = () => {
+    const {online} = this.props;
+
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .getUploadedOrdersList()
+        .then((response) => {
+         console.group('response', response);
+         if (response.code === 200) {
+          this.setState({showLoading: false});
+          this.setState({items: response.data.items});
+        }
+
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
     //this.props.navigation.navigate('Cart')
   };
 
-  addQuote = () => {
-    this.props.navigation.navigate('AddQuote');
-  };
-
-  openQuote = () => {
-    this.props.navigation.navigate('Quote');
+  openScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   listItem = (item, index) => {
@@ -66,7 +96,7 @@ export default class UploadedOrders extends Component {
     );
   };
   render() {
-    const {items} = this.state;
+    const {items, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -80,7 +110,7 @@ export default class UploadedOrders extends Component {
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
-                onPress={this.addQuote}
+                onPress={() => this.openScreen('UploadOrder')}
               />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
@@ -88,6 +118,7 @@ export default class UploadedOrders extends Component {
             </View>
           </View>
 
+          {items.length !==0 ? <>
           <TouchableOpacity style={styles.quotesRow}>
             <View style={{width: '70%'}}>
               <Text style={styles.recentText}>RECENT UPLOADED ORDERS</Text>
@@ -105,8 +136,18 @@ export default class UploadedOrders extends Component {
             extraData={this.state}
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) => this.listItem(item, index)}
-          />
+          /></>
+          : <><Text style={commonStyles.noRecordFound}>No Order Found </Text></>}
+
         </TouchableOpacity>
+
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -185,3 +226,12 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
 });
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  getUploadedOrdersList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UploadedOrders);

@@ -22,6 +22,7 @@ import Users from './screens/user/Users';
 import RecentOrders from './screens/orders/RecentOrders';
 import AddOrder from './screens/orders/AddOrder';
 import AllQuotes from './screens/quotes/AllQuotes';
+import AllOrders from './screens/orders/AllOrders';
 import AddQuote from './screens/quotes/AddQuote';
 import AllUsers from './screens/user/AllUsers';
 import RecentProducts from './screens/products/RecentProducts';
@@ -75,6 +76,16 @@ function TabStackNavigator() {
       <Stack.Screen name="AddQuote" component={AddQuote} />
       <Stack.Screen name="Resource" component={ResourceHub} />
       <Stack.Screen name="Products" component={ProductStackNavigator} />
+      <Stack.Screen name="UploadOrders" component={UploadOrdersStackNavigator} />
+    </Stack.Navigator>
+  );
+}
+
+function UploadOrdersStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="UploadOrderStack" component={UploadedOrders} />
+      <Stack.Screen name="UploadOrder" component={UploadOrderWithFile} />
     </Stack.Navigator>
   );
 }
@@ -129,6 +140,7 @@ function OrdersStackNavigator() {
       <Stack.Screen name="OrdersStack" component={Orders} />
       <Stack.Screen name="AddOrder" component={AddOrder} />
       <Stack.Screen name="AddOrderQuote" component={AddOrderQuote} />
+      <Stack.Screen name="AllOrders" component={AllOrders} />
     </Stack.Navigator>
   );
 }

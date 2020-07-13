@@ -44,30 +44,16 @@ class AllProducts extends Component {
     };
   }
   componentDidMount = () => {
-    const {online} = this.props;
+    const {online, products} = this.props;
+    console.log('productsss', products);
     if (online) {
       this.setState({showLoading: true});
-      this.props
-        .getProductsList()
-        .then((response) => {
-          console.group('response', response);
-          this.setState({showLoading: false});
-          if (response.code === 200) {
-            this.setState({items: response.data.items});
-          }
-        })
-        .catch((error) => {
-          this.setState({showLoading: false});
-          if (error.code === 'unauthorized') {
-            showErrorPopup(
-              "Couldn't validate those credentials.\nPlease try again",
-            );
-          } else {
-            showErrorPopup(
-              'There was an unexpected error.\nPlease wait a few minutes and try again.',
-            );
-          }
+      setTimeout(() => {
+        this.setState({
+          showLoading: false
         });
+        this.setState({items:products.items});
+      }, 2000);
     } else {
       Alert.alert('', 'No Internet Connection');
     }
@@ -222,6 +208,7 @@ const styles = ScaledSheet.create({
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
+  products : state.products.productsList
 });
 
 const mapDispatchToProps = {

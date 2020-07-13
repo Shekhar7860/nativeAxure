@@ -164,7 +164,7 @@ class Quotes extends Component {
           title="QUOTES"
         />
         <KeyboardAwareScrollView
-          contentContainerStyle={{...commonStyles.content, flex: 1}}>
+          contentContainerStyle={{...commonStyles.content}}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
@@ -243,6 +243,7 @@ const styles = ScaledSheet.create({
   },
   parentFlatList: {
     marginTop: moderateScale(10),
+    height : moderateScale(50)
   },
   rowItem: {
     height: moderateScale(30),

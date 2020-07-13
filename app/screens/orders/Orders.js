@@ -34,13 +34,14 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 
 class Orders extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: [1, 2, 3, 4],
+      items: [1,2,3],
       showLoading: false,
       shippedItems: [],
       acceptedItems: [],
@@ -116,7 +117,12 @@ class Orders extends Component {
               completedItemsTotal: completedSum,
               cancelledItemsTotal: cancelledSum,
             });
-            this.setState({items: response.data.items});
+            let arr = response.data.items
+              .slice(Math.max(response.data.items.length - 5, 1))
+              .reverse();
+              console.log('this is array', arr);
+           this.setState({items: arr});
+          //  this.setState({items: response.data.items});
           }
         })
         .catch((error) => {
@@ -152,14 +158,14 @@ class Orders extends Component {
     return (
       <TouchableOpacity style={styles.rowItem}>
         <View style={styles.bottomQuotesRow}>
-          <View style={index == 0 ? styles.dotBlue : styles.dotGreen} />
+          <View style={!item.is_active == 1 ? styles.dotRed : styles.dotGreen}  />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>Yantra Test Reseller</Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£1494.00</Text>
+            <Text style={styles.amountText}>£{item.grand_total}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -188,7 +194,7 @@ class Orders extends Component {
           rightImage={USER}
           title="Orders"
         />
-        <TouchableOpacity style={commonStyles.content}>
+        <TouchableOpacity style={{...commonStyles.content, flex : 1}}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
@@ -200,46 +206,61 @@ class Orders extends Component {
               <ContainerSearch />
             </View>
           </View>
-          <ScrollView>
-            <View style={{height: Dimensions.get('window').height}}>
+
+          <KeyboardAwareScrollView>
               <CardWithIcon
                 color={ORANGE_COLOR}
                 count={shippedItemsCount}
                 status={'Shipped'}
                 amount={shippedItemsTotal}
-                onPress={this.openQuote}
               />
               <CardWithIcon
                 color={APP_MAIN_GREEN}
                 count={acceptedItemsCount}
                 status={'Accepted'}
                 amount={acceptedItemsTotal}
-                onPress={this.onClickListen}
               />
               <CardWithIcon
                 color={CARD_DARK_BLUE}
                 count={partiallyShippedItemsCount}
                 status={'Partially Shipped'}
                 amount={partiallyShippedItemsTotal}
-                onPress={this.onClickListen}
               />
               <CardWithIcon
                 color={APP_MAIN_BLUE}
                 count={completedItemsCount}
                 status={'Completed'}
                 amount={completedItemsTotal}
-                onPress={this.onClickListen}
               />
               <CardWithIcon
                 color={APP_MAIN_COLOR}
                 count={cancelledItemsCount}
                 status={'Cancelled'}
                 amount={cancelledItemsTotal}
-                onPress={this.onClickListen}
               />
-            </View>
-          </ScrollView>
+              <TouchableOpacity style={styles.quotesRow}>
+                <View style={{width: '60%'}}>
+                  <Text style={styles.recentText}>RECENT ORDERS</Text>
+                </View>
+                <View style={{width: '10%'}} />
+                <View style={{width: '30%'}}>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.openScreen('AllOrders')}>
+                    <Text style={styles.seeText}>SEE ALL</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+              <FlatList
+                style={styles.parentFlatList}
+                data={items}
+                extraData={this.state}
+                keyExtractor={(item, index) => '' + index}
+                renderItem={({item, index}) => this.listItem(item, index)}
+              />
+          </KeyboardAwareScrollView>
         </TouchableOpacity>
+
         <OverlaySpinner
           cancelable
           visible={showLoading}
@@ -323,6 +344,12 @@ const styles = ScaledSheet.create({
     borderColor: '#e6e6e6',
     height: moderateScale(30),
     justifyContent: 'center',
+  },
+  quotesRow: {
+    flexDirection: 'row',
+    width: '100%',
+    marginHorizontal: moderateScale(10),
+    marginTop: moderateScale(10),
   },
 });
 

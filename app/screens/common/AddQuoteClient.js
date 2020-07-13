@@ -108,7 +108,11 @@ class AddQuoteClient extends PureComponent {
       this.setState({quoteData : this.props.route.params.quoteData})
       var id = this.props.route.params.quoteData.id;
       // as input value does not show integer, so connverting to string
-      this.setState({quoteId : id.toString(), userquoteId : id, quoteTitle : this.props.route.params.quoteData.name, poPreference : this.props.route.params.quoteData.po_reference, type : this.props.route.params.quoteData.type, status : this.props.route.params.quoteData.status,
+      console.log('id is this', id);
+      if(id !== undefined){
+        this.setState({quoteId : id.toString()});
+      }
+      this.setState({ userquoteId : id, quoteTitle : this.props.route.params.quoteData.name, poPreference : this.props.route.params.quoteData.po_reference, type : this.props.route.params.quoteData.type, status : this.props.route.params.quoteData.status,
       paymentCurrency : this.props.route.params.quoteData.currency, paymentVat : this.props.route.params.quoteData.vat_percentage, shippingCost : this.props.route.params.shipping_cost, billingCompanyName :  this.props.route.params.billing_company_name, billingFirstName : this.props.route.params.billing_first_name,
       billingLastName : this.props.route.params.billing_last_name,   billingEmail : this.props.route.params.billing_email,   billingCountry : this.props.route.params.billing_country,   billingCity : this.props.route.params.billing_city,   billingPostalCode : this.props.route.params.billing_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name,
       shippingFirstName : this.props.route.params.shipping_first_name, billingAdd1 : this.props.route.params.billing_add1, billingAdd2 : this.props.route.params.billing_add2, shippingAdd1 : this.props.route.params.shipping_add1, shippingAdd2 : this.props.route.params.shipping_add2,
@@ -354,8 +358,8 @@ addQuoteItem = (product_id, qty, val, status) => {
         )
         .then((response) => {
           console.log(response, 'update')
+          this.setState({showLoading: false});
           if (response.code === 200) {
-            this.setState({showLoading: false});
             Toast.show(response.message)
             this.props.navigation.navigate('AllQuotes')
           } else {

@@ -156,7 +156,7 @@ const Sidebar = (props) => {
   const isDrawerOpen = useIsDrawerOpen();
   const [USER_PROFILE_PIC, setProfilePic] = useState(userInfo.profile_pic);
   return (
-    <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
+    <SafeAreaView style={{flex : 1}}>
       <View style={styles.menuMargin}>
         <View style={styles.imageTextRow}>
           <View style={styles.columnStyle}>

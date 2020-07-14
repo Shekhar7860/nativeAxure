@@ -21,6 +21,8 @@ import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import InputBox from '../../components/InputBox';
 import HR from '../../components/HR';
+import OverlaySpinner from '../../components/OverlaySpinner';
+import {connect} from 'react-redux';
 import {
   View,
   Text,
@@ -31,25 +33,81 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
+  Alert
 } from 'react-native';
+import ButtonDefault from '../../components/ButtonDefault';
+import {addUSER} from '../../redux/reducers/users';
+import Toast from 'react-native-simple-toast';
+import {showErrorPopup} from '../../util/utils';
 
-export default class AddOrderQuote extends PureComponent {
+class UserDetail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      userData : {}
+      userData : {},
+      showLoading : false,
+      email : "",
+      firstName : "",
+      surName : ""
     };
   }
   componentDidMount = () => {
     if (this.props.route.params) {
-      console.log('here are params', this.props.route.params)
+      console.log('here are params', this.props.route.params);
+      if(this.props.route.params.userData !== undefined)
+      {
       this.setState({userData : this.props.route.params.userData})
+      }
     }
     //this.props.navigation.navigate('Cart')
   };
 
+  saveUser = () => {
+    const {online} = this.props;
+    const {
+      email, firstName, surName
+    } = this.state;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .addUSER(
+          email,
+          firstName,
+          surName     
+        )
+        .then((response) => {
+          console.log('ddd', response)
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            Toast.show(response.message)
+            this.props.navigation.navigate('AllUsers')
+          } else {
+            if (response.validation_errors) {
+              showErrorPopup(response.validation_errors);
+            } else {
+              showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  }
+
   render() {
-    const {items, userData} = this.state;
+    const {items, userData, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -285,8 +343,18 @@ export default class AddOrderQuote extends PureComponent {
                 </View>
               </ExpandCollapseLayout>
             </View>
+            <ButtonDefault onPress={() => this.saveUser('AddOrderQuote')}>
+              SAVE
+            </ButtonDefault>
           </View>
         </ScrollView>
+        <OverlaySpinner
+          cancelable
+          visible={showLoading}
+          color={WHITE}
+          textContent="Please wait..."
+          textStyle={{color: WHITE}}
+        />
       </SafeAreaView>
     );
   }
@@ -361,3 +429,13 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(10),
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+});
+
+const mapDispatchToProps = {
+  addUSER,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserDetail);

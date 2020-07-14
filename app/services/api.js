@@ -242,6 +242,19 @@ export default class Api {
     return response;
   }
 
+  static addUSER(userData = {}) {
+    const formData = clearQuery(
+      pick(userData, [
+        'email',
+        'first_name',
+        'last_name',
+      ]),
+    );
+    let response = this.sendRequest('POST', 'users', {formData});
+    return response;
+  }
+
+
   static updateOrder(ID, userData = {}) {
     console.log('this is orderId', ID)
     const formData = clearQuery(

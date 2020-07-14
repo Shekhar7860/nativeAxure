@@ -130,7 +130,9 @@ class HelpSteps extends PureComponent {
           dot={this.renderInactiveDot()}
           activeDot={this.renderActiveDot()}
           style={styles.wrapper}
+          paginationStyle={{ marginLeft : moderateScale(-160) }}
           showsButtons={false}>
+
           <ImageBackground
             resizeMode="cover"
             style={styles.image}
@@ -183,16 +185,16 @@ class HelpSteps extends PureComponent {
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginHorizontal: 0,
+    alignSelf : 'flex-start'
   },
   image: {
     flex: 1,
     width: '100%',
     height: '100%',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   BasescreenStyle: {
-    marginTop: isIphoneX ? -30 : 0,
+    marginTop: isIphoneX ? -30 : 0
   },
   buttonContainer: {
     width: 280,
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
     height: moderateScale(15),
     backgroundColor: APP_MAIN_COLOR,
     borderRadius: DOTS_WIDTH_HEIGHT / 2,
-    marginLeft: 5,
+    marginLeft: moderateScale(5),
     marginBottom: 80,
   },
   inactiveDotStyle: {
@@ -227,7 +229,7 @@ const styles = StyleSheet.create({
     height: DOTS_WIDTH_HEIGHT,
     backgroundColor: WHITE,
     borderRadius: DOTS_WIDTH_HEIGHT / 2,
-    marginLeft: 5,
+    marginLeft: moderateScale(5),
     marginBottom: 80,
   },
   buttonText: {
@@ -236,14 +238,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   labelTextStyle: {
-    fontSize: moderateScale(25),
+    fontSize: moderateScale(35),
     textAlign: 'center',
     color: WHITE,
+    fontWeight : 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+  textShadowOffset: {width: moderateScale(-1), height: moderateScale(1)},
+  textShadowRadius: moderateScale(10)
   },
   skipText: {
     textAlign: 'center',
     color: WHITE,
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(18),
   },
 });
 

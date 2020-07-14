@@ -65,8 +65,7 @@ const styles = ScaledSheet.create({
     borderBottomWidth: 0,
   },
   input: {
-    fontSize: moderateScale(14),
-    fontWeight: 'bold',
+    fontSize: moderateScale(14)
   },
   inputContainerStyle: {
     borderColor: LINE_COLOR,

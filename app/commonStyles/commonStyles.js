@@ -11,22 +11,15 @@ import {
   LINE_COLOR,
 } from '../constants/colors';
 
-const BADGE_WIDTH_HEIGHT = 8;
-const INPUT_BOX_HEIGHT = 40;
-const BUTTON_HEIGHT = 50;
-const USER_IMAGE_SIZE = 50;
+
 const ADD_NOTE_BTN = 40;
 const NOTES_TEXT_PADDING = 25;
-const YES_NO_BTN_MARGIN = 15;
-const PARENT_PADDING = 20;
-const USER_ROW_PADDING = 10;
-const ADD_NEW_APPOINTMENT_TEXT_SIZE = 12;
-const MENU_IMAGE_SIZE = 20;
-const BUTTON_GROUP_CONTAINER_HEIGHT = 42;
+
 
 const commonStyles = ScaledSheet.create({
   ketboardAvoidingContainer: {
     flex: 1,
+    backgroundColor : WHITE
   },
   appNmetextStyle: {
     textAlign: 'center',
@@ -131,6 +124,9 @@ const commonStyles = ScaledSheet.create({
     marginTop : moderateScale(20),
     textAlign : 'center',
     fontSize : moderateScale(20)
+  },
+  logoIcon :{
+    alignSelf : 'center'
   }
 });
 

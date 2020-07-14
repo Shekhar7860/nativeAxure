@@ -11,7 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR
 } from '../../constants/colors';
-import {USER} from '../../constants/Images';
+import {USER, leftArrow} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
@@ -137,8 +137,12 @@ class Quotes extends Component {
             <Text style={styles.labelText}>{item.name}</Text>
           </View>
           <View style={{width: '20%'}} />
-          <View style={{width: '25%'}}>
+          <View style={{width: '15%'}}>
             <Text style={styles.amountText}>£{item.grand_total}</Text>
+          </View>
+          <View style={{width: '5%'}} />
+          <View style={{width:'5%'}}>
+          <Image source={leftArrow} style={commonStyles.smallIcon}/>
           </View>
         </View>
       </TouchableOpacity>

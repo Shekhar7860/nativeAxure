@@ -20,6 +20,7 @@
 		39EF2F4A679068B2497394F8 /* libPods-NativeAxure-NativeAxureTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CF40680F33462554DFC4F63 /* libPods-NativeAxure-NativeAxureTests.a */; };
 		4B4CCEED4956F62BD72AC9BF /* libPods-NativeAxure-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 455725AB9EC98B5BA489BA63 /* libPods-NativeAxure-tvOSTests.a */; };
 		BDDC5D0253813A3732392863 /* libPods-NativeAxure.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90165809E908029FF43C310B /* libPods-NativeAxure.a */; };
+		EDA0A0E824BDBAF900A050F2 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EDA0A0E724BDBAF900A050F2 /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,7 +82,7 @@
 		D97A6F2587AE4AB385C84D58 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		EDE011A924A1E3D500DCF9E7 /* mphBeta.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = mphBeta.entitlements; path = NativeAxure/mphBeta.entitlements; sourceTree = "<group>"; };
+		EDA0A0E724BDBAF900A050F2 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		FCD6FFE24E574337826BBE9C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		FD3A46EC302D9E9C58507B1E /* Pods-NativeAxure.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NativeAxure.debug.xcconfig"; path = "Target Support Files/Pods-NativeAxure/Pods-NativeAxure.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -142,7 +143,6 @@
 		13B07FAE1A68108700A75B9A /* NativeAxure */ = {
 			isa = PBXGroup;
 			children = (
-				EDE011A924A1E3D500DCF9E7 /* mphBeta.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -177,6 +177,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				EDA0A0E724BDBAF900A050F2 /* Default-568h@2x.png */,
 				13B07FAE1A68108700A75B9A /* NativeAxure */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* NativeAxureTests */,
@@ -386,6 +387,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				EDA0A0E824BDBAF900A050F2 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -793,10 +795,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = NativeAxure/mphBeta.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ER8GT5ZEAJ;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -811,9 +811,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mphbetaa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.avonbeta;
 				PRODUCT_NAME = mphBeta;
-				PROVISIONING_PROFILE_SPECIFIER = MPH_Beta_Provisoning_Developement;
+				PROVISIONING_PROFILE_SPECIFIER = Avon_Devolpement_Provisoning;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -826,10 +826,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = NativeAxure/mphBeta.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ER8GT5ZEAJ;
 				INFOPLIST_FILE = NativeAxure/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -839,9 +837,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mphbetaa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.avonbeta;
 				PRODUCT_NAME = mphBeta;
-				PROVISIONING_PROFILE_SPECIFIER = MPH_Beta_Provisoning_Developement;
+				PROVISIONING_PROFILE_SPECIFIER = Avon_Devolpement_Provisoning;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

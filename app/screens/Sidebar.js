@@ -57,6 +57,7 @@ openScreen = (screenName, props) => {
     screenName == 'Quotes' ||
     screenName == 'Users' ||
     screenName == 'Orders' ||
+    screenName == 'Support Requests' ||
     screenName == 'Products'
   ) {
     props.navigation.navigate(screenName);
@@ -238,6 +239,7 @@ const styles = ScaledSheet.create({
     width: '70%',
   },
   profilePic: {
+    marginLeft : moderateScale(40),
     width: moderateScale(80),
     height: moderateScale(80),
     borderRadius: moderateScale(40),

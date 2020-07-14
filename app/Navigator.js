@@ -46,18 +46,11 @@ import Icon from 'react-native-vector-icons/AntDesign';
 // import Icon3 from 'react-native-vector-icons/MaterialIcons';
 // import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons';
 import commonStyles from './commonStyles/commonStyles';
-import {HOME, CART, CHAT, SETTING, MAIL} from './constants/Images';
+import {HOME, CART, CHAT, SETTING, MAIL, CALCULATOR} from './constants/Images';
 import {PINK_COLOR, WHITE} from './constants/colors';
 import Sidebar from './screens/Sidebar';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 
-function HomeScreen() {
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Home Screen</Text>
-    </View>
-  );
-}
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -77,6 +70,7 @@ function TabStackNavigator() {
       <Stack.Screen name="Resource" component={ResourceHub} />
       <Stack.Screen name="Products" component={ProductStackNavigator} />
       <Stack.Screen name="UploadOrders" component={UploadOrdersStackNavigator} />
+      <Stack.Screen name="Support Requests" component={RequestsStackNavigator} />
     </Stack.Navigator>
   );
 }
@@ -86,6 +80,14 @@ function UploadOrdersStackNavigator() {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="UploadOrderStack" component={UploadedOrders} />
       <Stack.Screen name="UploadOrder" component={UploadOrderWithFile} />
+    </Stack.Navigator>
+  );
+}
+
+function RequestsStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="RequestsStack" component={Requests} />
     </Stack.Navigator>
   );
 }
@@ -193,7 +195,7 @@ function TabNavigator() {
         name="TabHome"
         options={{
           tabBarIcon: ({color, size}) => (
-            <Icon name="home" type="ionicon" size={moderateScale(20)} />
+            <Image source={CALCULATOR} style={commonStyles.icon} />
           ),
         }}
         component={TabStackNavigator}

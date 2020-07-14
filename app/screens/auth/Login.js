@@ -13,7 +13,7 @@ import {
   Linking,
 } from 'react-native';
 import BaseScreen from '../../components/BaseScreen';
-import {rightArrow} from '../../constants/Images';
+import {rightArrow, LOGO} from '../../constants/Images';
 import ButtonWithImage from '../../components/ButtonWithImage';
 import {CheckBox} from 'react-native-elements';
 import ClickableText from '../../components/ClickableText';
@@ -25,8 +25,6 @@ import {
   APP_MAIN_COLOR_DISABLE,
   BLACK,
 } from '../../constants/colors';
-import {CommonActions} from '@react-navigation/native';
-
 import InputBox from '../../components/InputBox';
 import {APP_NAME} from '../../constants/const';
 import {loginUser} from '../../redux/reducers/session';
@@ -91,8 +89,6 @@ class Login extends Component {
               }
               Api.setAuthToken(response.data.auth_token);
               StoreDB.loggedInUserData(response.data);
-              const userId = response.data.id.toString();
-              const nickname = response.data.name;
               this.props.navigation.navigate('Home');
               this.props.navigation.reset({
                 routes: [{name: 'Home'}],
@@ -136,7 +132,7 @@ class Login extends Component {
         behavior={Platform.OS === 'android' ? null : 'padding'}
         enabled>
         <View style={styles.loginAppName}>
-          <Text style={commonStyles.appNmetextStyle}>{APP_NAME}</Text>
+          <Image source={LOGO} style={commonStyles.logoIcon}/>
           <Text style={styles.signInText}>Sign In</Text>
           <View style={styles.contentMargin}>
             <InputBox
@@ -144,7 +140,7 @@ class Login extends Component {
               onChangeText={(value) => this.setState({username: value})}
               boxStyle={commonStyles.inputBoxStyle}
               value={username}
-              placeHolder="Username/(Email Address)"
+              placeHolder="Username (Email Address)"
             />
             <InputBox
               secureTextEntry
@@ -212,7 +208,7 @@ const styles = ScaledSheet.create({
   signInText: {
     marginTop: moderateScale(10),
     textAlign: 'center',
-    fontSize: moderateScale(18),
+    fontSize: moderateScale(25),
     fontWeight: 'normal',
   },
   contentMargin: {

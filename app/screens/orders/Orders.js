@@ -12,6 +12,7 @@ import {
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
+  SEE_ALL_BUTTON_COLOR
 } from '../../constants/colors';
 import {USER} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -212,38 +213,48 @@ class Orders extends Component {
                 color={ORANGE_COLOR}
                 count={shippedItemsCount}
                 status={'Shipped'}
-                amount={shippedItemsTotal}
+                amount={'£' + ' ' + shippedItemsTotal}
+                amountStyle={styles.amountTextStyle}
+                statusStyle={styles.statusTextStyle}
               />
               <CardWithIcon
                 color={APP_MAIN_GREEN}
                 count={acceptedItemsCount}
                 status={'Accepted'}
-                amount={acceptedItemsTotal}
+                amount={ '£' + ' ' + acceptedItemsTotal}
+                amountStyle={styles.amountTextStyle}
+                statusStyle={styles.statusTextStyle}
               />
               <CardWithIcon
                 color={CARD_DARK_BLUE}
                 count={partiallyShippedItemsCount}
                 status={'Partially Shipped'}
-                amount={partiallyShippedItemsTotal}
+                amount={'£' + ' ' + partiallyShippedItemsTotal}
+                amountStyle={styles.amountTextStyle}
+                statusStyle={styles.statusTextStyle}
               />
               <CardWithIcon
                 color={APP_MAIN_BLUE}
                 count={completedItemsCount}
                 status={'Completed'}
-                amount={completedItemsTotal}
+                amount={'£' + ' ' +completedItemsTotal}
+                amountStyle={styles.amountTextStyle}
+                statusStyle={styles.statusTextStyle}
               />
               <CardWithIcon
                 color={APP_MAIN_COLOR}
                 count={cancelledItemsCount}
                 status={'Cancelled'}
-                amount={cancelledItemsTotal}
+                amount={'£' + ' ' + cancelledItemsTotal}
+                amountStyle={styles.amountTextStyle}
+                statusStyle={styles.statusTextStyle}
               />
               <TouchableOpacity style={styles.quotesRow}>
                 <View style={{width: '60%'}}>
                   <Text style={styles.recentText}>RECENT ORDERS</Text>
                 </View>
-                <View style={{width: '10%'}} />
-                <View style={{width: '30%'}}>
+                <View style={{width: '20%'}} />
+                <View style={{width: '20%'}}>
                   <TouchableOpacity
                     style={styles.button}
                     onPress={() => this.openScreen('AllOrders')}>
@@ -324,13 +335,13 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(10),
   },
   button: {
-    backgroundColor: DARK_BLUE,
-    width: moderateScale(90),
+    backgroundColor: SEE_ALL_BUTTON_COLOR,
+    width: moderateScale(55),
     height: moderateScale(25),
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: DARK_BLUE,
+    borderColor: SEE_ALL_BUTTON_COLOR,
     borderRadius: moderateScale(15),
   },
   labelText: {
@@ -351,6 +362,14 @@ const styles = ScaledSheet.create({
     marginHorizontal: moderateScale(10),
     marginTop: moderateScale(10),
   },
+  amountTextStyle : {
+    fontSize : moderateScale(20),
+    fontWeight : 'bold'
+  },
+  statusTextStyle : {
+    fontSize : moderateScale(13),
+    fontWeight : 'bold'
+  }
 });
 
 const mapStateToProps = (state) => ({

@@ -11,6 +11,7 @@ import {
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
+  SEE_ALL_BUTTON_COLOR
 } from '../../constants/colors';
 import {USER} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -26,7 +27,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  ScrollView,
+  ScrollView
 } from 'react-native';
 import {getProductsList} from '../../redux/reducers/products';
 import {connect} from 'react-redux';
@@ -136,8 +137,8 @@ class RecentProducts extends Component {
             <View style={{width: '60%'}}>
               <Text style={styles.recentText}>RECENT PRODUCTS</Text>
             </View>
-            <View style={{width: '10%'}} />
-            <View style={{width: '30%'}}>
+            <View style={{width: '20%'}} />
+            <View style={{width: '20%'}}>
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => this.openScreen('AllProducts')}>
@@ -216,13 +217,13 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(20),
   },
   button: {
-    backgroundColor: DARK_BLUE,
-    width: moderateScale(90),
+    backgroundColor: SEE_ALL_BUTTON_COLOR,
+    width: moderateScale(55),
     height: moderateScale(25),
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: DARK_BLUE,
+    borderColor: SEE_ALL_BUTTON_COLOR,
     borderRadius: moderateScale(15),
   },
   labelText: {

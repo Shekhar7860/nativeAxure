@@ -10,6 +10,7 @@ import {
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
+  SEE_ALL_BUTTON_COLOR
 } from '../../constants/colors';
 import {USER, leftArrow} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -145,6 +146,8 @@ class Users extends Component {
             amount={activeUsersCount + ' ' + 'Active'}
             amountStyle={styles.amountStyle}
             onPress={this.onClickListen}
+            amountStyle={styles.amountTextStyle}
+            statusStyle={styles.statusTextStyle}
           />
           <CardWithIcon
             color={APP_MAIN_COLOR}
@@ -153,14 +156,16 @@ class Users extends Component {
             amount={inActiveUsersCount + ' ' +  'InActive'}
             amountStyle={styles.amountStyle}
             onPress={this.onClickListen}
+            amountStyle={styles.amountTextStyle}
+            statusStyle={styles.statusTextStyle}
           />
 
           <TouchableOpacity style={styles.quotesRow}>
             <View style={{width: '60%'}}>
               <Text style={styles.recentText}>RECENT USERS</Text>
             </View>
-            <View style={{width: '10%'}} />
-            <View style={{width: '30%'}}>
+            <View style={{width: '20%'}} />
+            <View style={{width: '20%'}}>
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => this.openScreen('AllUsers')}>
@@ -239,13 +244,13 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(10),
   },
   button: {
-    backgroundColor: DARK_BLUE,
-    width: moderateScale(90),
+    backgroundColor: SEE_ALL_BUTTON_COLOR,
+    width: moderateScale(55),
     height: moderateScale(25),
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: DARK_BLUE,
+    borderColor: SEE_ALL_BUTTON_COLOR,
     borderRadius: moderateScale(15),
   },
   labelText: {
@@ -266,6 +271,14 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(15),
     color: WHITE,
   },
+  amountTextStyle : {
+    fontSize : moderateScale(20),
+    fontWeight : 'bold'
+  },
+  statusTextStyle : {
+    fontSize : moderateScale(13),
+    fontWeight : 'bold'
+  }
 });
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,

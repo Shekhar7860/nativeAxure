@@ -9,7 +9,8 @@ import {
   NOTIFICATION_COUNT_BG_COLOR,
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
-  APP_MAIN_COLOR
+  APP_MAIN_COLOR,
+  SEE_ALL_BUTTON_COLOR
 } from '../../constants/colors';
 import {USER, leftArrow} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -186,6 +187,8 @@ class Quotes extends Component {
             status={'Pending'}
             amount={'£' + ' ' + pendingItemsTotal}
             onPress={this.openQuote}
+            amountStyle={styles.amountTextStyle}
+            statusStyle={styles.statusTextStyle}
           />
           <CardWithIcon
             color={APP_MAIN_GREEN}
@@ -193,6 +196,8 @@ class Quotes extends Component {
             status={'Accepted'}
             amount={'£' + ' ' + acceptedItemsTotal}
             onPress={this.onClickListen}
+            amountStyle={styles.amountTextStyle}
+            statusStyle={styles.statusTextStyle}
           />
           <CardWithIcon
             color={APP_MAIN_COLOR}
@@ -200,14 +205,16 @@ class Quotes extends Component {
             status={'Rejected'}
             amount={'£' + ' ' + rejectedItemsTotal}
             onPress={this.onClickListen}
+            amountStyle={styles.amountTextStyle}
+            statusStyle={styles.statusTextStyle}
           />
 
           <TouchableOpacity style={styles.quotesRow}>
             <View style={{width: '60%'}}>
               <Text style={styles.recentText}>RECENT QUOTES</Text>
             </View>
-            <View style={{width: '10%'}} />
-            <View style={{width: '30%'}}>
+            <View style={{width: '20%'}} />
+            <View style={{width: '20%'}}>
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => this.openScreen('AllQuotes')}>
@@ -246,8 +253,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
   parentFlatList: {
-    marginTop: moderateScale(10),
-    height : moderateScale(50)
+    marginTop: moderateScale(10)
   },
   rowItem: {
     height: moderateScale(30),
@@ -294,13 +300,13 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(10),
   },
   button: {
-    backgroundColor: DARK_BLUE,
-    width: moderateScale(90),
+    backgroundColor: SEE_ALL_BUTTON_COLOR,
+    width: moderateScale(55),
     height: moderateScale(25),
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: DARK_BLUE,
+    borderColor: SEE_ALL_BUTTON_COLOR,
     borderRadius: moderateScale(15),
   },
   labelText: {
@@ -315,6 +321,14 @@ const styles = ScaledSheet.create({
     height: moderateScale(30),
     justifyContent: 'center',
   },
+  amountTextStyle : {
+    fontSize : moderateScale(20),
+    fontWeight : 'bold'
+  },
+  statusTextStyle : {
+    fontSize : moderateScale(13),
+    fontWeight : 'bold'
+  }
 });
 
 const mapStateToProps = (state) => ({

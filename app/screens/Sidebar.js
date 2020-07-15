@@ -16,12 +16,11 @@ import {
   WHITE,
   APP_MAIN_COLOR_DISABLE,
 } from '../constants/colors';
-import {PROFILE_PIC} from '../constants/Images';
+import {PROFILE_PIC,CROSS} from '../constants/Images';
 import {showErrorPopup} from '../util/utils';
 import Toast from 'react-native-simple-toast';
 import OverlaySpinner from '../components/OverlaySpinner';
 import {useIsDrawerOpen} from '@react-navigation/drawer';
-import Clients from './client/Clients';
 import StoreDB from '../storage/StoreDB';
 import {connect} from 'react-redux';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -102,6 +101,7 @@ openImagePicker = (setProfilePic, props) => {
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
+       // console.log('uri,', response)
         const source = {uri: response.uri};
         setProfilePic(response.uri);
 
@@ -157,6 +157,7 @@ const Sidebar = (props) => {
   const [USER_PROFILE_PIC, setProfilePic] = useState(userInfo.profile_pic);
   return (
     <SafeAreaView style={{flex : 1}}>
+      <Image source={CROSS} style={{...commonStyles.icon, ...styles.crossImage}} />
       <View style={styles.menuMargin}>
         <View style={styles.imageTextRow}>
           <View style={styles.columnStyle}>
@@ -166,6 +167,7 @@ const Sidebar = (props) => {
           <View style={{width: '0%'}} />
           {/* showing profile only when drawe is open*/}
           {isDrawerOpen ? (
+            <>
             <TouchableOpacity
               onPress={() => openImagePicker(setProfilePic, props)}>
               {USER_PROFILE_PIC ? (
@@ -177,10 +179,11 @@ const Sidebar = (props) => {
                 <Image source={PROFILE_PIC} style={styles.profilePic} />
               )}
             </TouchableOpacity>
+            </>
           ) : null}
         </View>
         <FlatList
-          style={styles.patientFlatList}
+          style={styles.parentFlatList}
           showsVerticalScrollIndicator={false}
           data={ITEMS}
           keyExtractor={(item, index) => '' + index}
@@ -208,6 +211,12 @@ const styles = ScaledSheet.create({
     fontWeight: 'bold',
     fontSize: moderateScale(20),
   },
+  crossImage : {
+   alignSelf : 'flex-end',
+   marginRight : moderateScale(10),
+   marginTop : moderateScale(30),
+   tintColor : "#bdc3c7"
+  },
   partnerText: {
     color: WHITE,
     fontWeight: 'normal',
@@ -221,7 +230,7 @@ const styles = ScaledSheet.create({
     fontWeight: 'normal',
   },
   menuMargin: {
-    marginTop: moderateScale(50),
+    marginTop: moderateScale(20),
   },
   rowItem: {
     marginHorizontal: moderateScale(20),
@@ -231,8 +240,8 @@ const styles = ScaledSheet.create({
     color: WHITE,
     fontSize: moderateScale(15),
   },
-  patientFlatList: {
-    marginTop: moderateScale(10),
+  parentFlatList: {
+    marginTop: moderateScale(30),
   },
   columnStyle: {
     flexDirection: 'column',

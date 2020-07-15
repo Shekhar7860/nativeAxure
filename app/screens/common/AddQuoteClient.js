@@ -19,6 +19,7 @@ import {
   DRAWER_MENU,
   CROSS,
   rightArrow,
+  PRINTER
 } from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
@@ -413,6 +414,14 @@ addQuoteItem = (product_id, qty, val, status) => {
                 marginTop: moderateScale(2),
               }}
             />
+            <TouchableImage
+              image={PRINTER}
+              imageStyle={{
+                ...commonStyles.icon,
+                marginLeft: moderateScale(-18),
+                marginTop: moderateScale(2),
+              }}
+            />
             <View style={{marginRight: moderateScale(-10)}}>
               <ContainerSearch />
             </View>
@@ -467,7 +476,7 @@ addQuoteItem = (product_id, qty, val, status) => {
             </View>
 
             <View style={commonStyles.space}>
-              <Text style={styles.labelText}>PO Preference</Text>
+              <Text style={styles.labelText}>PO Reference</Text>
               <InputBox
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}

@@ -28,3 +28,4 @@ export const CHAT_PIC = require('../images/profile-pic.png');
 export const leftArrow = require('../images/left-chevron.png');
 export const LOGO = require('../images/appLogo.png');
 export const CALCULATOR= require('../images/calculator.png');
+export const PRINTER= require('../images/interface.png');

@@ -87,7 +87,7 @@ class Header extends PureComponent {
       Platform.OS === 'android' ? {paddingTop: moderateScale(20)} : {};
     return (
       <SafeArea style={[styles.container, paddingTop]}>
-        <View>
+        <View style={{ overflow: 'hidden', paddingBottom: 5}}>
           <View style={styles.header}>
             <View style={styles.leftView}>
               {isShowDrawer && (
@@ -129,6 +129,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'transparent',
+    borderBottomWidth : 0,
+    borderTopColor : "white",
+    backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity:  0.4,
+        shadowRadius: 3,
+        elevation: 5,
   },
   leftView: {
     flex: 1,

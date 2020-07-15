@@ -72,6 +72,10 @@ const commonStyles = ScaledSheet.create({
     width: moderateScale(10),
     height: moderateScale(10),
   },
+  smallMailIcon : {
+    width: moderateScale(20),
+    height: moderateScale(20)
+  },
   largeIcon: {
     width: moderateScale(56),
     height: moderateScale(57),

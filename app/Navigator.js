@@ -231,7 +231,7 @@ function TabNavigator() {
       <Tab.Screen
         options={{
           tabBarIcon: ({color, size}) => (
-            <Image source={MAIL} style={commonStyles.icon} />
+            <Image source={MAIL} style={commonStyles.smallMailIcon} />
           ),
         }}
         name="TabHome5"

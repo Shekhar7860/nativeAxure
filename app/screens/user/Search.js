@@ -2,9 +2,8 @@ import React, {PureComponent} from 'react';
 import Header from '../../components/Header';
 import commonStyles from '../../commonStyles/commonStyles';
 import {
-  APP_LIGHT_BLUE_COLOR,
-  SEMI_TRANSPARENT,
-  NOTIFICATION_COUNT_BG_COLOR,
+  LIGHT_GREY,
+  SEARCH_TEXT_TRANSPARENT
 } from '../../constants/colors';
 import {CROSS, SEARCH} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -39,7 +38,7 @@ const styles = ScaledSheet.create({
     marginHorizontal: moderateScale(20),
   },
   subHeader: {
-    color: NOTIFICATION_COUNT_BG_COLOR,
+    color: SEARCH_TEXT_TRANSPARENT,
   },
   row: {
     flexDirection: 'row',

@@ -31,3 +31,5 @@ export const CARD_DARK_BLUE = '#130f40';
 export const FOREST_COLOR = '#0a3d62';
 export const BORDER_COLOR = '#b2bec3';
 export const DARK_TEXT_COLOR = '#636e72';
+export const SEARCH_TEXT_TRANSPARENT="#a5b1c2"
+export const SEE_ALL_BUTTON_COLOR = "#001935";

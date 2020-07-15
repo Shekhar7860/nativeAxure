@@ -12,13 +12,13 @@ class CardWithIcon extends PureComponent {
 		super(props);
 	}
 	render() {
-		const {color, count, status, amount, amountStyle} = this.props;
+		const {color, count, status, amount, amountStyle, statusStyle} = this.props;
 		return (
 			<TouchableOpacity>
 				<TouchableOpacity
 					style={{...styles.card, backgroundColor: color, borderColor: color}}
 					onPress={this.props.onPress}>
-					<Text style={styles.text}>
+					<Text style={[styles.text, statusStyle]} >
 						{count} {status}
 					</Text>
 					<Image
@@ -48,8 +48,7 @@ const styles = ScaledSheet.create({
 	},
 	text: {
 		margin: moderateScale(10),
-		color: WHITE,
-		fontSize: moderateScale(11),
+		color: WHITE
 	},
 	imageStyle: {
 		alignSelf: 'flex-end',

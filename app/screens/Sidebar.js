@@ -16,7 +16,7 @@ import {
   WHITE,
   APP_MAIN_COLOR_DISABLE,
 } from '../constants/colors';
-import {PROFILE_PIC,CROSS} from '../constants/Images';
+import {PROFILE_PIC,CROSS, CROSS2} from '../constants/Images';
 import {showErrorPopup} from '../util/utils';
 import Toast from 'react-native-simple-toast';
 import OverlaySpinner from '../components/OverlaySpinner';
@@ -157,7 +157,7 @@ const Sidebar = (props) => {
   const [USER_PROFILE_PIC, setProfilePic] = useState(userInfo.profile_pic);
   return (
     <SafeAreaView style={{flex : 1}}>
-      <Image source={CROSS} style={{...commonStyles.icon, ...styles.crossImage}} />
+      <Image source={CROSS2} style={{...commonStyles.icon, ...styles.crossImage}} />
       <View style={styles.menuMargin}>
         <View style={styles.imageTextRow}>
           <View style={styles.columnStyle}>
@@ -214,8 +214,7 @@ const styles = ScaledSheet.create({
   crossImage : {
    alignSelf : 'flex-end',
    marginRight : moderateScale(10),
-   marginTop : moderateScale(30),
-   tintColor : "#bdc3c7"
+   marginTop : moderateScale(30)
   },
   partnerText: {
     color: WHITE,

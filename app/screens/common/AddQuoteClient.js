@@ -19,7 +19,8 @@ import {
   DRAWER_MENU,
   CROSS,
   rightArrow,
-  PRINTER
+  PRINTER,
+  LISTINGICON
 } from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
@@ -406,7 +407,7 @@ addQuoteItem = (product_id, qty, val, status) => {
               <AddNewButtonGroup color={APP_MAIN_GREEN} />
             </View>
             <TouchableImage
-              image={DRAWER_MENU}
+              image={LISTINGICON}
               onPress={() => this.openScreen('AllQuotes')}
               imageStyle={{
                 ...commonStyles.icon,

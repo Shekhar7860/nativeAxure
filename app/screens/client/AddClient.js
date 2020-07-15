@@ -102,6 +102,8 @@ class AddClient extends PureComponent {
     };
   }
   componentDidMount = () => {
+    const {userInfo} = this.props;
+    console.log('userinfo', userInfo)
     //this.props.navigation.navigate('Cart')
   };
 
@@ -157,7 +159,7 @@ class AddClient extends PureComponent {
       website,
       note
     } = this.state;
-    const {online} = this.props;
+    const {online, userInfo} = this.props;
 if(clientname && first3letters && email){
   if(isEmailValid(email) && isEmailValid(contactEmail)){
     if (online) {
@@ -212,8 +214,8 @@ if(clientname && first3letters && email){
       tradeRefBankerAddress,
       tradeRefBankerAccountNumber,
       website,
-      note
-          
+      note,
+      userInfo.reseller_id
         )
         .then((response) => {
           console.log('ddd', response)
@@ -1019,6 +1021,7 @@ const styles = ScaledSheet.create({
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
+  userInfo: state.session.userInfo,
 });
 
 const mapDispatchToProps = {

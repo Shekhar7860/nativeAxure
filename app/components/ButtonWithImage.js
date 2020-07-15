@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {PureComponent} from 'react';
-import {rightArrow} from '../constants/Images';
+import {rightArrow, ARROW} from '../constants/Images';
 import {StyleSheet, View, TouchableOpacity, Image, Text} from 'react-native';
 import BoldText from './BoldText';
 import {
@@ -9,6 +9,7 @@ import {
   APP_MAIN_COLOR,
   APP_MAIN_COLOR_DISABLE,
 } from '../constants/colors';
+import { moderateScale } from 'react-native-size-matters';
 const BUTTON_HEIGHT = 35;
 const BUTTON_RADIUS = 15;
 const BUTTON_TEXT_SIZE = 14;
@@ -41,7 +42,7 @@ class ButtonWithImage extends PureComponent {
           <View style={styles.viewStyle}>
             {isShowRightIcon && (
               <Image
-                source={rightImage}
+                source={ARROW}
                 style={[styles.buttonImage, rightImageStyle]}
               />
             )}
@@ -97,9 +98,9 @@ const styles = StyleSheet.create({
     right: 0,
   },
   buttonImage: {
-    width: BUTTON_TEXT_SIZE,
-    height: BUTTON_TEXT_SIZE,
-    marginRight: 10,
+    width: moderateScale(20),
+    height: moderateScale(20),
+    marginRight: moderateScale(10),
     tintColor: WHITE,
   },
 });

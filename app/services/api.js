@@ -205,7 +205,8 @@ export default class Api {
         'trade_reference_banker_address',
         'trade_reference_banker_account_no',
         'website',
-        'note'
+        'note',
+        'reseller_id'
       ]),
     );
     let response = this.sendRequest('POST', 'clients', {formData});
@@ -310,7 +311,7 @@ export default class Api {
   }
 
   static getUsersList() {
-    let response = this.sendRequest('GET', 'users');
+    let response = this.sendRequest('GET', 'users?force_all_data=yes');
     return response;
   }
 
@@ -325,7 +326,7 @@ export default class Api {
   }
 
   static getQuotesList() {
-    let response = this.sendRequest('GET', 'quotes');
+    let response = this.sendRequest('GET', 'quotes?force_all_data=yes');
     return response;
   }
 
@@ -340,12 +341,12 @@ export default class Api {
   }
 
   static getProductsList() {
-    let response = this.sendRequest('GET', 'products');
+    let response = this.sendRequest('GET', 'products?force_all_data=yes');
     return response;
   }
 
   static getOrdersList() {
-    let response = this.sendRequest('GET', 'orders');
+    let response = this.sendRequest('GET', 'orders?force_all_data=yes');
     return response;
   }
 

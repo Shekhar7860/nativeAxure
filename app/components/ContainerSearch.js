@@ -14,7 +14,7 @@ const ContainerSearch = (props) => {
 				<TouchableImage
 					image={SEARCH}
 					imageStyle={styles.icon}
-					onPress={() => this.imageFunction(rightImage)}
+					
 				/>
 			</TouchableOpacity>
 		</View>

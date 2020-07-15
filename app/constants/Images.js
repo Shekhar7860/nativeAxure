@@ -29,3 +29,6 @@ export const leftArrow = require('../images/left-chevron.png');
 export const LOGO = require('../images/appLogo.png');
 export const CALCULATOR= require('../images/calculator.png');
 export const PRINTER= require('../images/interface.png');
+export const CROSS2= require('../images/cross72.png');
+export const LISTINGICON= require('../images/listing72.png');
+export const ARROW= require('../images/aro.png');

@@ -87,7 +87,8 @@ trade_reference_banker_name,
 trade_reference_banker_address,
 trade_reference_banker_account_no,
 website,
-note
+note,
+reseller_id
 ) => {
   
   return (dispatch) => {
@@ -140,7 +141,8 @@ note
       trade_reference_banker_address,
       trade_reference_banker_account_no,
       website,
-      note
+      note,
+      reseller_id
     }).then((response) => {
       if (response.code === 200) {
         if (response.data) {

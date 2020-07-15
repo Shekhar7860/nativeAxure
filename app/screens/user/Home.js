@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import Header from '../../components/Header';
+import HeaderWithLogo from '../../components/HeaderWithLogo';
 import TouchableImage from '../../components/TouchableImage';
 import commonStyles from '../../commonStyles/commonStyles';
 import {
@@ -151,7 +151,7 @@ class Home extends PureComponent {
     const {imagesList, showLoading} = this.state;
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
-        <Header
+        <HeaderWithLogo
           navigation={this.props.navigation}
           title="MPH GROUP"
           rightImage={SEARCH}
@@ -185,7 +185,7 @@ const styles = ScaledSheet.create({
     marginRight: moderateScale(-20),
   },
   image: {
-    height: moderateScale(500),
+    height: moderateScale(670),
     width: moderateScale(310),
   },
 });

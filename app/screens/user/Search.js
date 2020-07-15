@@ -5,7 +5,7 @@ import {
   LIGHT_GREY,
   SEARCH_TEXT_TRANSPARENT
 } from '../../constants/colors';
-import {CROSS, SEARCH} from '../../constants/Images';
+import {CROSS, SEARCH, CROSS2} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import TouchableImage from '../../components/TouchableImage';
 import {View, Text, Button, SafeAreaView, Image} from 'react-native';
@@ -19,7 +19,7 @@ export default class Search extends PureComponent {
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
         <Header
           navigation={this.props.navigation}
-          rightImage={CROSS}
+          rightImage={CROSS2}
           title="SEARCH"
         />
         <View style={styles.row}>

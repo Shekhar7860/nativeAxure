@@ -47,7 +47,7 @@ class AllQuotes extends Component {
       if (this.props.quotes.items[i].status == 'Pending') {
         this.state.pendingItems.push(this.props.quotes.items[i]);
       } else if (this.props.quotes.items[i].status == 'Accepted') {
-        console.log('fired', this.props.quotes.items[i] )
+        // console.log('fired', this.props.quotes.items[i] )
         this.state.acceptedItems.push(this.props.quotes.items[i]);
       } else {
         this.state.rejectedItems.push(this.props.quotes.items[i]);
@@ -85,7 +85,7 @@ class AllQuotes extends Component {
           />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>{item.billing_company_name}</Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>

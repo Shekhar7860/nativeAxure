@@ -233,14 +233,14 @@ const styles = ScaledSheet.create({
   },
   rowItem: {
     marginHorizontal: moderateScale(20),
-    marginBottom: moderateScale(15),
+    marginBottom: moderateScale(25),
   },
   itemText: {
     color: WHITE,
     fontSize: moderateScale(15),
   },
   parentFlatList: {
-    marginTop: moderateScale(30),
+    marginTop: moderateScale(40),
   },
   columnStyle: {
     flexDirection: 'column',

@@ -19,7 +19,8 @@ import {
   FlatList,
   BackHandler,
   Linking,
-  Alert
+  Alert,
+  Dimensions
 } from 'react-native';
 import BaseScreen from '../../components/BaseScreen';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -185,8 +186,8 @@ const styles = ScaledSheet.create({
     marginRight: moderateScale(-20),
   },
   image: {
-    height: moderateScale(670),
-    width: moderateScale(310),
+    height: Dimensions.get('window').height - moderateScale(90),
+    width: Dimensions.get('window').width - moderateScale(60),
   },
 });
 

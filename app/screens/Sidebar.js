@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
-  Linking
+  Linking,
+  Dimensions
 } from 'react-native';
 import commonStyles from '../commonStyles/commonStyles';
 import BoldText from '../components/ClickableText';
@@ -16,6 +17,7 @@ import {
   WHITE,
   APP_MAIN_COLOR_DISABLE,
 } from '../constants/colors';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {PROFILE_PIC,CROSS, CROSS2} from '../constants/Images';
 import {showErrorPopup} from '../util/utils';
 import Toast from 'react-native-simple-toast';
@@ -27,6 +29,7 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import ImagePicker from 'react-native-image-picker';
 import {updateProfilePic} from '../redux/reducers/session';
 import {DEFAULT_IMG_URL} from '../constants/const';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const ITEMS = [
   {name: 'Profile'},
@@ -118,11 +121,13 @@ openImagePicker = (setProfilePic, props) => {
 
 getRowItem = (item, index, props) => {
   return (
+    <>
     <TouchableOpacity
       style={styles.rowItem}
       onPress={() => openScreen(item.name, props)}>
       <Text style={styles.itemText}>{item.name}</Text>
     </TouchableOpacity>
+    </>
   );
 };
 const Sidebar = (props) => {
@@ -157,6 +162,7 @@ const Sidebar = (props) => {
   const [USER_PROFILE_PIC, setProfilePic] = useState(userInfo.profile_pic);
   return (
     <SafeAreaView style={{flex : 1}}>
+       
       <Image source={CROSS2} style={{...commonStyles.icon, ...styles.crossImage}} />
       <View style={styles.menuMargin}>
         <View style={styles.imageTextRow}>
@@ -182,14 +188,16 @@ const Sidebar = (props) => {
             </>
           ) : null}
         </View>
+        </View>
+        <KeyboardAwareScrollView>
         <FlatList
           style={styles.parentFlatList}
-          showsVerticalScrollIndicator={false}
           data={ITEMS}
           keyExtractor={(item, index) => '' + index}
           renderItem={({item, index}) => getRowItem(item, index, props)}
         />
-      </View>
+        </KeyboardAwareScrollView>
+      
       <OverlaySpinner
         cancelable
         visible={SHOW_LOADING}
@@ -240,7 +248,7 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(15),
   },
   parentFlatList: {
-    marginTop: moderateScale(40),
+    marginTop: moderateScale(40)
   },
   columnStyle: {
     flexDirection: 'column',

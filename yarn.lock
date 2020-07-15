@@ -5860,11 +5860,6 @@ react-native-fast-image@7.0.2:
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-7.0.2.tgz#e06b21f42f4a9786eaa86f3db35d919070fb8403"
   integrity sha512-MfuzJbC0RjYobR2gFCdqe1I7jvNOCfDkjQ7VGOHXniqjohhULMkcWNBE9Umovi9Dx93lJ6t5utcE2wf/09zvlg==
 
-react-native-freshchat-sdk@^2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/react-native-freshchat-sdk/-/react-native-freshchat-sdk-2.6.1.tgz#5afc574126c3368d646ba96d6eddc8c868a7345a"
-  integrity sha512-irbC3V06it3Ye3zx+GQKAotUcpLVpI5UhRkIjn1IZJ/FIWJEeVnRzybVobYACx+/tuCTeaecvc27a7Lg5DkmIQ==
-
 react-native-gesture-handler@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.6.1.tgz#678e2dce250ed66e93af409759be22cd6375dd17"

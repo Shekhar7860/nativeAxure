@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {
   WHITE,
@@ -135,7 +135,7 @@ const commonStyles = ScaledSheet.create({
   },
   smallLogoIcon :{
     alignSelf : 'center',
-    width : '60%',
+    width : Dimensions.get('window').width - moderateScale(110),
     height : 50
     
   }

@@ -11,6 +11,7 @@ import {
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
+  SEE_ALL_BUTTON_COLOR
 } from '../../constants/colors';
 import {USER} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -123,8 +124,8 @@ import OverlaySpinner from '../../components/OverlaySpinner';
             <View style={{width: '70%'}}>
               <Text style={styles.recentText}>RECENT UPLOADED ORDERS</Text>
             </View>
-            <View style={{width: '3%'}} />
-            <View style={{width: '27%'}}>
+            <View style={{width: '7%'}} />
+            <View style={{width: '31%'}}>
               <TouchableOpacity style={styles.button}>
                 <Text style={styles.seeText}>SEE ALL</Text>
               </TouchableOpacity>
@@ -204,13 +205,13 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(20),
   },
   button: {
-    backgroundColor: DARK_BLUE,
-    width: moderateScale(90),
+    backgroundColor: SEE_ALL_BUTTON_COLOR,
+    width: moderateScale(55),
     height: moderateScale(25),
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: DARK_BLUE,
+    borderColor: SEE_ALL_BUTTON_COLOR,
     borderRadius: moderateScale(15),
   },
   labelText: {

@@ -2,8 +2,11 @@
 
 import React, {PureComponent} from 'react';
 
-import {StyleSheet, View, Platform, Image} from 'react-native';
+import {StyleSheet, View, Platform, Image, StatusBar, Dimensions} from 'react-native';
 import { BACK, LOGO} from '../constants/Images';
+import {
+  WHITE
+} from '../constants/colors';
 import SafeArea from './SafeArea';
 import SubHeader from './SubHeader';
 import TouchableImage from './TouchableImage';
@@ -85,9 +88,10 @@ class HeaderWithLogo extends PureComponent {
     } = this.props;
     const statusBarHeight = this.getStatusBarHeight();
     const paddingTop =
-      Platform.OS === 'android' ? {paddingTop: moderateScale(20)} : {};
+      Platform.OS === 'android' ? {paddingTop: moderateScale(0)} : {};
     return (
       <SafeArea style={[styles.container, paddingTop]}>
+        <StatusBar backgroundColor={WHITE} barStyle="dark-content"/>
         <View style={{ overflow: 'hidden', paddingBottom: 5}}>
           <View style={styles.header}>
             <View style={styles.leftView}>

@@ -32,3 +32,4 @@ export const PRINTER= require('../images/interface.png');
 export const CROSS2= require('../images/cross72.png');
 export const LISTINGICON= require('../images/listing72.png');
 export const ARROW= require('../images/aro.png');
+export const HOMELOGO= require('../images/homeLogo.png');

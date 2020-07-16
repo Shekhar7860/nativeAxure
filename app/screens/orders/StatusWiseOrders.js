@@ -6,6 +6,7 @@ import {
   SEMI_TRANSPARENT,
   WHITE,
   DARK_BLUE,
+  ORANGE_COLOR,
   NOTIFICATION_COUNT_BG_COLOR,
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
@@ -31,58 +32,54 @@ import {
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
 
-class AllQuotes extends Component {
+class StatusWiseOrders extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      acceptedItems: [],
-      pendingItems: [],
-      rejectedItems: [],
+      items : [],
       showLoading: false,
+      status : ""
     };
   }
   componentDidMount = () => {
-    console.group('prii', this.props.quotes);
-    for (var i = 0; i < this.props.quotes.items.length; i++) {
-      if (this.props.quotes.items[i].status == 'Pending') {
-        this.state.pendingItems.push(this.props.quotes.items[i]);
-      } else if (this.props.quotes.items[i].status == 'Accepted') {
-        // console.log('fired', this.props.quotes.items[i] )
-        this.state.acceptedItems.push(this.props.quotes.items[i]);
-      } else {
-        this.state.rejectedItems.push(this.props.quotes.items[i]);
+    if (this.props.route.params) {
+        console.log('pareama', this.props.route.params)
+        this.setState({items : this.props.route.params.orderStatusData.list, status : this.props.route.params.orderStatusData.status})
       }
-    }
-    console.log('this', this.state.acceptedItems);
-    this.setState({showLoading: true});
-    setTimeout(() => {
-      this.setState({
-        showLoading: false,
-        pendingItems: this.state.pendingItems,
-        acceptedItems: this.state.acceptedItems,
-        rejectedItems: this.state.rejectedItems,
-      });
-    }, 2000);
-    // this.props.navigation.navigate('Cart')
   };
 
   openScreen = (screen, param) => {
     this.props.navigation.navigate(screen, {clientData: param});
   };
 
-  listItem = (item, index, status) => {
+  dotStyle = (status) => {
+    let style = styles.dotRed
+    switch(status) {
+      case "Shipped":
+        style = styles.dotOrange;
+        break;
+      case "Accepted":
+        style = styles.dotGreen;
+        break;
+      case "Partially_Shipped":
+          style = styles.dotDarkblue;
+          break;
+      case "Completed":
+       style = styles.dotLightBlue;
+          break;
+      default:
+        style = styles.dotRed;
+        // code block
+    } 
+    return style
+  }
+
+  listItem = (item) => {
+      console.log('status', item.status)
     return (
       <TouchableOpacity style={styles.rowItem} onPress={() => this.openScreen('Quote', item)}>
         <View style={styles.bottomQuotesRow}>
-          <View
-            style={
-              status == 'PENDING'
-                ? styles.dotBlue
-                : status == 'ACCEPTED'
-                ? styles.dotGreen
-                : styles.dotRed
-            }
-          />
+        <View style={this.dotStyle(item.status)}  />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
             <Text style={styles.labelText}>{item.name}</Text>
@@ -97,9 +94,8 @@ class AllQuotes extends Component {
   };
   render() {
     const {
-      acceptedItems,
-      pendingItems,
-      rejectedItems,
+      items,
+      status,
       showLoading,
     } = this.state;
 
@@ -109,7 +105,7 @@ class AllQuotes extends Component {
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
-          title="ALL QUOTES"
+          title={status + " " +  'ORDERS'}
           leftImage={BACK}
         />
 
@@ -130,55 +126,22 @@ class AllQuotes extends Component {
 
             <TouchableOpacity style={styles.quotesRow}>
               <View style={{width: '60%'}}>
-                <Text style={styles.recentText}>PENDING</Text>
+                <Text style={styles.recentText}>{status}</Text>
               </View>
               <View style={{width: '10%'}} />
               <View style={{width: '30%'}}></View>
             </TouchableOpacity>
             <FlatList
               style={styles.parentFlatList}
-              data={pendingItems}
+              data={items}
               extraData={this.state}
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) =>
-                this.listItem(item, index, 'PENDING')
+                this.listItem(item, index)
               }
             />
 
-            <TouchableOpacity style={styles.quotesRow}>
-              <View style={{width: '60%'}}>
-                <Text style={styles.recentText}>ACCEPTED</Text>
-              </View>
-              <View style={{width: '10%'}} />
-              <View style={{width: '30%'}}></View>
-            </TouchableOpacity>
-            <FlatList
-              style={styles.parentFlatList}
-              data={acceptedItems}
-              extraData={this.state}
-              keyExtractor={(item, index) => '' + index}
-              renderItem={({item, index}) =>
-                this.listItem(item, index, 'ACCEPTED')
-              }
-            />
-
-            <TouchableOpacity style={styles.quotesRow}>
-              <View style={{width: '60%'}}>
-                <Text style={styles.recentText}>REJECTED</Text>
-              </View>
-              <View style={{width: '10%'}} />
-              <View style={{width: '30%'}}></View>
-            </TouchableOpacity>
-
-            <FlatList
-              style={styles.parentFlatList}
-              data={rejectedItems}
-              extraData={this.state}
-              keyExtractor={(item, index) => '' + index}
-              renderItem={({item, index}) =>
-                this.listItem(item, index, 'REJECTED')
-              }
-            />
+            
           </TouchableOpacity>
         </KeyboardAwareScrollView>
       </KeyboardAwareScrollView>
@@ -210,28 +173,6 @@ const styles = ScaledSheet.create({
   rowItem: {
     height: moderateScale(30),
   },
-  dotBlue: {
-    marginTop: moderateScale(5),
-    height: moderateScale(12),
-    width: moderateScale(12),
-    borderRadius: moderateScale(6),
-    backgroundColor: APP_MAIN_BLUE,
-  },
-  dotGreen: {
-    marginTop: moderateScale(5),
-    height: moderateScale(12),
-    width: moderateScale(12),
-    borderRadius: moderateScale(6),
-    backgroundColor: APP_MAIN_GREEN,
-  },
-  dotRed: {
-    marginTop: moderateScale(5),
-    height: moderateScale(12),
-    width: moderateScale(12),
-    borderRadius: moderateScale(6),
-    backgroundColor: APP_MAIN_COLOR,
-  },
-
   rowContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -274,6 +215,41 @@ const styles = ScaledSheet.create({
     height: moderateScale(30),
     justifyContent: 'center',
   },
+  dotOrange: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: ORANGE_COLOR,
+  },
+  dotGreen: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: APP_MAIN_GREEN,
+  },
+  dotDarkblue: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: DARK_BLUE,
+  },
+  dotLightBlue: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: APP_MAIN_BLUE,
+  },
+  dotRed: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: APP_MAIN_COLOR,
+  },
 });
 
 const mapStateToProps = (state) => ({
@@ -282,4 +258,4 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {};
 
-export default connect(mapStateToProps, mapDispatchToProps)(AllQuotes);
+export default connect(mapStateToProps, mapDispatchToProps)(StatusWiseOrders);

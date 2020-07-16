@@ -135,9 +135,7 @@ const commonStyles = ScaledSheet.create({
     alignSelf : 'center'
   },
   smallLogoIcon :{
-    alignSelf : 'center',
-    width : Dimensions.get('window').width - moderateScale(110),
-    height : 50
+    alignSelf : 'center'
     
   }
 });

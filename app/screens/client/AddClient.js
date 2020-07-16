@@ -39,7 +39,7 @@ import OverlaySpinner from '../../components/OverlaySpinner';
 import {connect} from 'react-redux';
 import {addClient} from '../../redux/reducers/clients';
 import ButtonDefault from '../../components/ButtonDefault';
-const arrDataDesignation = ['Pending', 'Accepted', 'Rejected'];
+const arrDataDesignation = ['Head of Company', 'Head of Sales', 'Head of Marketing', 'Head of Finance', 'Head of Technical', 'Head of Purchasing', 'Business Development Mgr/Dir', 'Other'];
 
 class AddClient extends PureComponent {
   constructor(props) {
@@ -327,6 +327,7 @@ if(clientname && first3letters && email){
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>MPH ID</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}

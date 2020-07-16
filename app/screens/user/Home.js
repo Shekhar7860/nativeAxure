@@ -31,6 +31,7 @@ import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 import {WHITE} from '../../constants/colors';
+
 class Home extends PureComponent {
   constructor(props) {
     super(props);

@@ -52,9 +52,7 @@ class AllClients extends Component {
         this.setState({showLoading: false});
         if (response.code === 200) {
           this.setState({items: response.data.items});
-
           for (var i = 0; i <= response.data.items.length; i++) {
-            console.group('ddd', response.data.items[i].is_active);
             if (response.data.items[i].is_active == 1) {
               this.state.acceptedItems.push(response.data.items[i]);
             } else {

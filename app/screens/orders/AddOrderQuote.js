@@ -376,6 +376,7 @@ class AddOrderQuote extends PureComponent {
               <Text style={styles.labelText}>Order Title</Text>
               <InputBox
                 placeHolder=""
+                disabled
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({orderTitle: value})}
@@ -444,6 +445,7 @@ class AddOrderQuote extends PureComponent {
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>Quote Currency</Text>
                 <InputBox
+                  disabled
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
@@ -456,6 +458,7 @@ class AddOrderQuote extends PureComponent {
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>Payment Term </Text>
                 <InputBox
+                 disabled
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
@@ -464,8 +467,9 @@ class AddOrderQuote extends PureComponent {
                 />
               </View>
               <View style={commonStyles.space}>
-                <Text style={styles.labelText}>Shipping Method</Text>
+                <Text style={styles.labelText}>Shipping Service</Text>
                 <InputBox
+                disabled
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
@@ -477,6 +481,7 @@ class AddOrderQuote extends PureComponent {
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>Shipping Cost</Text>
                 <InputBox
+                  disabled
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}
@@ -487,6 +492,7 @@ class AddOrderQuote extends PureComponent {
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>VAT Percentage</Text>
                 <InputBox
+                disabled
                   placeHolder=""
                   boxStyle={styles.inputBoxStyle}
                   inputStyle={styles.input}

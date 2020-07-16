@@ -156,8 +156,11 @@ const Sidebar = (props) => {
         }
       });
   };
-  console.log('mypoo', props.userInfo);
-  const {userInfo} = props;
+  
+  const {userInfo, screenStatus} = props;
+  // if(screenStatus.screenStatus == true) {
+  //   props.navigation.navigate('HomePage')
+  // }
   const isDrawerOpen = useIsDrawerOpen();
   const [USER_PROFILE_PIC, setProfilePic] = useState(userInfo.profile_pic);
   return (
@@ -269,6 +272,7 @@ const mapDispatchToProps = {
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
   userInfo: state.session.userInfo,
+  screenStatus : state.screenStatus
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);

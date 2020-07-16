@@ -40,7 +40,7 @@ import {CheckBox} from 'react-native-elements';
 import {connect} from 'react-redux';
 import {updateQuote, addQuoteItem, deleteQuoteItem} from '../../redux/reducers/quotes';
 import Toast from 'react-native-simple-toast';
-
+const arrDataStatus = ['Pending'];
 import {
   View,
   Text,
@@ -100,7 +100,9 @@ class AddQuoteClient extends PureComponent {
       vat : 0.00,
       quoteData : { client : {}},
       userquoteId : "",
-      clientName : ""
+      clientName : "",
+      clientItems : [],
+      clientIds : []
     };
   }
   componentDidMount = () => {
@@ -260,6 +262,18 @@ addQuoteItem = (product_id, qty, val, status) => {
     return price*quantity
 
   }
+
+
+  selectItem = (val, type) => {
+    if (type == 'type') {
+      this.setState({type: arrDataType[val]});
+    } else if (type == 'status') {
+      this.setState({status: arrDataStatus[val]});
+    } else {
+      this.setState({clientId: this.state.clientIds[val]});
+      this.setState({client: this.state.clientItems[val]});
+    }
+  };
 
   listItem = (item, index) => {
     // console.log(item.name, 'skskks')
@@ -444,6 +458,7 @@ addQuoteItem = (product_id, qty, val, status) => {
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Quote Title</Text>
               <InputBox
+               disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
@@ -525,91 +540,18 @@ addQuoteItem = (product_id, qty, val, status) => {
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Status</Text>
-              <InputBox
-                disabled
-                placeHolder=""
-                boxStyle={styles.inputBoxStyle}
-                inputStyle={styles.input}
-                onChangeText={(value) => this.setState({status: value})}
-                value={status}
-              />
+              <SimpleDropdown
+              placeHolder="Please select status"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={arrDataStatus}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'status')}
+            />
+              
             </View>
 
-            <View style={commonStyles.space}>
-              <ExpandCollapseLayout title="+ Payment & Shipping">
-                <Text style={styles.labelText}>Currency</Text>
-                <InputBox
-                  placeHolder=""
-                  boxStyle={styles.inputBoxStyle}
-                  inputStyle={styles.input}
-                  onChangeText={(value) =>
-                    this.setState({paymentCurrency: value})
-                  }
-                  value={paymentCurrency}
-                />
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Payment Term</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({paymentTerm: value})
-                    }
-                    value={quoteData.terms}
-                  />
-                </View>
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>VAT Percentage</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({paymentVat: value})}
-                    value={paymentVat}
-                  />
-                </View>
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Shipping Method</Text>
-                  <SimpleDropdown
-                    placeHolder="Please select Shipping Method"
-                    style={commonStyles.dropDownStyle}
-                    drowdownArray={arrDataMethod}
-                    dropDownWidth={'85%'}
-                    imageStyle={{
-                      marginTop: moderateScale(10),
-                      ...commonStyles.icon,
-                    }}
-                    isIconVisible={true}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Shipping Cost</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({shippingCost: value})
-                    }
-                    value={shippingCost}
-                  />
-                </View>
-
-                <View style={commonStyles.topMargin}>
-                  <Text style={styles.labelText}>Total Weight : 0 LB</Text>
-                  <ButtonWithImage
-                    onPress={() => this.calculateCost()}
-                    isShowRightIcon
-                    style={commonStyles.otherButtons}
-                    textStyle={commonStyles.otherButtonText}
-                    rightImage={rightArrow}>
-                    Get Rates
-                  </ButtonWithImage>
-                </View>
-              </ExpandCollapseLayout>
-            </View>
             <View style={commonStyles.space}>
               <ExpandCollapseLayout title="+ Billing & Shipping Address">
                 <CheckBox
@@ -868,6 +810,83 @@ addQuoteItem = (product_id, qty, val, status) => {
                     }
                     value={shippingPostalCode}
                   />
+                </View>
+              </ExpandCollapseLayout>
+            </View>
+            <View style={commonStyles.space}>
+              <ExpandCollapseLayout title="+ Payment & Shipping">
+                <Text style={styles.labelText}>Currency</Text>
+                <InputBox
+                  disabled
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) =>
+                    this.setState({paymentCurrency: value})
+                  }
+                  value={paymentCurrency}
+                />
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Payment Term</Text>
+                  <InputBox
+                   disabled
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({paymentTerm: value})
+                    }
+                    value={quoteData.terms}
+                  />
+                </View>
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>VAT Percentage</Text>
+                  <InputBox
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) => this.setState({paymentVat: value})}
+                    value={paymentVat}
+                  />
+                </View>
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Shipping Service</Text>
+                  <SimpleDropdown
+                    placeHolder="Please select Shipping Service"
+                    style={commonStyles.dropDownStyle}
+                    drowdownArray={arrDataMethod}
+                    dropDownWidth={'85%'}
+                    imageStyle={{
+                      marginTop: moderateScale(10),
+                      ...commonStyles.icon,
+                    }}
+                    isIconVisible={true}
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Shipping Cost</Text>
+                  <InputBox
+                   disabled
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingCost: value})
+                    }
+                    value={shippingCost}
+                  />
+                </View>
+                <View style={commonStyles.topMargin}>
+                  <Text style={styles.labelText}>Total Weight : 0 LB</Text>
+                  <ButtonWithImage
+                    onPress={() => this.calculateCost()}
+                    isShowRightIcon
+                    style={commonStyles.otherButtons}
+                    textStyle={commonStyles.otherButtonText}
+                    rightImage={rightArrow}>
+                    Get Rates
+                  </ButtonWithImage>
                 </View>
               </ExpandCollapseLayout>
             </View>

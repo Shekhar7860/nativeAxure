@@ -85,22 +85,22 @@ class Orders extends Component {
               } else if (response.data.items[i].status == 'Accepted') {
                 acceptedSum += response.data.items[i].grand_total;
                 this.state.acceptedItems.push(
-                  response.data.items[i].grand_total,
+                  response.data.items[i],
                 );
               } else if (response.data.items[i].status == 'Partially_Shipped') {
                 partiallyShippedSum += response.data.items[i].grand_total;
                 this.state.partiallyShippedItems.push(
-                  response.data.items[i].grand_total,
+                  response.data.items[i],
                 );
               } else if (response.data.items[i].status == 'Completed') {
                 completedSum += response.data.items[i].grand_total;
                 this.state.completedItems.push(
-                  response.data.items[i].grand_total,
+                  response.data.items[i],
                 );
               } else {
                 cancelledSum += response.data.items[i].grand_total;
                 this.state.cancelledItems.push(
-                  response.data.items[i].grand_total,
+                  response.data.items[i],
                 );
               }
             }
@@ -112,11 +112,16 @@ class Orders extends Component {
                 .length,
               completedItemsCount: this.state.completedItems.length,
               cancelledItemsCount: this.state.cancelledItems.length,
-              shippedItemsTotal: shippedSum,
-              acceptedItemsTotal: acceptedSum,
-              partiallyShippedItemsTotal: partiallyShippedSum,
-              completedItemsTotal: completedSum,
-              cancelledItemsTotal: cancelledSum,
+              shippedItemsTotal: shippedSum.toFixed(2),
+              acceptedItemsTotal: acceptedSum.toFixed(2),
+              partiallyShippedItemsTotal: partiallyShippedSum.toFixed(2),
+              completedItemsTotal: completedSum.toFixed(2),
+              cancelledItemsTotal: cancelledSum.toFixed(2),
+              shippedItems: this.state.shippedItems,
+              acceptedItems: this.state.acceptedItems,
+              partiallyShippedItems: this.state.partiallyShippedItems,
+              completedItems: this.state.completedItems,
+              cancelledItems: this.state.cancelledItems,
             });
             let arr = response.data.items
               .slice(Math.max(response.data.items.length - 5, 1))
@@ -147,8 +152,12 @@ class Orders extends Component {
     this.props.navigation.navigate('AddQuote');
   };
 
-  openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
+  openScreen = (screen, param, status) => {
+    let data = {
+      'status' : status,
+      'list' : param
+    }
+    this.props.navigation.navigate(screen, {orderStatusData: data});
   };
 
   openQuote = () => {
@@ -186,6 +195,11 @@ class Orders extends Component {
       partiallyShippedItemsTotal,
       completedItemsTotal,
       cancelledItemsTotal,
+      shippedItems,
+      acceptedItems,
+      partiallyShippedItems,
+      completedItems,
+      cancelledItems
     } = this.state;
 
     return (
@@ -216,6 +230,7 @@ class Orders extends Component {
                 amount={'£' + ' ' + shippedItemsTotal}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', shippedItems, 'SHIPPED')}
               />
               <CardWithIcon
                 color={APP_MAIN_GREEN}
@@ -224,6 +239,7 @@ class Orders extends Component {
                 amount={ '£' + ' ' + acceptedItemsTotal}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', acceptedItems, 'ACCEPED')}
               />
               <CardWithIcon
                 color={CARD_DARK_BLUE}
@@ -232,6 +248,7 @@ class Orders extends Component {
                 amount={'£' + ' ' + partiallyShippedItemsTotal}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', partiallyShippedItems, 'PARTIALLY SHIPPED')}
               />
               <CardWithIcon
                 color={APP_MAIN_BLUE}
@@ -240,6 +257,7 @@ class Orders extends Component {
                 amount={'£' + ' ' +completedItemsTotal}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', completedItems, 'COMPLETED')}
               />
               <CardWithIcon
                 color={APP_MAIN_COLOR}
@@ -248,6 +266,7 @@ class Orders extends Component {
                 amount={'£' + ' ' + cancelledItemsTotal}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', cancelledItems, 'CANCELLED')}
               />
               <TouchableOpacity style={styles.quotesRow}>
                 <View style={{width: '60%'}}>

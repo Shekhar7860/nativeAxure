@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import Header from '../../components/Header';
 import commonStyles from '../../commonStyles/commonStyles';
 import {
@@ -22,6 +22,8 @@ import HR from '../../components/HR';
 import {getQuotesList} from '../../redux/reducers/quotes';
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
+
+
 import {
   View,
   Text,
@@ -34,7 +36,7 @@ import {
   ScrollView
 } from 'react-native';
 
-class Quotes extends Component {
+class Quotes extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,72 +55,91 @@ class Quotes extends Component {
     };
   }
   componentDidMount = () => {
-    const {online} = this.props;
-
-    if (online) {
-      this.setState({showLoading: true});
-      this.props
-        .getQuotesList()
-        .then((response) => {
-          console.log('quotes', response);
-          this.setState({showLoading: false});
-          if (response.code === 200) {
-            let pendingSum = 0;
-            let acceptedSum = 0;
-            let rejectedSum = 0;
-            let arr = response.data.items
-              .slice(Math.max(response.data.items.length - 5, 1))
-              .reverse();
-            this.setState({items: arr});
-            for (var i = 0; i < response.data.items.length; i++) {
-              if (response.data.items[i].status == 'Pending') {
-                this.state.pendingItems.push(response.data.items[i]);
-                pendingSum += response.data.items[i].grand_total;
-              } else if (response.data.items[i].status == 'Accepted') {
-                acceptedSum += response.data.items[i].grand_total;
-                this.state.acceptedItems.push(
-                  response.data.items[i].grand_total,
-                );
-              } else {
-                rejectedSum += response.data.items[i].grand_total;
-                this.state.rejectedItems.push(
-                  response.data.items[i].grand_total,
-                );
-              }
-            }
-            //  alert(pendingSum);
-            this.setState({
-              pendingItemsCount: this.state.pendingItems.length,
-              acceptedItemsCount: this.state.acceptedItems.length,
-              rejectedItemsCount: this.state.rejectedItems.length,
-              pendingItemsTotal: pendingSum,
-              acceptedItemsTotal: acceptedSum,
-              rejectedItemsTotal: rejectedSum,
-            });
-          }
-        })
-        .catch((error) => {
-          this.setState({showLoading: false});
-          if (error.code === 'unauthorized') {
-            showErrorPopup(
-              "Couldn't validate those credentials.\nPlease try again",
-            );
-          } else {
-            showErrorPopup(
-              'There was an unexpected error.\nPlease wait a few minutes and try again.',
-            );
-          }
-        });
-    } else {
-      Alert.alert('', 'No Internet Connection');
-    }
+    this.init();
+    this._sub = this.props.navigation.addListener('didFocus', () => {
+      this.init();
+    });
+     
   };
 
-  openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
+  init = () => {
+      const {online} = this.props;
+      if (online) {
+        this.setState({showLoading: true});
+        this.props
+          .getQuotesList()
+          .then((response) => {
+            console.log('quotes', response);
+            this.setState({showLoading: false});
+            if (response.code === 200) {
+              let pendingSum = 0;
+              let acceptedSum = 0;
+              let rejectedSum = 0;
+              let arr = response.data.items
+                .slice(Math.max(response.data.items.length - 5, 1))
+                .reverse();
+              this.setState({items: arr});
+              for (var i = 0; i < response.data.items.length; i++) {
+                if (response.data.items[i].status == 'Pending') {
+                  this.state.pendingItems.push(response.data.items[i]);
+                  pendingSum += response.data.items[i].grand_total;
+                } else if (response.data.items[i].status == 'Accepted') {
+                  acceptedSum += response.data.items[i].grand_total;
+                  this.state.acceptedItems.push(
+                    response.data.items[i]
+                  );
+                } else {
+                  rejectedSum += response.data.items[i].grand_total;
+                  this.state.rejectedItems.push(
+                    response.data.items[i]
+                  );
+                }
+              }
+              //  alert(pendingSum);
+              this.setState({
+                pendingItemsCount: this.state.pendingItems.length,
+                acceptedItemsCount: this.state.acceptedItems.length,
+                rejectedItemsCount: this.state.rejectedItems.length,
+                pendingItemsTotal: pendingSum.toFixed(2),
+                acceptedItemsTotal: acceptedSum.toFixed(2),
+                rejectedItemsTotal: rejectedSum.toFixed(2),
+                pendingItems: this.state.pendingItems,
+                acceptedItems: this.state.acceptedItems,
+                rejectedItems: this.state.rejectedItems,
+              });
+            }
+          })
+          .catch((error) => {
+            this.setState({showLoading: false});
+            if (error.code === 'unauthorized') {
+              showErrorPopup(
+                "Couldn't validate those credentials.\nPlease try again",
+              );
+            } else {
+              showErrorPopup(
+                'There was an unexpected error.\nPlease wait a few minutes and try again.',
+              );
+            }
+          });
+      } else {
+        Alert.alert('', 'No Internet Connection');
+      }
+   
+   
+  
+ 
+  }
+
+  openScreen = (screen, param, status) => {
+    let data = {
+      'status' : status,
+      'list' : param
+    }
+    this.props.navigation.navigate(screen, {quoteStatusData: data});
   };
 
   listItem = (item, index) => {
+
     return (
       <TouchableOpacity
         style={styles.rowItem}
@@ -159,6 +180,9 @@ class Quotes extends Component {
       pendingItemsTotal,
       acceptedItemsTotal,
       rejectedItemsTotal,
+      pendingItems,
+      acceptedItems, 
+      rejectedItems
     } = this.state;
 
     return (
@@ -186,7 +210,7 @@ class Quotes extends Component {
             count={pendingItemsCount}
             status={'Pending'}
             amount={'£' + ' ' + pendingItemsTotal}
-            onPress={this.openQuote}
+            onPress={() => this.openScreen('StatusQuotes', pendingItems, 'PENDING')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />
@@ -195,7 +219,7 @@ class Quotes extends Component {
             count={acceptedItemsCount}
             status={'Accepted'}
             amount={'£' + ' ' + acceptedItemsTotal}
-            onPress={this.onClickListen}
+            onPress={() => this.openScreen('StatusQuotes', acceptedItems, 'ACCEPTED')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />
@@ -204,7 +228,7 @@ class Quotes extends Component {
             count={rejectedItemsCount}
             status={'Rejected'}
             amount={'£' + ' ' + rejectedItemsTotal}
-            onPress={this.onClickListen}
+            onPress={() => this.openScreen('StatusQuotes', rejectedItems, 'REJECTED')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />
@@ -332,11 +356,11 @@ const styles = ScaledSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-  online: state.netInfo.online,
+  online: state.netInfo.online
 });
 
 const mapDispatchToProps = {
-  getQuotesList,
+  getQuotesList
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Quotes);

@@ -43,6 +43,7 @@ class Quote extends PureComponent {
     };
   }
   componentDidMount = () => {
+    this.props.navigation.navigate('TabHome3');
     // console.group('props', this.props.route.params.clientData.id);
     if (this.props.route.params) {
       this.setState({quoteId: this.props.route.params.clientData.id});

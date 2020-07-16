@@ -3,7 +3,7 @@
 import React, {PureComponent} from 'react';
 
 import {StyleSheet, View, Platform, Image, StatusBar, Dimensions} from 'react-native';
-import { BACK, LOGO} from '../constants/Images';
+import { BACK, HOMELOGO} from '../constants/Images';
 import {
   WHITE
 } from '../constants/colors';
@@ -110,7 +110,7 @@ class HeaderWithLogo extends PureComponent {
                 />
               )}
             </View>
-            <Image source={LOGO} style={commonStyles.smallLogoIcon}/>
+            <Image source={HOMELOGO} style={commonStyles.smallLogoIcon}/>
             <View style={styles.lastView}>
               <TouchableImage
                 image={rightImage}

@@ -37,7 +37,7 @@ import UploadedOrders from './screens/orders/UploadedOrders';
 import AddProduct from './screens/products/AddProduct';
 import Requests from './screens/requests/Requests';
 import Notifications from './screens/user/Notifications';
-import AddSupportRequest from './screens/requests/AddSupportRequest';
+import StatusWiseQuotes from './screens/quotes/StatusWiseQuotes';
 import AddQuoteClient from './screens/common/AddQuoteClient';
 import ResourceHub from './screens/user/ResourceHub';
 import ChatScreen from './screens/chat/ChatScreen';
@@ -50,7 +50,7 @@ import {HOME, CART, CHAT, SETTING, MAIL, CALCULATOR} from './constants/Images';
 import {PINK_COLOR, WHITE} from './constants/colors';
 import Sidebar from './screens/Sidebar';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
-
+import StatusWiseOrders from './screens/orders/StatusWiseOrders';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -66,8 +66,6 @@ function TabStackNavigator() {
       <Stack.Screen name="Clients" component={ClientStackNavigator} />
       <Stack.Screen name="Users" component={UsersStackNavigator} />
       <Stack.Screen name="Orders" component={OrdersStackNavigator} />
-      <Stack.Screen name="AddQuote" component={AddQuote} />
-      <Stack.Screen name="Resource" component={ResourceHub} />
       <Stack.Screen name="Products" component={ProductStackNavigator} />
       <Stack.Screen name="UploadOrders" component={UploadOrdersStackNavigator} />
       <Stack.Screen name="Support Requests" component={RequestsStackNavigator} />
@@ -118,6 +116,13 @@ function QuoteStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="QuoteStack" component={Quotes} />
+      <Stack.Screen name="Clients" component={ClientStackNavigator} />
+      <Stack.Screen name="Users" component={UsersStackNavigator} />
+      <Stack.Screen name="Orders" component={OrdersStackNavigator} />
+      <Stack.Screen name="Products" component={ProductStackNavigator} />
+      <Stack.Screen name="UploadOrders" component={UploadOrdersStackNavigator} />
+      <Stack.Screen name="Support Requests" component={RequestsStackNavigator} />
+      <Stack.Screen name="StatusQuotes" component={StatusWiseQuotes} />
       <Stack.Screen name="AllQuotes" component={AllQuotes} />
       <Stack.Screen name="AddQuote" component={AddQuote} />
       <Stack.Screen name="Quote" component={Quote} />
@@ -143,6 +148,7 @@ function OrdersStackNavigator() {
       <Stack.Screen name="AddOrder" component={AddOrder} />
       <Stack.Screen name="AddOrderQuote" component={AddOrderQuote} />
       <Stack.Screen name="AllOrders" component={AllOrders} />
+      <Stack.Screen name="StatusOrders" component={StatusWiseOrders} />
     </Stack.Navigator>
   );
 }
@@ -190,7 +196,8 @@ function TabNavigator() {
           borderBottomColor: '#87B56A',
           borderBottomWidth: 2,
         },
-      }}>
+      }}
+      initialRouteName="TabHome3">
       <Tab.Screen
         name="TabHome"
         options={{
@@ -198,7 +205,7 @@ function TabNavigator() {
             <Image source={CALCULATOR} style={commonStyles.icon} />
           ),
         }}
-        component={TabStackNavigator}
+        component={QuoteStackNavigator}
       />
       <Tab.Screen
         options={{
@@ -207,7 +214,7 @@ function TabNavigator() {
           ),
         }}
         name="Cart"
-        component={Cart}
+        component={OrdersStackNavigator}
       />
       <Tab.Screen
         options={{

@@ -48,7 +48,11 @@ class UserDetail extends PureComponent {
       showLoading : false,
       email : "",
       firstName : "",
-      surName : ""
+      surName : "",
+      password : "",
+      confirmPassword : "",
+      add1 : "",
+      add2 : ""
     };
   }
   componentDidMount = () => {
@@ -63,9 +67,10 @@ class UserDetail extends PureComponent {
   };
 
   saveUser = () => {
-    const {online} = this.props;
+    const {online, userInfo} = this.props;
     const {
-      email, firstName, surName
+      email, firstName, surName, add1, add2,
+      phone, mobile, postalCode, newPassword
     } = this.state;
     if (online) {
       this.setState({showLoading: true});
@@ -73,7 +78,15 @@ class UserDetail extends PureComponent {
         .addUSER(
           email,
           firstName,
-          surName     
+          surName,
+          userInfo.reseller_id,
+          newPassword,
+          add1,
+          add2,
+          phone, 
+          mobile, 
+          postalCode
+
         )
         .then((response) => {
           console.log('ddd', response)
@@ -315,34 +328,7 @@ class UserDetail extends PureComponent {
                 </View>
               </ExpandCollapseLayout>
             </View>
-            <View style={commonStyles.space}>
-              <ExpandCollapseLayout title="+ Token">
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Auth Token</Text>
-                  <InputBox
-                    placeHolder=""
-                    maxLines={5}
-                    maxLength={50}
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({authToken: value})}
-                  />
-                </View>
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Device Token</Text>
-                  <InputBox
-                    placeHolder=""
-                    maxLines={5}
-                    maxLength={50}
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({deviceToken: value})
-                    }
-                  />
-                </View>
-              </ExpandCollapseLayout>
-            </View>
+            
             <ButtonDefault onPress={() => this.saveUser('AddOrderQuote')}>
               SAVE
             </ButtonDefault>
@@ -432,6 +418,7 @@ const styles = ScaledSheet.create({
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
+  userInfo: state.session.userInfo,
 });
 
 const mapDispatchToProps = {

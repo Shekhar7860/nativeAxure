@@ -249,6 +249,13 @@ export default class Api {
         'email',
         'first_name',
         'last_name',
+        'reseller_id',
+        'password',
+      'address1',
+    'address2',
+     'phone',
+     'mobile',
+     'zip_code'
       ]),
     );
     let response = this.sendRequest('POST', 'users', {formData});

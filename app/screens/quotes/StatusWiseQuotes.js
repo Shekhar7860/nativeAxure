@@ -31,39 +31,20 @@ import {
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
 
-class AllQuotes extends Component {
+class StatusWiseQuotes extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      acceptedItems: [],
-      pendingItems: [],
-      rejectedItems: [],
+      items : [],
       showLoading: false,
+      status : ""
     };
   }
   componentDidMount = () => {
-    console.group('prii', this.props.quotes);
-    for (var i = 0; i < this.props.quotes.items.length; i++) {
-      if (this.props.quotes.items[i].status == 'Pending') {
-        this.state.pendingItems.push(this.props.quotes.items[i]);
-      } else if (this.props.quotes.items[i].status == 'Accepted') {
-        // console.log('fired', this.props.quotes.items[i] )
-        this.state.acceptedItems.push(this.props.quotes.items[i]);
-      } else {
-        this.state.rejectedItems.push(this.props.quotes.items[i]);
+    if (this.props.route.params) {
+        console.log('pareama', this.props.route.params)
+        this.setState({items : this.props.route.params.quoteStatusData.list, status : this.props.route.params.quoteStatusData.status})
       }
-    }
-    console.log('this', this.state.acceptedItems);
-    this.setState({showLoading: true});
-    setTimeout(() => {
-      this.setState({
-        showLoading: false,
-        pendingItems: this.state.pendingItems,
-        acceptedItems: this.state.acceptedItems,
-        rejectedItems: this.state.rejectedItems,
-      });
-    }, 2000);
-    // this.props.navigation.navigate('Cart')
   };
 
   openScreen = (screen, param) => {
@@ -71,14 +52,15 @@ class AllQuotes extends Component {
   };
 
   listItem = (item, index, status) => {
+      console.log('status', item.status)
     return (
       <TouchableOpacity style={styles.rowItem} onPress={() => this.openScreen('Quote', item)}>
         <View style={styles.bottomQuotesRow}>
           <View
             style={
-              status == 'PENDING'
+            item.status == 'Pending'
                 ? styles.dotBlue
-                : status == 'ACCEPTED'
+                : item.status == 'Accepted'
                 ? styles.dotGreen
                 : styles.dotRed
             }
@@ -97,9 +79,8 @@ class AllQuotes extends Component {
   };
   render() {
     const {
-      acceptedItems,
-      pendingItems,
-      rejectedItems,
+      items,
+      status,
       showLoading,
     } = this.state;
 
@@ -109,7 +90,7 @@ class AllQuotes extends Component {
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
-          title="ALL QUOTES"
+          title={status + " " +  'QUOTES'}
           leftImage={BACK}
         />
 
@@ -130,55 +111,22 @@ class AllQuotes extends Component {
 
             <TouchableOpacity style={styles.quotesRow}>
               <View style={{width: '60%'}}>
-                <Text style={styles.recentText}>PENDING</Text>
+                <Text style={styles.recentText}>{status}</Text>
               </View>
               <View style={{width: '10%'}} />
               <View style={{width: '30%'}}></View>
             </TouchableOpacity>
             <FlatList
               style={styles.parentFlatList}
-              data={pendingItems}
+              data={items}
               extraData={this.state}
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) =>
-                this.listItem(item, index, 'PENDING')
+                this.listItem(item, index)
               }
             />
 
-            <TouchableOpacity style={styles.quotesRow}>
-              <View style={{width: '60%'}}>
-                <Text style={styles.recentText}>ACCEPTED</Text>
-              </View>
-              <View style={{width: '10%'}} />
-              <View style={{width: '30%'}}></View>
-            </TouchableOpacity>
-            <FlatList
-              style={styles.parentFlatList}
-              data={acceptedItems}
-              extraData={this.state}
-              keyExtractor={(item, index) => '' + index}
-              renderItem={({item, index}) =>
-                this.listItem(item, index, 'ACCEPTED')
-              }
-            />
-
-            <TouchableOpacity style={styles.quotesRow}>
-              <View style={{width: '60%'}}>
-                <Text style={styles.recentText}>REJECTED</Text>
-              </View>
-              <View style={{width: '10%'}} />
-              <View style={{width: '30%'}}></View>
-            </TouchableOpacity>
-
-            <FlatList
-              style={styles.parentFlatList}
-              data={rejectedItems}
-              extraData={this.state}
-              keyExtractor={(item, index) => '' + index}
-              renderItem={({item, index}) =>
-                this.listItem(item, index, 'REJECTED')
-              }
-            />
+            
           </TouchableOpacity>
         </KeyboardAwareScrollView>
       </KeyboardAwareScrollView>
@@ -282,4 +230,4 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {};
 
-export default connect(mapStateToProps, mapDispatchToProps)(AllQuotes);
+export default connect(mapStateToProps, mapDispatchToProps)(StatusWiseQuotes);

@@ -40,6 +40,7 @@ import {connect} from 'react-redux';
 import {addClient} from '../../redux/reducers/clients';
 import ButtonDefault from '../../components/ButtonDefault';
 const arrDataDesignation = ['Head of Company', 'Head of Sales', 'Head of Marketing', 'Head of Finance', 'Head of Technical', 'Head of Purchasing', 'Business Development Mgr/Dir', 'Other'];
+const arrDataCurrency = ['GBP', 'USD', 'EUR'];
 
 class AddClient extends PureComponent {
   constructor(props) {
@@ -389,12 +390,17 @@ if(clientname && first3letters && email){
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Currency</Text>
-              <InputBox
-                placeHolder=""
-                boxStyle={styles.inputBoxStyle}
-                inputStyle={styles.input}
-                onChangeText={(value) => this.setState({currency: value})}
-              />
+              <SimpleDropdown
+                    placeHolder="Please select designation"
+                    style={commonStyles.dropDownStyle}
+                    drowdownArray={arrDataCurrency}
+                    dropDownWidth={'85%'}
+                    imageStyle={{
+                      marginTop: moderateScale(10),
+                      ...commonStyles.icon,
+                    }}
+                    isIconVisible={true}
+                  />
             </View>
 
             <View style={commonStyles.space}>

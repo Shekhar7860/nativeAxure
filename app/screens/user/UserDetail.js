@@ -20,7 +20,7 @@ import ExpandCollapseLayout from '../../components/ExpandCollapseLayout';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import InputBox from '../../components/InputBox';
-import HR from '../../components/HR';
+import SimpleDropdown from '../../components/SimpleDropdown';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {connect} from 'react-redux';
 import {
@@ -36,7 +36,7 @@ import {
   Alert
 } from 'react-native';
 import ButtonDefault from '../../components/ButtonDefault';
-import {addUSER} from '../../redux/reducers/users';
+import {addUSER, updateUser} from '../../redux/reducers/users';
 import Toast from 'react-native-simple-toast';
 import {showErrorPopup} from '../../util/utils';
 
@@ -52,15 +52,46 @@ class UserDetail extends PureComponent {
       password : "",
       confirmPassword : "",
       add1 : "",
-      add2 : ""
+      add2 : "",
+      city : "",
+      country : "",
+      postalCode : "",
+      group : "",
+      partner : "",
+      phone : "",
+      mobile : "",
+      countries : [],
+      userId : ""
     };
   }
   componentDidMount = () => {
+    const {countries} = this.props;
+    console.log('here are countries', countries);
+    for (var i = 0; i < countries.items.length; i++) {
+      this.state.countries.push(countries.items[i].name);
+    }
     if (this.props.route.params) {
       console.log('here are params', this.props.route.params);
       if(this.props.route.params.userData !== undefined)
       {
-      this.setState({userData : this.props.route.params.userData})
+      this.setState({userData : this.props.route.params.userData, email : this.props.route.params.userData.email,
+        firstName : this.props.route.params.userData.first_name, surName : this.props.route.params.userData.last_name,
+        add1 : this.props.route.params.userData.address1, add2 : this.props.route.params.userData.address2,
+        phone : this.props.route.params.userData.phone, mobile : this.props.route.params.userData.mobile,
+        postalCode : this.props.route.params.userData.zip_code,
+        userId : this.props.route.params.userData.id,
+        emailVerified : this.props.route.params.userData.email_verified_at})
+
+        if(this.props.route.params.userData.type == "reseller-user"){
+          this.setState({group : "Partner user"})
+        }
+        else {
+          this.setState({group : "Partner admin"})
+        }
+        if(this.props.route.params.userData.reseller_id == 27){
+          this.setState({partner : "Yantra Test Reseller"})
+        }
+        
       }
     }
     //this.props.navigation.navigate('Cart')
@@ -70,10 +101,15 @@ class UserDetail extends PureComponent {
     const {online, userInfo} = this.props;
     const {
       email, firstName, surName, add1, add2,
-      phone, mobile, postalCode, newPassword
+      phone, mobile, postalCode, newPassword, confirmPassword,
+      city, userId
     } = this.state;
-    if (online) {
+    if(email && firstName && surName && newPassword && confirmPassword){
+     if(newPassword == confirmPassword)
+     {
+      if (online) {
       this.setState({showLoading: true});
+  if(userId == "") {
       this.props
         .addUSER(
           email,
@@ -85,8 +121,9 @@ class UserDetail extends PureComponent {
           add2,
           phone, 
           mobile, 
-          postalCode
-
+          postalCode,
+          city,
+          confirmPassword
         )
         .then((response) => {
           console.log('ddd', response)
@@ -114,13 +151,70 @@ class UserDetail extends PureComponent {
             );
           }
         });
+      }
+      else {
+        this.props
+        .updateUser(
+          userId,
+          email,
+          firstName,
+          surName,
+          userInfo.reseller_id,
+          newPassword,
+          add1,
+          add2,
+          phone, 
+          mobile, 
+          postalCode,
+          city,
+          confirmPassword
+        )
+        .then((response) => {
+          console.log('ddd', response)
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            Toast.show(response.message)
+            this.props.navigation.navigate('AllUsers')
+          } else {
+            if (response.validation_errors) {
+              showErrorPopup(response.validation_errors);
+            } else {
+              showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+      }
     } else {
       Alert.alert('', 'No Internet Connection');
     }
   }
+  else {
+      Alert.alert('', 'Password Do Not Match')
+  }
+  }
+  else {
+    Alert.alert('', 'Please enter details')
+  }
+  }
+
+  selectData = (val) => {
+      this.setState({country: this.state.countries[val]});
+  };
 
   render() {
-    const {items, userData, showLoading} = this.state;
+    const {items, userData, showLoading, email, firstName, surName, add1, add2, city, country, postalCode, emailVerified, group, partner, phone, mobile, countries} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -140,7 +234,7 @@ class UserDetail extends PureComponent {
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
               onChangeText={(value) => this.setState({email: value})}
-              value={userData.email}
+              value={email}
             />
 
             <View style={commonStyles.space}>
@@ -150,7 +244,7 @@ class UserDetail extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({firstName: value})}
-                value={userData.first_name}
+                value={firstName}
               />
             </View>
 
@@ -160,27 +254,31 @@ class UserDetail extends PureComponent {
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({surname: value})}
-                value={userData.last_name}
+                onChangeText={(value) => this.setState({surName: value})}
+                value={surName}
               />
             </View>
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Group</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({group: value})}
+                value={group}
               />
             </View>
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Partner</Text>
               <InputBox
+              disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
+                value={partner}
                 onChangeText={(value) => this.setState({partner: value})}
               />
             </View>
@@ -219,6 +317,7 @@ class UserDetail extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({emailVerified: value})}
+                value={emailVerified}
               />
             </View>
 
@@ -233,6 +332,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({add1: value})}
+                    value={add1}
                   />
                 </View>
 
@@ -245,6 +345,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({add2: value})}
+                    value={add2}
                   />
                 </View>
 
@@ -255,17 +356,21 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({city: value})}
+                    value={city}
                   />
                 </View>
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({country: value})}
-                  />
+                  <SimpleDropdown
+              placeHolder="Please select Country"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={countries}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectData(value, 'country')}
+            />
                 </View>
 
                 <View style={commonStyles.space}>
@@ -276,6 +381,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({postalCode: value})}
+                    value={postalCode}
                   />
                 </View>
 
@@ -287,6 +393,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({phone: value})}
+                    value={phone}
                   />
                 </View>
 
@@ -298,6 +405,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({mobile: value})}
+                    value={mobile}
                   />
                 </View>
               </ExpandCollapseLayout>
@@ -419,10 +527,12 @@ const styles = ScaledSheet.create({
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
   userInfo: state.session.userInfo,
+  countries: state.countries.countriesList,
 });
 
 const mapDispatchToProps = {
   addUSER,
+  updateUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserDetail);

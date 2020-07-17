@@ -7,6 +7,7 @@ import quotes from './quotes';
 import users from './users';
 import products from './products';
 import orders from './orders';
+import countries from './countries';
 
 const INITIAL_STATE = {};
 
@@ -20,6 +21,7 @@ export default function (state = INITIAL_STATE, action) {
 		users: users(state.users, action),
 		clients: clients(state.clients, action),
 		products: products(state.products, action),
-		orders: orders(state.orders, action)
+		orders: orders(state.orders, action),
+		countries: countries(state.countries, action)
 	};
 }

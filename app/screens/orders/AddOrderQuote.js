@@ -85,9 +85,15 @@ class AddOrderQuote extends PureComponent {
       total : 0,
       shipping : 0.00,
       vat : 0.00,
+      countries : []
     };
   }
   componentDidMount = () => {
+    const {countries} = this.props;
+    console.log('here are countries', countries);
+    for (var i = 0; i < countries.items.length; i++) {
+      this.state.countries.push(countries.items[i].name);
+    }
       if (this.props.route.params) {
         console.log('sdddsd', this.props.route.params)
         if (this.props.route.params.orderData !== undefined) {
@@ -120,7 +126,6 @@ class AddOrderQuote extends PureComponent {
   selectData = (val) => {
   //   console.log('products', this.state.products[val], 'prices', this.state.prices[val]);
       //creating an copy and pushing array
-
     for (var i = 0; i < this.state.items.length; i++) {
       console.log('fired', this.state.items[i].name)
         if (this.state.items[i].name === this.state.products[val]) {
@@ -138,6 +143,25 @@ class AddOrderQuote extends PureComponent {
 
   };
 
+  selectItem = (val, type) => {
+    if (type == 'type') {
+      this.setState({type: arrDataType[val]});
+    } else if (type == 'status') {
+      this.setState({status: arrDataStatus[val]});
+    }
+    else if (type == "billingCountry"){
+      this.setState({billingCountry: this.state.countries[val]});
+    }
+    else if (type == "shippingCountry"){
+      this.setState({shippingCountry: this.state.countries[val]});
+    } else {
+      this.setState({clientId: this.state.clientIds[val]});
+      this.setState({client: this.state.clientItems[val]});
+    }
+  };
+
+
+  
   addTotal = () => {
     var sum=0;
     for (var i =0; i < this.state.items.length; i++) {
@@ -331,7 +355,7 @@ class AddOrderQuote extends PureComponent {
   render() {
     const {total, subTotal, shipping, vat, invoiceItems,products,items, showLoading, orderId, orderTitle, client, mphId, poPreference, status, quoteCurrency, paymentTerm, shippingCost, vatPercentage,
     billingAdd1, billingCity, billingAdd2, billingEmail, billingCountry, billingFirstName, billingLastName, billingPostalCode, shippingAdd2, shippingAdd1, shippingFirstName, shippingLastName, shippingCity, shippingCountry,
-  shippingEmail, shippingPostalCode, billingCompanyName, shippingCompanyName, terms} = this.state;
+  shippingEmail, shippingPostalCode, billingCompanyName, shippingCompanyName, terms, countries} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -587,13 +611,15 @@ class AddOrderQuote extends PureComponent {
 
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>Country</Text>
-                <InputBox
-                  placeHolder=""
-                  boxStyle={styles.inputBoxStyle}
-                  inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({billingCountry: value})}
-                  value={billingCountry}
-                />
+                <SimpleDropdown
+              placeHolder="Please select Country"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={countries}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'billingCountry')}
+            />
               </View>
 
               <View style={commonStyles.space}>
@@ -692,13 +718,15 @@ class AddOrderQuote extends PureComponent {
 
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>Country</Text>
-                <InputBox
-                  placeHolder=""
-                  boxStyle={styles.inputBoxStyle}
-                  inputStyle={styles.input}
-                  onChangeText={(value) => this.setState({shippingCountry: value})}
-                  value={shippingCountry}
-                />
+                <SimpleDropdown
+              placeHolder="Please select Country"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={countries}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'shippingCountry')}
+            />
               </View>
 
               <View style={commonStyles.space}>
@@ -979,7 +1007,8 @@ const styles = ScaledSheet.create({
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
-  products : state.products.productsList
+  products : state.products.productsList,
+  countries: state.countries.countriesList
 });
 
 const mapDispatchToProps = {

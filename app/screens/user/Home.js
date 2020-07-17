@@ -27,6 +27,7 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {StackActions} from '@react-navigation/native';
 import {getClientsList} from '../../redux/reducers/clients';
 import {getProductsList} from '../../redux/reducers/products';
+import {getCountriesList} from '../../redux/reducers/countries';
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
@@ -68,7 +69,7 @@ class Home extends PureComponent {
       this.props
         .getClientsList()
         .then((response) => {
-          console.group('response', response);
+        //  console.group('response', response);
           if (response.code === 200) {
             this.setState({showLoading : false})
           }
@@ -84,9 +85,30 @@ class Home extends PureComponent {
           }
         });
         this.props
+          .getCountriesList()
+          .then((response) => {
+            console.log('Countries', response);
+            this.setState({showLoading: false});
+            if (response.code === 200) {
+              this.setState({items: response.data.items});
+            }
+          })
+          .catch((error) => {
+            this.setState({showLoading: false});
+            if (error.code === 'unauthorized') {
+              showErrorPopup(
+                "Couldn't validate those credentials.\nPlease try again",
+              );
+            } else {
+              showErrorPopup(
+                'There was an unexpected error.\nPlease wait a few minutes and try again.',
+              );
+            }
+          });
+          this.props
           .getProductsList()
           .then((response) => {
-            console.group('response', response);
+         //  console.log('response', response);
             this.setState({showLoading: false});
             if (response.code === 200) {
               this.setState({items: response.data.items});
@@ -199,7 +221,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getClientsList,
-  getProductsList
+  getProductsList,
+  getCountriesList
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

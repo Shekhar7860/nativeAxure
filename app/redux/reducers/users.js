@@ -38,7 +38,9 @@ export const addUSER = (
   address2,
   phone,
   mobile,
-  zip_code
+  zip_code,
+  city,
+  confirm_password
 ) => {
   return (dispatch) => {
     return API.addUSER({
@@ -51,12 +53,52 @@ export const addUSER = (
      address2,
      phone,
      mobile,
-     zip_code
+     zip_code,
+     city,
+     confirm_password
     }).then((response) => {
       if (response.code === 200) {
         if (response.data) {
           dispatch(addUSERSuccess(response.data));
         }
+      }
+      return response;
+    });
+  };
+};
+
+export const updateUser = (
+  userId,
+  email,
+  first_name,
+  last_name,
+  reseller_id,
+  password,
+  address1,
+  address2,
+  phone,
+  mobile,
+  zip_code,
+  city,
+  confirm_password
+) => {
+  return (dispatch) => {
+    return API.updateUser(userId, {
+     email,
+     first_name,
+     last_name,
+     reseller_id,
+     password,
+     address1,
+     address2,
+     phone,
+     mobile,
+     zip_code,
+     city,
+     confirm_password
+    }).then((response) => {
+      if (response.code === 200) {
+        
       }
       return response;
     });

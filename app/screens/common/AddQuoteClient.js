@@ -102,10 +102,17 @@ class AddQuoteClient extends PureComponent {
       userquoteId : "",
       clientName : "",
       clientItems : [],
-      clientIds : []
+      clientIds : [],
+      country : "",
+      countries : []
     };
   }
   componentDidMount = () => {
+    const {countries} = this.props;
+   // console.log('here are countries', countries);
+    for (var i = 0; i < countries.items.length; i++) {
+      this.state.countries.push(countries.items[i].name);
+    }
     if (this.props.route.params) {
       console.log('params', this.props.route.params);
       if (this.props.route.params.quoteData !== undefined) {
@@ -117,10 +124,10 @@ class AddQuoteClient extends PureComponent {
         this.setState({quoteId : id.toString()});
       }
       this.setState({ userquoteId : id, quoteTitle : this.props.route.params.quoteData.name, poPreference : this.props.route.params.quoteData.po_reference, type : this.props.route.params.quoteData.type, status : this.props.route.params.quoteData.status,
-      paymentCurrency : this.props.route.params.quoteData.currency, paymentVat : this.props.route.params.quoteData.vat_percentage, shippingCost : this.props.route.params.shipping_cost, billingCompanyName :  this.props.route.params.billing_company_name, billingFirstName : this.props.route.params.billing_first_name,
-      billingLastName : this.props.route.params.billing_last_name,   billingEmail : this.props.route.params.billing_email,   billingCountry : this.props.route.params.billing_country,   billingCity : this.props.route.params.billing_city,   billingPostalCode : this.props.route.params.billing_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name,
-      shippingFirstName : this.props.route.params.shipping_first_name, billingAdd1 : this.props.route.params.billing_add1, billingAdd2 : this.props.route.params.billing_add2, shippingAdd1 : this.props.route.params.shipping_add1, shippingAdd2 : this.props.route.params.shipping_add2,
-      shippingLastName : this.props.route.params.shipping_last_name,   shippingEmail : this.props.route.params.shipping_email,   shippingCountry : this.props.route.params.shipping_country,   shippingCity : this.props.route.params.shipping_city,   shippingPostalCode : this.props.route.params.shipping_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name
+      paymentCurrency : this.props.route.params.quoteData.currency, paymentVat : this.props.route.params.quoteData.vat_percentage, shippingCost : this.props.route.params.quoteData.shipping_cost, billingCompanyName :  this.props.route.params.quoteData.billing_company_name, billingFirstName : this.props.route.params.billing_first_name,
+      billingLastName : this.props.route.params.quoteData.billing_last_name,   billingEmail : this.props.route.params.quoteData.billing_email,   billingCountry : this.props.route.params.quoteData.billing_country,   billingCity : this.props.route.params.billing_city,   billingPostalCode : this.props.route.params.billing_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name,
+      shippingFirstName : this.props.route.params.quoteData.shipping_first_name, billingAdd1 : this.props.route.params.quoteData.billing_add1, billingAdd2 : this.props.route.params.quoteData.billing_add2, shippingAdd1 : this.props.route.params.quoteData.shipping_add1, shippingAdd2 : this.props.route.params.quoteData.shipping_add2,
+      shippingLastName : this.props.route.params.quoteData.shipping_last_name,   shippingEmail : this.props.route.params.quoteData.shipping_email,   shippingCountry : this.props.route.params.quoteData.shipping_country,   shippingCity : this.props.route.params.quoteData.shipping_city,   shippingPostalCode : this.props.route.params.quoteData.shipping_zip_code, shippingCompanyName : this.props.route.params.quoteData.shipping_company_name
     })
     // this.setState({quoteId : id.toString(), userquoteId : id})
     if (this.props.route.params.quoteData.client !== undefined) {
@@ -269,6 +276,12 @@ addQuoteItem = (product_id, qty, val, status) => {
       this.setState({type: arrDataType[val]});
     } else if (type == 'status') {
       this.setState({status: arrDataStatus[val]});
+    }
+    else if (type == "billingCountry"){
+      this.setState({billingCountry: countries[val]});
+    }
+    else if (type == "shippingCountry"){
+      this.setState({shippingCountry: countries[val]});
     } else {
       this.setState({clientId: this.state.clientIds[val]});
       this.setState({client: this.state.clientItems[val]});
@@ -403,9 +416,42 @@ addQuoteItem = (product_id, qty, val, status) => {
     }
   };
 
+  setSame = (billingCompanyName, billingFirstName, billingLastName, billingEmail, billingAdd1, billingAdd2, billingCity, billingCountry, billingPostalCode, isRememberMe) => {
+    console.log('isRememberME', isRememberMe)
+    if(isRememberMe !== true){
+     this.setState({
+       shippingCompanyName : billingCompanyName,
+       shippingFirstName : billingFirstName,
+       shippingLastName : billingLastName,
+       shippingEmail : billingEmail,
+       shippingAdd1 : billingAdd1,
+       shippingAdd2 : billingAdd2,
+       shippingCity : billingCity,
+       shippingCountry : billingCountry,
+       shippingPostalCode : billingPostalCode,
+     })
+    }
+    else {
+      this.setState({
+        shippingCompanyName : "",
+        shippingFirstName : "",
+        shippingLastName : "",
+        shippingEmail : "",
+        shippingAdd1 : "",
+        shippingAdd2 : "",
+        shippingCity : "",
+        shippingCountry : "",
+        shippingPostalCode : "",
+      })
+    }
+
+    this.setState({ isRememberMe : !isRememberMe})
+    
+  }
+
   calculateCost = () => {};
   render() {
-    const {items, clientName, quoteTitle,shippingCost, poPreference,paymentCurrency, paymentVat, billingCompanyName, billingFirstName, billingLastName, billingCountry, billingCity, billingPostalCode, billingAdd1, billingAdd2, shippingCity, shippingCountry, shippingAdd2, shippingAdd1, shippingLastName, shippingFirstName,  type, status, isRememberMe, quoteDetail, quoteId, showLoading, products, shipping, vat, quoteData, shippingCompanyName, shippingPostalCode} = this.state;
+    const {items, clientName, quoteTitle,shippingCost, poPreference,paymentCurrency, paymentVat, billingCompanyName, billingFirstName, billingLastName, billingCountry, billingCity, billingPostalCode, billingAdd1, billingAdd2, shippingCity, shippingCountry, shippingAdd2, shippingAdd1, shippingLastName, shippingFirstName,  type, status, isRememberMe, quoteDetail, quoteId, showLoading, products, shipping, vat, quoteData, shippingCompanyName, shippingPostalCode, countries, billingEmail, shippingEmail} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -554,16 +600,6 @@ addQuoteItem = (product_id, qty, val, status) => {
 
             <View style={commonStyles.space}>
               <ExpandCollapseLayout title="+ Billing & Shipping Address">
-                <CheckBox
-                  title="Same As Billing"
-                  checked={isRememberMe}
-                  onPress={() => this.setState({isRememberMe: !isRememberMe})}
-                  checkedColor={BLACK}
-                  containerStyle={commonStyles.checkBoxContainer}
-                  uncheckedIcon="square"
-                  size={15}
-                  textStyle={commonStyles.checkBoxText}
-                />
 
                 <Text style={styles.topLabelText}>Billing</Text>
 
@@ -613,7 +649,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                     onChangeText={(value) =>
                       this.setState({billingEmail: value})
                     }
-                    value={quoteData.billing_email}
+                    value={billingEmail}
                   />
                 </View>
 
@@ -662,15 +698,15 @@ addQuoteItem = (product_id, qty, val, status) => {
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({billingCountry: value})
-                    }
-                    value={billingCountry}
-                  />
+                  <SimpleDropdown
+              placeHolder="Please select Country"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={countries}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'billingCountry')}
+            />
                 </View>
 
                 <View style={commonStyles.space}>
@@ -687,10 +723,21 @@ addQuoteItem = (product_id, qty, val, status) => {
                   />
                 </View>
 
-
                 <View style={commonStyles.space}>
+                <CheckBox
+                  title="Same As Billing"
+                  checked={isRememberMe}
+                  onPress={() => this.setSame(billingCompanyName, billingFirstName, billingLastName, billingEmail, billingAdd1, billingAdd2, billingCity, billingCountry, billingPostalCode, isRememberMe)}
+                  checkedColor={BLACK}
+                  containerStyle={commonStyles.checkBoxContainer}
+                  uncheckedIcon="square"
+                  size={15}
+                  textStyle={commonStyles.checkBoxText}
+                />
+                </View>
+                
                 <Text style={styles.topLabelText}>Shipping</Text>
-               </View>
+               
 
                 <Text style={styles.labelText}>Company Name</Text>
                 <InputBox
@@ -738,7 +785,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                     onChangeText={(value) =>
                       this.setState({shippingEmail: value})
                     }
-                    value={quoteData.shipping_email}
+                    value={shippingEmail}
                   />
                 </View>
 
@@ -787,15 +834,15 @@ addQuoteItem = (product_id, qty, val, status) => {
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({shippingCountry: value})
-                    }
-                    value={shippingCountry}
-                  />
+                  <SimpleDropdown
+              placeHolder="Please select Country"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={countries}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'shippingCountry')}
+            />
                 </View>
 
                 <View style={commonStyles.space}>
@@ -1151,7 +1198,8 @@ const styles = ScaledSheet.create({
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
-  products : state.products.productsList
+  products : state.products.productsList,
+  countries: state.countries.countriesList
 });
 
 const mapDispatchToProps = {

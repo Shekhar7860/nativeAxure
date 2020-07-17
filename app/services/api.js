@@ -250,15 +250,40 @@ export default class Api {
         'first_name',
         'last_name',
         'reseller_id',
-        'password',
-      'address1',
-    'address2',
-     'phone',
-     'mobile',
-     'zip_code'
+         'password',
+         'address1',
+         'address2',
+         'phone',
+         'mobile',
+         'zip_code',
+         'city',
+         'confirm_password'
       ]),
     );
     let response = this.sendRequest('POST', 'users', {formData});
+    return response;
+  }
+
+  static updateUser(ID, userData = {}) {
+    console.log('userId is', ID)
+    const formData = clearQuery(
+      pick(userData, [
+        'email',
+        'first_name',
+        'last_name',
+        'reseller_id',
+         'password',
+         'address1',
+         'address2',
+         'phone',
+         'mobile',
+         'zip_code',
+         'city',
+        'confirm_password'
+
+      ]),
+    );
+    let response = this.sendRequest('PATCH', `users/${ID}`, {formData});
     return response;
   }
 
@@ -359,6 +384,11 @@ export default class Api {
 
   static getUploadedOrdersList() {
     let response = this.sendRequest('GET', 'uploaded-orders');
+    return response;
+  }
+
+  static getCountriesList() {
+    let response = this.sendRequest('GET', 'countries', "", true);
     return response;
   }
 

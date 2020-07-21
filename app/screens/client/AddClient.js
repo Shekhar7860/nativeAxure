@@ -12,6 +12,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
   BLACK,
+  GRAY
 } from '../../constants/colors';
 import {USER, BACK, TASK} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -99,12 +100,19 @@ class AddClient extends PureComponent {
       regDatePickerVisible: false,
       yearDatePickerVisible : false,
       website : "",
-      note : ""
+      note : "",
+      countries : [],
+      countryIndex : 0
     };
   }
   componentDidMount = () => {
     const {userInfo} = this.props;
-    console.log('userinfo', userInfo)
+   // console.log('userinfo', userInfo)
+    const {countries} = this.props;
+   // console.log('here are countries', countries);
+    for (var i = 0; i < countries.items.length; i++) {
+      this.state.countries.push(countries.items[i].name);
+    }
     //this.props.navigation.navigate('Cart')
   };
 
@@ -275,6 +283,34 @@ if(clientname && first3letters && email){
      this.setState({ yearDatePickerVisible: false})
     }
   };
+
+  setSame = (add1, add2, city, country, postalCode, isRememberMe) => {
+    console.log('selected', this.state.countries[this.state.countryIndex])
+    console.log('isRememberME', isRememberMe)
+    if(isRememberMe !== true){
+     this.setState({
+       contAdd1 : add1,
+       contAdd2 : add2,
+       contCity : city,
+       contCountry : this.state.countries[this.state.countryIndex],
+       contPostalCode : postalCode,
+       
+       
+     })
+    }
+    else {
+      this.setState({
+        contAdd1 : "",
+       contAdd2 : "",
+       contCity : "",
+       contCountry : "",
+       contPostalCode : ""
+      })
+    }
+
+    this.setState({ isRememberMe : !isRememberMe})
+    
+  }
  
   handleDatePicked = (date, val) => {
     console.log("A date has been picked: ", date);
@@ -290,8 +326,25 @@ if(clientname && first3letters && email){
     this.hideDateTimePicker(val);
   };
 
+  selectData = (val, type) => {
+      this.setState({currency: arrDataCurrency[val]});
+  };
+
+  selectItem = (val, type) => {
+     if (type == "country"){
+      this.setState({country: this.state.countries[val]});
+      this.setState({countryIndex: val});
+    }
+    else if (type == "contCountry"){
+      this.setState({contCountry: this.state.scountries[val]});
+    } else {
+      this.setState({clientId: this.state.clientIds[val]});
+      this.setState({client: this.state.clientItems[val]});
+    }
+  };
+
   render() {
-    const {items, isRememberMe, showLoading} = this.state;
+    const {countries, add1, add2, city, country, postalCode, contAdd1, contAdd2, contCity, contCountry, contPostalCode, items, isRememberMe, showLoading} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -330,7 +383,7 @@ if(clientname && first3letters && email){
               <InputBox
                 disabled
                 placeHolder=""
-                boxStyle={styles.inputBoxStyle}
+                boxStyle={styles.inputBoxStyleBackground}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({mphId: value})}
               />
@@ -391,7 +444,7 @@ if(clientname && first3letters && email){
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Currency</Text>
               <SimpleDropdown
-                    placeHolder="Please select designation"
+                    placeHolder="Please select Currency"
                     style={commonStyles.dropDownStyle}
                     drowdownArray={arrDataCurrency}
                     dropDownWidth={'85%'}
@@ -400,6 +453,7 @@ if(clientname && first3letters && email){
                       ...commonStyles.icon,
                     }}
                     isIconVisible={true}
+                    onSelect={(value) => this.selectData(value, 'currency')}
                   />
             </View>
 
@@ -459,6 +513,7 @@ if(clientname && first3letters && email){
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({add1: value})}
+                    value={add1}
                   />
                 </View>
 
@@ -468,6 +523,7 @@ if(clientname && first3letters && email){
                     placeHolder=""
                     maxLines={5}
                     maxLength={50}
+                    value={add2}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({add2: value})}
@@ -480,18 +536,22 @@ if(clientname && first3letters && email){
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
+                    value={city}
                     onChangeText={(value) => this.setState({city: value})}
                   />
                 </View>
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({country: value})}
-                  />
+                  <SimpleDropdown
+              placeHolder="Please select Country"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={countries}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'country')}
+            />
                 </View>
 
                 <View style={commonStyles.space}>
@@ -502,6 +562,7 @@ if(clientname && first3letters && email){
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
+                    value={postalCode}
                     onChangeText={(value) => this.setState({postalCode: value})}
                   />
                 </View>
@@ -513,7 +574,7 @@ if(clientname && first3letters && email){
                 <CheckBox
                   title="Same details As Address?"
                   checked={isRememberMe}
-                  onPress={() => this.setState({isRememberMe: !isRememberMe})}
+                  onPress={() => this.setSame(add1, add2, city, country, postalCode, isRememberMe)}
                   checkedColor={BLACK}
                   containerStyle={commonStyles.checkBoxContainer}
                   uncheckedIcon="square"
@@ -562,6 +623,7 @@ if(clientname && first3letters && email){
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({contAdd1: value})}
+                    value={contAdd1}
                   />
                 </View>
 
@@ -573,6 +635,7 @@ if(clientname && first3letters && email){
                     maxLength={50}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
+                    value={contAdd2}
                     onChangeText={(value) => this.setState({contAdd2: value})}
                   />
                 </View>
@@ -583,20 +646,22 @@ if(clientname && first3letters && email){
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
+                    value={contCity}
                     onChangeText={(value) => this.setState({contCity: value})}
                   />
                 </View>
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({contCountry: value})
-                    }
-                  />
+                  <SimpleDropdown
+              placeHolder="Please select Country"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={countries}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'contCountry')}
+            />
                 </View>
 
                 <View style={commonStyles.space}>
@@ -607,6 +672,7 @@ if(clientname && first3letters && email){
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
+                    value={contPostalCode}
                     onChangeText={(value) =>
                       this.setState({contPostalCode: value})
                     }
@@ -1020,6 +1086,17 @@ const styles = ScaledSheet.create({
     marginTop: moderateScale(-20),
     height: moderateScale(30),
   },
+  inputBoxStyleBackground: {
+    marginTop: moderateScale(-10),
+    height: moderateScale(45),
+    backgroundColor : GRAY,
+    borderBottomWidth : 0,
+    borderWidth : 0,
+    borderRadius : 0,
+    width : '90%',
+    alignSelf : 'center',
+    borderBottomColor : WHITE
+  },
   input: {
     fontWeight: 'normal',
     fontSize: moderateScale(10),
@@ -1029,6 +1106,7 @@ const styles = ScaledSheet.create({
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
   userInfo: state.session.userInfo,
+  countries: state.countries.countriesList
 });
 
 const mapDispatchToProps = {

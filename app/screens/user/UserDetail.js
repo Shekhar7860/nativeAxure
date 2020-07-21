@@ -38,7 +38,7 @@ import {
 import ButtonDefault from '../../components/ButtonDefault';
 import {addUSER, updateUser} from '../../redux/reducers/users';
 import Toast from 'react-native-simple-toast';
-import {showErrorPopup} from '../../util/utils';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
 
 class UserDetail extends PureComponent {
   constructor(props) {
@@ -61,7 +61,8 @@ class UserDetail extends PureComponent {
       phone : "",
       mobile : "",
       countries : [],
-      userId : ""
+      userId : "",
+      groupId : [21]
     };
   }
   componentDidMount = () => {
@@ -99,14 +100,16 @@ class UserDetail extends PureComponent {
 
   saveUser = () => {
     const {online, userInfo} = this.props;
+    console.log('this grp id', this.state.groupId)
     const {
       email, firstName, surName, add1, add2,
       phone, mobile, postalCode, newPassword, confirmPassword,
-      city, userId
+      city, userId, groupId
     } = this.state;
     if(email && firstName && surName && newPassword && confirmPassword){
      if(newPassword == confirmPassword)
      {
+       if(isEmailValid(email)){
       if (online) {
       this.setState({showLoading: true});
   if(userId == "") {
@@ -123,7 +126,8 @@ class UserDetail extends PureComponent {
           mobile, 
           postalCode,
           city,
-          confirmPassword
+          confirmPassword,
+          groupId,
         )
         .then((response) => {
           console.log('ddd', response)
@@ -199,6 +203,9 @@ class UserDetail extends PureComponent {
     } else {
       Alert.alert('', 'No Internet Connection');
     }
+  } else {
+    Alert.alert('', 'Please Enter Valid Email Address');
+  }
   }
   else {
       Alert.alert('', 'Password Do Not Match')

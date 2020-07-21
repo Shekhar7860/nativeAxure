@@ -11,6 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
+const arrDataVat= ['Exempted'];
 import {USER, BACK, TASK, DRAWER_MENU, CROSS} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
@@ -21,6 +22,7 @@ import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import InputBox from '../../components/InputBox';
 import HR from '../../components/HR';
+const arrDataStatus = ['Pending'];
 import ButtonDefault from '../../components/ButtonDefault';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {
@@ -151,6 +153,9 @@ class AddOrderQuote extends PureComponent {
     }
     else if (type == "billingCountry"){
       this.setState({billingCountry: this.state.countries[val]});
+    }
+    else if (type == "vat"){
+      this.setState({paymentVat: arrDataVat[val]});
     }
     else if (type == "shippingCountry"){
       this.setState({shippingCountry: this.state.countries[val]});
@@ -443,7 +448,7 @@ class AddOrderQuote extends PureComponent {
             </View>
 
             <View style={commonStyles.space}>
-              <Text style={styles.labelText}>PO Preference</Text>
+              <Text style={styles.labelText}>PO Reference</Text>
               <InputBox
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
@@ -515,16 +520,15 @@ class AddOrderQuote extends PureComponent {
               </View>
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>VAT Percentage</Text>
-                <InputBox
-                disabled
-                  placeHolder=""
-                  boxStyle={styles.inputBoxStyle}
-                  inputStyle={styles.input}
-                  onChangeText={(value) =>
-                    this.setState({vatPercentage: value})
-                  }
-                  value={vatPercentage}
-                />
+                <SimpleDropdown
+              placeHolder="Please select VAT percentage"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={arrDataVat}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'vat')}
+            />
               </View>
             </ExpandCollapseLayout>
             </View>

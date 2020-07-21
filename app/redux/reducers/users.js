@@ -40,7 +40,8 @@ export const addUSER = (
   mobile,
   zip_code,
   city,
-  confirm_password
+  password_confirmation,
+  group_ids
 ) => {
   return (dispatch) => {
     return API.addUSER({
@@ -55,7 +56,8 @@ export const addUSER = (
      mobile,
      zip_code,
      city,
-     confirm_password
+     password_confirmation,
+     group_ids
     }).then((response) => {
       if (response.code === 200) {
         if (response.data) {

@@ -103,10 +103,16 @@ class EditClient extends PureComponent {
       regDatePickerVisible: false,
       yearDatePickerVisible : false,
       website : '',
-      note : ''
+      note : '',
+      countries : []
     };
   }
   componentDidMount = () => {
+    const {countries} = this.props;
+   // console.log('here are countries', countries);
+    for (var i = 0; i < countries.items.length; i++) {
+      this.state.countries.push(countries.items[i].name);
+    }
     if (this.props.route.params) {
       if (this.props.route.params.clientData !== undefined) {
          console.log('djdjdjd', this.props.route.params);
@@ -166,6 +172,33 @@ class EditClient extends PureComponent {
       }
     }
   };
+
+  setSame = (add1, add2, city, country, postalCode, isRememberMe) => {
+   // console.log('selected', this.state.countries[this.state.countryIndex])
+    console.log('isRememberME', isRememberMe)
+    if(isRememberMe !== true){
+     this.setState({
+       contAdd1 : add1,
+       contAdd2 : add2,
+       contCity : city,
+       contCountry : country,
+       contPostalCode : postalCode,
+       
+       
+     })
+    }
+    else {
+      this.setState({
+        contAdd1 : "",
+       contAdd2 : "",
+       contCity : "",
+       contCountry : "",
+       contPostalCode : ""
+      })
+    }
+
+    this.setState({ isRememberMe : !isRememberMe})
+  }
   showDateTimePicker = (val) => {
     if(val == "regDatePickerVisible")
     {
@@ -176,6 +209,8 @@ class EditClient extends PureComponent {
     }
   };
  
+
+  
   hideDateTimePicker = (val) => {
     if(val == "regDatePickerVisible")
     {
@@ -186,6 +221,7 @@ class EditClient extends PureComponent {
     }
   };
  
+  
   handleDatePicked = (date, val) => {
     console.log("A date has been picked: ", date);
     var selectedDate= moment(date).format("MM/DD/YYYY")
@@ -348,8 +384,21 @@ if(clientname && first3letters && email){
   }
   };
 
+  selectItem = (val, type) => {
+    if (type == "country"){
+     this.setState({country: this.state.countries[val]});
+   }
+   else if (type == "contCountry"){
+     this.setState({contCountry: this.state.countries[val]});
+   } else {
+     this.setState({clientId: this.state.clientIds[val]});
+     this.setState({client: this.state.clientItems[val]});
+   }
+ };
+
+
   render() {
-    const {items, clientDetail, clientname, first3letters, mphId, trading, vatReg, comRegNum, targetTech, email, currency, description, add1, add2, city,country, postalCode, 
+    const {countries,  items, clientDetail, clientname, first3letters, mphId, trading, vatReg, comRegNum, targetTech, email, currency, description, add1, add2, city,country, postalCode, 
       firstName,surName,contactEmail,contAdd1,contAdd2,contCity,contCountry,contPostalCode,contPhone,
       contMobile, isRememberMe, showLoading,  bankName ,
       bankSortCode,
@@ -597,13 +646,15 @@ if(clientname && first3letters && email){
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({country: value})}
-                    value={country}
-                  />
+                  <SimpleDropdown
+              placeHolder="Please select Country"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={countries}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'country')}
+            />
                 </View>
 
                 <View style={commonStyles.space}>
@@ -626,7 +677,7 @@ if(clientname && first3letters && email){
                 <CheckBox
                   title="Same details As Address?"
                   checked={isRememberMe}
-                  onPress={() => this.setState({isRememberMe: !isRememberMe})}
+                  onPress={() => this.setSame(add1, add2, city, country, postalCode, isRememberMe)}
                   checkedColor={BLACK}
                   containerStyle={commonStyles.checkBoxContainer}
                   uncheckedIcon="square"
@@ -708,15 +759,15 @@ if(clientname && first3letters && email){
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({contCountry: value})
-                    }
-                    value={contCountry}
-                  />
+                  <SimpleDropdown
+              placeHolder="Please select Country"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={countries}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'contCountry')}
+            />
                 </View>
 
                 <View style={commonStyles.space}>
@@ -1143,6 +1194,7 @@ const styles = ScaledSheet.create({
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
+  countries: state.countries.countriesList
 });
 
 const mapDispatchToProps = {

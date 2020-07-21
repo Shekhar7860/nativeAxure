@@ -257,7 +257,8 @@ export default class Api {
          'mobile',
          'zip_code',
          'city',
-         'confirm_password'
+         'password_confirmation',
+         'group_ids'
       ]),
     );
     let response = this.sendRequest('POST', 'users', {formData});

@@ -197,6 +197,7 @@ class AddOrder extends PureComponent {
             <View>
               <Text style={styles.labelText}>MPH ID</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
@@ -205,9 +206,9 @@ class AddOrder extends PureComponent {
             </View>
 
             <View style={commonStyles.space}>
-              <Text style={styles.labelText}>PO Preference</Text>
+              <Text style={styles.labelText}>PO Reference</Text>
               <InputBox
-                placeHolder=""
+                placeHolder=""s
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({poPreference: value})}

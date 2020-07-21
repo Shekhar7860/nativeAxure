@@ -41,6 +41,7 @@ import {connect} from 'react-redux';
 import {updateQuote, addQuoteItem, deleteQuoteItem} from '../../redux/reducers/quotes';
 import Toast from 'react-native-simple-toast';
 const arrDataStatus = ['Pending'];
+const arrDataVat= ['Exempted'];
 import {
   View,
   Text,
@@ -278,11 +279,15 @@ addQuoteItem = (product_id, qty, val, status) => {
       this.setState({status: arrDataStatus[val]});
     }
     else if (type == "billingCountry"){
-      this.setState({billingCountry: countries[val]});
+      this.setState({billingCountry: this.state.countries[val]});
     }
     else if (type == "shippingCountry"){
-      this.setState({shippingCountry: countries[val]});
-    } else {
+      this.setState({shippingCountry: this.state.countries[val]});
+    } 
+    else if (type == "vat"){
+      this.setState({paymentVat: arrDataVat[val]});
+    }
+      else {
       this.setState({clientId: this.state.clientIds[val]});
       this.setState({client: this.state.clientItems[val]});
     }
@@ -888,13 +893,15 @@ addQuoteItem = (product_id, qty, val, status) => {
                 </View>
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>VAT Percentage</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({paymentVat: value})}
-                    value={paymentVat}
-                  />
+                  <SimpleDropdown
+              placeHolder="Please select VAT percentage"
+              style={commonStyles.dropDownStyle}
+              drowdownArray={arrDataVat}
+              dropDownWidth={'85%'}
+              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
+              isIconVisible={true}
+              onSelect={(value) => this.selectItem(value, 'vat')}
+            />
                 </View>
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Shipping Service</Text>

@@ -58,9 +58,9 @@ class AllQuotes extends Component {
     setTimeout(() => {
       this.setState({
         showLoading: false,
-        pendingItems: this.state.pendingItems,
-        acceptedItems: this.state.acceptedItems,
-        rejectedItems: this.state.rejectedItems,
+        pendingItems: this.state.pendingItems.reverse(),
+        acceptedItems: this.state.acceptedItems.reverse(),
+        rejectedItems: this.state.rejectedItems.reverse(),
       });
     }, 2000);
     // this.props.navigation.navigate('Cart')
@@ -104,7 +104,7 @@ class AllQuotes extends Component {
     } = this.state;
 
     return (
-      <SafeAreaView style={{flex :1}}>
+      <View style={{flex :1}}>
       <KeyboardAwareScrollView style={commonStyles.ketboardAvoidingContainer}>
         <Header
           navigation={this.props.navigation}
@@ -189,7 +189,7 @@ class AllQuotes extends Component {
           textContent="Please wait..."
           textStyle={{color: WHITE}}
         />
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -207,9 +207,7 @@ const styles = ScaledSheet.create({
   parentFlatList: {
     marginTop: moderateScale(10),
   },
-  rowItem: {
-    height: moderateScale(30),
-  },
+
   dotBlue: {
     marginTop: moderateScale(5),
     height: moderateScale(12),
@@ -271,9 +269,9 @@ const styles = ScaledSheet.create({
   rowItem: {
     borderTopWidth: 1,
     borderColor: '#e6e6e6',
-    height: moderateScale(30),
+    height: moderateScale(50),
     justifyContent: 'center',
-  },
+  }
 });
 
 const mapStateToProps = (state) => ({

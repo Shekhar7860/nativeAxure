@@ -12,6 +12,7 @@ import {
   APP_MAIN_COLOR,
   SEE_ALL_BUTTON_COLOR
 } from '../../constants/colors';
+import {commafy} from '../../util/utils';
 import {USER, leftArrow} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
@@ -33,7 +34,8 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  ScrollView
+  ScrollView,
+  StatusBar
 } from 'react-native';
 
 class Quotes extends PureComponent {
@@ -51,7 +53,8 @@ class Quotes extends PureComponent {
       pendingItemsTotal: 0,
       acceptedItemsTotal: 0,
       rejectedItemsTotal: 0,
-      quoteCurrency : ""
+      quoteCurrency : "",
+      searchBar : false
     };
   }
   componentDidMount = () => {
@@ -63,6 +66,7 @@ class Quotes extends PureComponent {
   };
 
   init = () => {
+    setTimeout(()=>{ 
       const {online} = this.props;
       if (online) {
         this.setState({showLoading: true});
@@ -124,12 +128,22 @@ class Quotes extends PureComponent {
       } else {
         Alert.alert('', 'No Internet Connection');
       }
-   
+    }, 2000);
    
   
  
   }
 
+  
+  
+
+  goToScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
+  };
+
+  showSearch = () => {
+    this.setState({searchBar : true})
+  }
   openScreen = (screen, param, status) => {
     let data = {
       'status' : status,
@@ -143,6 +157,7 @@ class Quotes extends PureComponent {
     return (
       <TouchableOpacity
         style={styles.rowItem}
+        onPress={() => this.goToScreen('Quote', item)}
         >
         <View style={styles.bottomQuotesRow}>
           <View
@@ -182,11 +197,12 @@ class Quotes extends PureComponent {
       rejectedItemsTotal,
       pendingItems,
       acceptedItems, 
-      rejectedItems
+      rejectedItems,
+      searchBar
     } = this.state;
 
     return (
-      <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
+      <View style={commonStyles.ketboardAvoidingContainer}>
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
@@ -194,22 +210,26 @@ class Quotes extends PureComponent {
         />
         <KeyboardAwareScrollView
           contentContainerStyle={{...commonStyles.content}}>
-          <View style={styles.rowContent}>
+          <TouchableOpacity style={styles.rowContent}>
+          {!searchBar ?
+            <>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
                 onPress={() => this.openScreen('AddQuote')}
               />
             </View>
-            <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
-            </View>
-          </View>
+            <TouchableOpacity style={{marginRight: moderateScale(-10)}} >
+              <ContainerSearch onPress={() => this.showSearch()}/>
+            </TouchableOpacity>
+            </>
+            : <View><Text>Hiiii</Text></View>}
+          </TouchableOpacity>
           <CardWithIcon
             color={APP_MAIN_BLUE}
             count={pendingItemsCount}
             status={'Pending'}
-            amount={'£' + ' ' + pendingItemsTotal}
+            amount={'£' + ' ' + commafy(pendingItemsTotal)}
             onPress={() => this.openScreen('StatusQuotes', pendingItems, 'PENDING')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
@@ -218,7 +238,7 @@ class Quotes extends PureComponent {
             color={APP_MAIN_GREEN}
             count={acceptedItemsCount}
             status={'Accepted'}
-            amount={'£' + ' ' + acceptedItemsTotal}
+            amount={'£' + ' ' + commafy(acceptedItemsTotal)}
             onPress={() => this.openScreen('StatusQuotes', acceptedItems, 'ACCEPTED')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
@@ -227,14 +247,14 @@ class Quotes extends PureComponent {
             color={APP_MAIN_COLOR}
             count={rejectedItemsCount}
             status={'Rejected'}
-            amount={'£' + ' ' + rejectedItemsTotal}
+            amount={'£' + ' ' + commafy(rejectedItemsTotal)}
             onPress={() => this.openScreen('StatusQuotes', rejectedItems, 'REJECTED')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />
 
           <TouchableOpacity style={styles.quotesRow}>
-            <View style={{width: '60%'}}>
+            <View style={{width: '60%', justifyContent : 'center'}}>
               <Text style={styles.recentText}>RECENT QUOTES</Text>
             </View>
             <View style={{width: '20%'}} />
@@ -261,7 +281,8 @@ class Quotes extends PureComponent {
           textContent="Please wait..."
           textStyle={{color: WHITE}}
         />
-      </SafeAreaView>
+      </View>
+    
     );
   }
 }
@@ -279,9 +300,7 @@ const styles = ScaledSheet.create({
   parentFlatList: {
     marginTop: moderateScale(10)
   },
-  rowItem: {
-    height: moderateScale(30),
-  },
+ 
   dotBlue: {
     marginTop: moderateScale(5),
     height: moderateScale(12),

@@ -389,7 +389,7 @@ export default class Api {
   }
 
   static getCountriesList() {
-    let response = this.sendRequest('GET', 'countries', "", true);
+    let response = this.sendRequest('GET', 'countries?force_all_data=yes', "", true);
     return response;
   }
 

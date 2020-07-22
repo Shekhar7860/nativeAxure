@@ -2,7 +2,7 @@
 
 import React, {PureComponent} from 'react';
 
-import {StyleSheet, View, Platform, StatusBar} from 'react-native';
+import {StyleSheet, View, Platform, StatusBar, SafeAreaView} from 'react-native';
 import {DRAWER_MENU, BACK, SEARCH} from '../constants/Images';
 import SafeArea from './SafeArea';
 import SubHeader from './SubHeader';
@@ -15,7 +15,7 @@ import BaseScreen from '../components/BaseScreen';
 import {getStatusBarHeight, isIphoneX} from 'react-native-iphone-x-helper';
 import {HEADER_ITEMS_MARGIN_LEFT_RIGHT} from '../constants/const';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
-
+const THEME_COLOR = '#285E29';
 const HEADER_IMAGE_WIDTH_HEIGHT = moderateScale(25);
 const HEADER_HEIGHT = moderateScale(45);
 const PROFILE_IMAGE_SIZE = moderateScale(20);
@@ -90,6 +90,8 @@ class Header extends PureComponent {
     const paddingTop =
       Platform.OS === 'android' ? {paddingTop: moderateScale(0)} : {};
     return (
+      <>
+      <SafeAreaView style={styles.topSafeArea} />
       <SafeArea style={[styles.container, paddingTop]}>
       <StatusBar backgroundColor={WHITE} barStyle="dark-content"/>
         <View style={{ overflow: 'hidden', paddingBottom: 5}}>
@@ -121,6 +123,7 @@ class Header extends PureComponent {
           </View>
         </View>
       </SafeArea>
+      </>
     );
   }
 }
@@ -161,7 +164,11 @@ const styles = StyleSheet.create({
   },
   styleStatusBar : {
     color : 'red'
-  }
+  },
+  topSafeArea: {
+    flex: 0, 
+    backgroundColor: WHITE
+}, 
 });
 
 export default Header;

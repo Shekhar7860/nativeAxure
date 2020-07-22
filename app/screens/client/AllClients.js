@@ -72,8 +72,8 @@ class AllClients extends Component {
       });
     console.group(this.state.acceptedItems, 'ssjsjsj');
     this.setState({
-      acceptedItems: this.state.acceptedItems,
-      rejectedItems: this.state.rejectedItems,
+      acceptedItems: this.state.acceptedItems.reverse(),
+      rejectedItems: this.state.rejectedItems.reverse(),
     });
   };
 

@@ -43,7 +43,7 @@ class StatusWiseQuotes extends Component {
   componentDidMount = () => {
     if (this.props.route.params) {
         console.log('pareama', this.props.route.params)
-        this.setState({items : this.props.route.params.quoteStatusData.list, status : this.props.route.params.quoteStatusData.status})
+        this.setState({items : this.props.route.params.quoteStatusData.list.reverse(), status : this.props.route.params.quoteStatusData.status})
       }
   };
 

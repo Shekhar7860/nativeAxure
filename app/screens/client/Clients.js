@@ -51,11 +51,19 @@ class Clients extends PureComponent {
         this.setState({
           showLoading: false
         });
-        this.setState({items:clients.items});
+       
+        let arr = clients.items
+                .slice(Math.max(clients.items.length - 5, 1))
+                .reverse();
+      this.setState({items:arr});
       }, 2000);
     } else {
       Alert.alert('', 'No Internet Connection');
     }
+  };
+
+  goToScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
   };
 
   openScreen = (screen, param) => {
@@ -66,6 +74,7 @@ class Clients extends PureComponent {
     return (
       <TouchableOpacity
         style={styles.rowItem}
+        onPress={() => this.goToScreen('Client', item)}
         >
         <View style={styles.bottomQuotesRow}>
           <View
@@ -83,8 +92,10 @@ class Clients extends PureComponent {
       </TouchableOpacity>
     );
   };
+
+  
   render() {
-    const {items, showLoading} = this.state;
+    const {items, showLoading,  searchBar} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -95,6 +106,8 @@ class Clients extends PureComponent {
         />
         <View style={commonStyles.content}>
           <View style={styles.rowContent}>
+            {!searchBar ?
+            <>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
@@ -104,6 +117,8 @@ class Clients extends PureComponent {
             <View style={{marginRight: moderateScale(-10)}}>
               <ContainerSearch />
             </View>
+            </>
+            : <View><Text></Text></View>}
           </View>
 
           <View style={styles.quotesRow}>

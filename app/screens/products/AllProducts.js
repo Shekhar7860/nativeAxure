@@ -52,7 +52,7 @@ class AllProducts extends Component {
         this.setState({
           showLoading: false
         });
-        this.setState({items:products.items});
+        this.setState({items:products.items.reverse()});
       }, 2000);
     } else {
       Alert.alert('', 'No Internet Connection');

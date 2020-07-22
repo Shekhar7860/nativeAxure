@@ -12,7 +12,7 @@ import {
   APP_MAIN_COLOR,
 } from '../../constants/colors';
 const arrDataVat= ['Exempted'];
-import {USER, BACK, TASK, DRAWER_MENU, CROSS} from '../../constants/Images';
+import {USER, BACK, TASK, DRAWER_MENU, CROSS, LISTINGICON} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ClickableText from '../../components/ClickableText';
@@ -373,10 +373,11 @@ class AddOrderQuote extends PureComponent {
         <TouchableOpacity style={commonStyles.content}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
-              <AddNewButtonGroup color={APP_MAIN_GREEN} />
+              {/* <AddNewButtonGroup color={APP_MAIN_GREEN} /> */}
             </View>
             <TouchableImage
-              image={DRAWER_MENU}
+             onPress={() => this.openScreen('AllOrders')}
+              image={LISTINGICON}
               imageStyle={{
                 ...commonStyles.icon,
                 marginLeft: moderateScale(-18),

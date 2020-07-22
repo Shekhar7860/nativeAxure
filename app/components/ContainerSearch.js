@@ -9,15 +9,12 @@ import {SEARCH} from '../constants/Images';
 
 const ContainerSearch = (props) => {
 	return (
-		<View>
-			<TouchableOpacity style={styles.searchContainer}>
+			<TouchableOpacity style={styles.searchContainer} onPress={props.onPress}>
 				<TouchableImage
 					image={SEARCH}
 					imageStyle={styles.icon}
-					
 				/>
-			</TouchableOpacity>
-		</View>
+		   </TouchableOpacity>
 	);
 };
 

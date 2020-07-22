@@ -203,7 +203,8 @@ class Login extends Component {
 
 const styles = ScaledSheet.create({
   loginAppName: {
-    marginTop: moderateScale(130),
+    flex : 1,
+    justifyContent : 'center'
   },
   signInText: {
     marginTop: moderateScale(10),

@@ -12,7 +12,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER, BACK, TASK, DRAWER_MENU} from '../../constants/Images';
+import {USER, BACK, TASK, DRAWER_MENU, LISTINGICON} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import SimpleDropdown from '../../components/SimpleDropdown';
@@ -71,11 +71,11 @@ class AddOrder extends PureComponent {
     this.setState({clientItems: this.state.clientItems, clientIds: this.state.clientIds});
   };
 
-  addClientQuote = () => {
-    this.props.navigation.navigate('AddQuoteClient');
+  goToOrders = () => {
+    this.props.navigation.navigate('AllOrders');
   };
 
-  openScreen = (screen, param) => {
+   createOrder= (screen, param) => {
     const {
       clientId,
       type,
@@ -157,7 +157,8 @@ class AddOrder extends PureComponent {
               <AddNewButtonGroup color={APP_MAIN_GREEN} />
             </View>
             <TouchableImage
-              image={DRAWER_MENU}
+              image={LISTINGICON}
+              onPress={()=> this.goToOrders()}
               imageStyle={{
                 ...commonStyles.icon,
                 marginLeft: moderateScale(-18),
@@ -228,7 +229,7 @@ class AddOrder extends PureComponent {
               />
             </View>
 
-            <ButtonDefault onPress={() => this.openScreen('AddOrderQuote')}>
+            <ButtonDefault onPress={() => this.createOrder('AddOrderQuote')}>
               NEXT
             </ButtonDefault>
           </View>

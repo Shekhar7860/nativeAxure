@@ -99,9 +99,13 @@ class Users extends Component {
     this.props.navigation.navigate(screen, {clientData: param});
   };
 
+  goToScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {userData: param});
+  };
+
   listItem = (item, index) => {
     return (
-      <TouchableOpacity style={styles.rowItem} >
+      <TouchableOpacity style={styles.rowItem} onPress={() => this.goToScreen('UserDetail', item)}>
         <View style={styles.bottomQuotesRow}>
           <View style={!item.is_active == 1 ? styles.dotRed : styles.dotGreen} />
           <View style={{width: '5%'}} />

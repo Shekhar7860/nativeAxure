@@ -30,7 +30,10 @@ class App extends PureComponent {
     console.disableYellowBox = true;
     OneSignal.setLogLevel(6, 0);
     OneSignal.init("6c356504-bbfc-4036-bb77-07245ccdb10e", {kOSSettingsKeyAutoPrompt : false, kOSSettingsKeyInAppLaunchURL: false, kOSSettingsKeyInFocusDisplayOption:2});
-    SplashScreen.hide();
+    setTimeout(()=>{
+      SplashScreen.hide();
+    }, 2000); 
+    
     this.getToken();
   }
 

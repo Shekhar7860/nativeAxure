@@ -105,12 +105,13 @@ class AddQuoteClient extends PureComponent {
       clientItems : [],
       clientIds : [],
       country : "",
-      countries : []
+      countries : [],
+      quantity : '1'
     };
   }
   componentDidMount = () => {
     const {countries} = this.props;
-   // console.log('here are countries', countries);
+    console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
     }
@@ -124,12 +125,14 @@ class AddQuoteClient extends PureComponent {
       if(id !== undefined){
         this.setState({quoteId : id.toString()});
       }
-      this.setState({ userquoteId : id, quoteTitle : this.props.route.params.quoteData.name, poPreference : this.props.route.params.quoteData.po_reference, type : this.props.route.params.quoteData.type, status : this.props.route.params.quoteData.status,
+      this.setState({  userquoteId : id, quoteTitle : this.props.route.params.quoteData.name, poPreference : this.props.route.params.quoteData.po_reference, type : this.props.route.params.quoteData.type, status : this.props.route.params.quoteData.status,
       paymentCurrency : this.props.route.params.quoteData.currency, paymentVat : this.props.route.params.quoteData.vat_percentage, shippingCost : this.props.route.params.quoteData.shipping_cost, billingCompanyName :  this.props.route.params.quoteData.billing_company_name, billingFirstName : this.props.route.params.billing_first_name,
       billingLastName : this.props.route.params.quoteData.billing_last_name,   billingEmail : this.props.route.params.quoteData.billing_email,   billingCountry : this.props.route.params.quoteData.billing_country,   billingCity : this.props.route.params.billing_city,   billingPostalCode : this.props.route.params.billing_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name,
       shippingFirstName : this.props.route.params.quoteData.shipping_first_name, billingAdd1 : this.props.route.params.quoteData.billing_add1, billingAdd2 : this.props.route.params.quoteData.billing_add2, shippingAdd1 : this.props.route.params.quoteData.shipping_add1, shippingAdd2 : this.props.route.params.quoteData.shipping_add2,
       shippingLastName : this.props.route.params.quoteData.shipping_last_name,   shippingEmail : this.props.route.params.quoteData.shipping_email,   shippingCountry : this.props.route.params.quoteData.shipping_country,   shippingCity : this.props.route.params.quoteData.shipping_city,   shippingPostalCode : this.props.route.params.quoteData.shipping_zip_code, shippingCompanyName : this.props.route.params.quoteData.shipping_company_name
     })
+    var text = this.props.route.params.quoteData.terms .replace(/<\/?[^>]+>/ig, " ");
+    this.setState({paymentTerm :  text, terms : text})
     // this.setState({quoteId : id.toString(), userquoteId : id})
     if (this.props.route.params.quoteData.client !== undefined) {
       this.setState({
@@ -148,7 +151,7 @@ class AddQuoteClient extends PureComponent {
   };
 
   selectData = (val) => {
-//   console.log('products', this.state.products[val], 'prices', this.state.prices[val]);
+  console.log('products', this.state.quantity);
       //creating an copy and pushing array
 
     for (var i = 0; i < this.state.items.length; i++) {
@@ -158,12 +161,12 @@ class AddQuoteClient extends PureComponent {
             this.setState({
            items: [...this.state.items]
            })
-           this.addQuoteItem(this.state.prices[val].product_id, 1, val, false)
+           this.addQuoteItem(this.state.prices[val].product_id, this.state.quantity, val, false)
            return;                       // exit loop and function
         }
       }
     //  console.log('ajjaj', this.state.items)
-      this.addQuoteItem(this.state.prices[val].product_id, 1, val, true)
+      this.addQuoteItem(this.state.prices[val].product_id, this.state.quantity, val, true)
 
 
   };
@@ -193,7 +196,7 @@ addQuoteItem = (product_id, qty, val, status) => {
       //  console.log('responseQuoteItem', response)
         if(status){
         var newArray = this.state.items.slice(); // Create a copy
-        newArray.push({name:this.state.products[val], price_gbp : this.state.prices[val].price_gbp, sku :  this.state.prices[val].sku, qty : this.state.prices[val].qty, product_id :  this.state.prices[val].product_id});
+        newArray.push({name:this.state.products[val], price_gbp : this.state.prices[val].price_gbp, sku :  this.state.prices[val].sku, qty : this.state.quantity, product_id :  this.state.prices[val].product_id});
         this.setState({ items: newArray })}
       } else {
         if (response.validation_errors) {
@@ -456,7 +459,7 @@ addQuoteItem = (product_id, qty, val, status) => {
 
   calculateCost = () => {};
   render() {
-    const {items, clientName, quoteTitle,shippingCost, poPreference,paymentCurrency, paymentVat, billingCompanyName, billingFirstName, billingLastName, billingCountry, billingCity, billingPostalCode, billingAdd1, billingAdd2, shippingCity, shippingCountry, shippingAdd2, shippingAdd1, shippingLastName, shippingFirstName,  type, status, isRememberMe, quoteDetail, quoteId, showLoading, products, shipping, vat, quoteData, shippingCompanyName, shippingPostalCode, countries, billingEmail, shippingEmail} = this.state;
+    const {items, terms, quantity, clientName, paymentTerm, quoteTitle,shippingCost, poPreference,paymentCurrency, paymentVat, billingCompanyName, billingFirstName, billingLastName, billingCountry, billingCity, billingPostalCode, billingAdd1, billingAdd2, shippingCity, shippingCountry, shippingAdd2, shippingAdd1, shippingLastName, shippingFirstName,  type, status, isRememberMe, quoteDetail, quoteId, showLoading, products, shipping, vat, quoteData, shippingCompanyName, shippingPostalCode, countries, billingEmail, shippingEmail} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -888,7 +891,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                     onChangeText={(value) =>
                       this.setState({paymentTerm: value})
                     }
-                    value={quoteData.terms}
+                    value={paymentTerm}
                   />
                 </View>
                 <View style={commonStyles.space}>
@@ -960,7 +963,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                   }}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({terms: value})}
-                  value={quoteData.terms}
+                  value={terms}
                 />
 
               </ExpandCollapseLayout>
@@ -1067,6 +1070,20 @@ addQuoteItem = (product_id, qty, val, status) => {
               isIconVisible={true}
             />
           </View>
+          <Text style={styles.labelText}>Quantity</Text>
+          <InputBox
+                  placeHolder=""
+                  maxLines={5}
+                  maxLength={50}
+                  boxStyle={{
+                    ...styles.inputBoxStyle3,
+                  }}
+                  inputStyle={styles.input2}
+                  onChangeText={(value) => this.setState({quantity: value})}
+                  value={quantity}
+                  keyboardType={'numeric'}
+                  maxLength={1}
+                />
 
             <ButtonDefault onPress={() => this.updateQuote('EditQuote')}>
               SAVE
@@ -1179,8 +1196,24 @@ const styles = ScaledSheet.create({
     borderBottomWidth: 1,
     borderColor: DARK_BLUE,
   },
+  inputBoxStyle3: {
+    
+    height: moderateScale(40),
+    borderRadius: 0,
+    borderWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: DARK_BLUE,
+    width : '15%',
+    marginHorizontal : moderateScale(20)
+  },
   input: {
     fontWeight: 'normal',
+    
+    fontSize: moderateScale(10),
+  },
+  inputBoxStyle2: {
+    fontWeight: 'normal',
+    color :'black',
     fontSize: moderateScale(10),
   },
   recentText: {

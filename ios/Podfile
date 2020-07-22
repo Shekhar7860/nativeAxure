@@ -95,7 +95,9 @@ target 'NativeAxure' do
     flipper_post_install(installer)
   end
 end
-
+target 'OneSignalNotificationServiceExtension' do
+  pod 'OneSignal', '>= 2.9.3', '< 3.0'
+end
 target 'NativeAxure-tvOS' do
   # Pods for NativeAxure-tvOS
 

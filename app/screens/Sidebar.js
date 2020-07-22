@@ -225,7 +225,8 @@ const styles = ScaledSheet.create({
   crossImage : {
    alignSelf : 'flex-end',
    marginRight : moderateScale(10),
-   marginTop : moderateScale(30)
+   marginTop : moderateScale(30),
+   tintColor : WHITE
   },
   partnerText: {
     color: WHITE,
@@ -262,6 +263,8 @@ const styles = ScaledSheet.create({
     width: moderateScale(80),
     height: moderateScale(80),
     borderRadius: moderateScale(40),
+    borderWidth : moderateScale(4),
+    borderColor : WHITE
   },
 });
 

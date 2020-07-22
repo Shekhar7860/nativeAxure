@@ -118,7 +118,7 @@ export default class Requests extends Component {
     const {items} = this.state;
 
     return (
-      <SafeAreaView
+      <View
         style={{
           ...commonStyles.ketboardAvoidingContainer,
           backgroundColor: LIGHTEST_GRAY,
@@ -181,7 +181,7 @@ export default class Requests extends Component {
           </ActionButton>
           {/* end of  bottom add button */}
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 }

@@ -62,6 +62,7 @@ class Home extends PureComponent {
       'hardwareBackPress',
       this.handleBackButtonClick,
     );
+    setTimeout(()=>{ 
     const {online} = this.props;
 
     if (online) {
@@ -129,6 +130,7 @@ class Home extends PureComponent {
     } else {
       Alert.alert('', 'No Internet Connection');
     }
+  }, 2000);
   };
 
   componentWillUnmount() {
@@ -178,7 +180,7 @@ class Home extends PureComponent {
         <HeaderWithLogo
           navigation={this.props.navigation}
           title="MPH GROUP"
-          rightImage={SEARCH}
+          rightImage={""}
         />
         {/* horizontal list */}
         <FlatList
@@ -209,8 +211,8 @@ const styles = ScaledSheet.create({
     marginRight: moderateScale(-20),
   },
   image: {
-    height: Dimensions.get('window').height - moderateScale(90),
-    width: Dimensions.get('window').width - moderateScale(60),
+    height: Dimensions.get('window').height - moderateScale(100),
+    width: Dimensions.get('window').width - moderateScale(30),
   },
 });
 

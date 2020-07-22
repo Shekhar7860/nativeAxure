@@ -20,6 +20,7 @@ import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import HR from '../../components/HR';
+import {commafy} from '../../util/utils';
 import {connect} from 'react-redux';
 import {getOrdersList} from '../../redux/reducers/orders';
 import OverlaySpinner from '../../components/OverlaySpinner';
@@ -117,11 +118,11 @@ class Orders extends Component {
               partiallyShippedItemsTotal: partiallyShippedSum.toFixed(2),
               completedItemsTotal: completedSum.toFixed(2),
               cancelledItemsTotal: cancelledSum.toFixed(2),
-              shippedItems: this.state.shippedItems,
-              acceptedItems: this.state.acceptedItems,
-              partiallyShippedItems: this.state.partiallyShippedItems,
-              completedItems: this.state.completedItems,
-              cancelledItems: this.state.cancelledItems,
+              shippedItems: this.state.shippedItems.reverse(),
+              acceptedItems: this.state.acceptedItems.reverse(),
+              partiallyShippedItems: this.state.partiallyShippedItems.reverse(),
+              completedItems: this.state.completedItems.reverse(),
+              cancelledItems: this.state.cancelledItems.reverse(),
             });
             let arr = response.data.items
               .slice(Math.max(response.data.items.length - 5, 1))
@@ -152,6 +153,11 @@ class Orders extends Component {
     this.props.navigation.navigate('AddQuote');
   };
 
+
+  goToScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {orderData: param});
+  };
+
   openScreen = (screen, param, status) => {
     let data = {
       'status' : status,
@@ -160,13 +166,11 @@ class Orders extends Component {
     this.props.navigation.navigate(screen, {orderStatusData: data});
   };
 
-  openQuote = () => {
-    this.props.navigation.navigate('Quote');
-  };
+  
 
   listItem = (item, index) => {
     return (
-      <TouchableOpacity style={styles.rowItem}>
+      <TouchableOpacity style={styles.rowItem} onPress={() => this.goToScreen('AddOrderQuote', item)}>
         <View style={styles.bottomQuotesRow}>
           <View style={!item.is_active == 1 ? styles.dotRed : styles.dotGreen}  />
           <View style={{width: '5%'}} />
@@ -207,15 +211,15 @@ class Orders extends Component {
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
-          title="Orders"
+          title="ORDERS"
         />
         <TouchableOpacity style={{...commonStyles.content, flex : 1}}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
-              <AddNewButtonGroup
+              {/* <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
                 onPress={() => this.openScreen('AddOrder')}
-              />
+              /> */}
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
               <ContainerSearch />
@@ -227,7 +231,7 @@ class Orders extends Component {
                 color={ORANGE_COLOR}
                 count={shippedItemsCount}
                 status={'Shipped'}
-                amount={'£' + ' ' + shippedItemsTotal}
+                amount={'£' + ' ' + commafy(shippedItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
                 onPress={() => this.openScreen('StatusOrders', shippedItems, 'SHIPPED')}
@@ -236,7 +240,7 @@ class Orders extends Component {
                 color={APP_MAIN_GREEN}
                 count={acceptedItemsCount}
                 status={'Accepted'}
-                amount={ '£' + ' ' + acceptedItemsTotal}
+                amount={ '£' + ' ' + commafy(acceptedItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
                 onPress={() => this.openScreen('StatusOrders', acceptedItems, 'ACCEPED')}
@@ -245,7 +249,7 @@ class Orders extends Component {
                 color={CARD_DARK_BLUE}
                 count={partiallyShippedItemsCount}
                 status={'Partially Shipped'}
-                amount={'£' + ' ' + partiallyShippedItemsTotal}
+                amount={'£' + ' ' + commafy(partiallyShippedItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
                 onPress={() => this.openScreen('StatusOrders', partiallyShippedItems, 'PARTIALLY SHIPPED')}
@@ -254,7 +258,7 @@ class Orders extends Component {
                 color={APP_MAIN_BLUE}
                 count={completedItemsCount}
                 status={'Completed'}
-                amount={'£' + ' ' +completedItemsTotal}
+                amount={'£' + ' ' + commafy(completedItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
                 onPress={() => this.openScreen('StatusOrders', completedItems, 'COMPLETED')}
@@ -263,7 +267,7 @@ class Orders extends Component {
                 color={APP_MAIN_COLOR}
                 count={cancelledItemsCount}
                 status={'Cancelled'}
-                amount={'£' + ' ' + cancelledItemsTotal}
+                amount={'£' + ' ' + commafy(cancelledItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
                 onPress={() => this.openScreen('StatusOrders', cancelledItems, 'CANCELLED')}

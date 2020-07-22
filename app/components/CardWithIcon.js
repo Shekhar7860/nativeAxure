@@ -39,6 +39,7 @@ const styles = ScaledSheet.create({
 		borderWidth: 1,
 		borderRadius: moderateScale(15),
 		marginTop: moderateScale(17),
+		alignSelf : 'center'
 	},
 	icon: {
 		width: moderateScale(18),

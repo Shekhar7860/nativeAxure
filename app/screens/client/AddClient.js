@@ -336,7 +336,7 @@ if(clientname && first3letters && email){
       this.setState({countryIndex: val});
     }
     else if (type == "contCountry"){
-      this.setState({contCountry: this.state.scountries[val]});
+      this.setState({contCountry: this.state.countries[val]});
     } else {
       this.setState({clientId: this.state.clientIds[val]});
       this.setState({client: this.state.clientItems[val]});

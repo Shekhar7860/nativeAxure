@@ -91,7 +91,7 @@ class Quote extends PureComponent {
     const {items, quote, showLoading} = this.state;
 
     return (
-      <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
+      <View style={commonStyles.ketboardAvoidingContainer}>
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
@@ -196,7 +196,7 @@ class Quote extends PureComponent {
           textContent="Please wait..."
           textStyle={{color: WHITE}}
         />
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -266,7 +266,7 @@ const styles = ScaledSheet.create({
     width: '5%',
   },
   emptyWidth: {
-    width: '10%',
+    width: '20%',
   },
   emptyWidth2: {
     width: '10%',
@@ -277,7 +277,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
   lastTextWidth: {
-    width: '30%',
+    width: '20%',
   },
   lastTextWidth2: {
     width: '30%',

@@ -12,7 +12,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER, BACK, TASK, DRAWER_MENU} from '../../constants/Images';
+import {USER, BACK, TASK, DRAWER_MENU, LISTINGICON} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import SimpleDropdown from '../../components/SimpleDropdown';
@@ -92,7 +92,11 @@ class AddQuote extends PureComponent {
     //this.props.navigation.navigate('Cart')
   };
 
-  openScreen = (screen) => {
+  openScreen = (screen, data) => {
+    this.props.navigation.navigate(screen, {params: data});
+  }
+
+  createQuote = (screen) => {
 
     const {
       clientId,
@@ -183,7 +187,8 @@ class AddQuote extends PureComponent {
               <AddNewButtonGroup color={APP_MAIN_GREEN} />
             </View>
             <TouchableImage
-              image={DRAWER_MENU}
+              image={LISTINGICON}
+              onPress={() => this.openScreen('AllQuotes')}
               imageStyle={{
                 ...commonStyles.icon,
                 marginLeft: moderateScale(-18),
@@ -241,7 +246,7 @@ class AddQuote extends PureComponent {
               onSelect={(value) => this.selectData(value, 'status')}
             />
 
-            <ButtonDefault onPress={() => this.openScreen('EditQuote')}>
+            <ButtonDefault onPress={() => this.createQuote('EditQuote')}>
               NEXT
             </ButtonDefault>
           </View>
@@ -283,7 +288,7 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: moderateScale(20),
-    marginHorizontal: moderateScale(20),
+    marginHorizontal: moderateScale(0),
   },
   quotesRow: {
     flexDirection: 'row',

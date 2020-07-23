@@ -13,6 +13,7 @@ import {
   APP_MAIN_COLOR,
   SEE_ALL_BUTTON_COLOR
 } from '../../constants/colors';
+import SearchWithCross from '../../components/SearchWithCross';
 import {USER} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
@@ -29,7 +30,7 @@ import {
   FlatList,
   ScrollView
 } from 'react-native';
-import {getProductsList} from '../../redux/reducers/products';
+import {getProductsList, searchProduct} from '../../redux/reducers/products';
 import {connect} from 'react-redux';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 import OverlaySpinner from '../../components/OverlaySpinner';
@@ -40,6 +41,8 @@ class RecentProducts extends Component {
     this.state = {
       items: [1, 2],
       showLoading: false,
+      searchBar : false,
+      searchResult : false
     };
   }
   componentDidMount = () => {
@@ -55,35 +58,53 @@ class RecentProducts extends Component {
                 .reverse();
         this.setState({items:arr});
       }, 2000);
-      // this.setState({showLoading: true});
-      // this.props
-      //   .getProductsList()
-      //   .then((response) => {
-      //     console.group('response', response);
-      //     this.setState({showLoading: false});
-      //     if (response.code === 200) {
-      //       let arr = response.data.items
-      //         .slice(Math.max(response.data.items.length - 5, 1))
-      //         .reverse(); // for showing last 5 elements of array
-      //       this.setState({items: arr});
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     this.setState({showLoading: false});
-      //     if (error.code === 'unauthorized') {
-      //       showErrorPopup(
-      //         "Couldn't validate those credentials.\nPlease try again",
-      //       );
-      //     } else {
-      //       showErrorPopup(
-      //         'There was an unexpected error.\nPlease wait a few minutes and try again.',
-      //       );
-      //     }
-      //   });
+
     } else {
       Alert.alert('', 'No Internet Connection');
     }
   };
+
+  showSearch = () => {
+    this.setState({searchBar : true})
+  }
+
+  imagePressed = () => {
+    this.setState({searchBar : false, searchResult : false})
+    this.componentDidMount()
+  }
+
+  searchText = (value) => {
+    this.setState({searchResult : true});
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .searchProduct(value)
+        .then((response) => {
+         // console.log('response', response);
+          if (response.code === 200) {
+             this.setState({showLoading: false, searchResult : true, items: response.data.items.reverse()});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+    
+  }
+
+
 
   addQuote = () => {
     this.props.navigation.navigate('AddQuote');
@@ -111,7 +132,7 @@ class RecentProducts extends Component {
     );
   };
   render() {
-    const {items, showLoading} = this.state;
+    const {items, showLoading, searchBar, searchResult} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -121,7 +142,7 @@ class RecentProducts extends Component {
           title="PRODUCTS"
         />
         <TouchableOpacity style={commonStyles.content}>
-          <View style={styles.rowContent}>
+        {!searchBar ?  <TouchableOpacity style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
@@ -129,10 +150,10 @@ class RecentProducts extends Component {
               />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              <ContainerSearch onPress={() => this.showSearch()}/>
             </View>
-          </View>
-
+          </TouchableOpacity>  : <TouchableOpacity style={styles.rowContent2}><SearchWithCross onSearchPress={(value) => this.searchText(value)} onImagePress={() => this.imagePressed()}/></TouchableOpacity>}
+          {!searchResult ?
           <TouchableOpacity style={styles.quotesRow}>
             <View style={{width: '60%'}}>
               <Text style={styles.recentText}>RECENT PRODUCTS</Text>
@@ -145,14 +166,15 @@ class RecentProducts extends Component {
                 <Text style={styles.seeText}>SEE ALL</Text>
               </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> : null}
+          {items.length !==0 ? <>
           <FlatList
             style={styles.parentFlatList}
             data={items}
             extraData={this.state}
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) => this.listItem(item, index)}
-          />
+          /></> :<><Text style={commonStyles.noRecordFound}>No Product Found </Text></>}
         </TouchableOpacity>
         <OverlaySpinner
           cancelable
@@ -235,8 +257,14 @@ const styles = ScaledSheet.create({
   rowItem: {
     borderTopWidth: 1,
     borderColor: '#e6e6e6',
-    height: moderateScale(50),
+    height: moderateScale(30),
     justifyContent: 'center',
+  },
+  rowContent2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(10),
+    marginHorizontal: moderateScale(5),
   },
 });
 
@@ -247,6 +275,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getProductsList,
+  searchProduct
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecentProducts);

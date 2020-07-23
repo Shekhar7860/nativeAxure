@@ -66,7 +66,7 @@ class AddQuote extends PureComponent {
       this.props
         .getClientsList()
         .then((response) => {
-          console.log('clientssss', response);
+          // console.log('clientssss', response);
           if (response.code === 200) {
             this.setState({items: response.data.items});
             for (var i = 0; i <= response.data.items.length; i++) {
@@ -170,7 +170,7 @@ class AddQuote extends PureComponent {
     this.props.navigation.navigate(screen, {clientData: param});
   };
   render() {
-    console.log('hhhh', this.state.clientitems);
+  //  console.log('hhhh', this.state.clientitems);
     const {items, clientItems, showLoading} = this.state;
 
     return (
@@ -196,7 +196,7 @@ class AddQuote extends PureComponent {
               }}
             />
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </TouchableOpacity>
         </TouchableOpacity>

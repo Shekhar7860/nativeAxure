@@ -23,6 +23,14 @@ export const getOrdersList = () => {
   };
 };
 
+export const searchOrder = (VAL) => {
+  return (dispatch) => {
+    return API.searchProduct(VAL).then((response) => {
+      return response;
+    });
+  };
+};
+
 export const addOrder = (
   client_id,
   reseller_id,

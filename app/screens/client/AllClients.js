@@ -48,7 +48,7 @@ class AllClients extends Component {
     this.props
       .getClientsList()
       .then((response) => {
-        console.group('responseAll', response);
+       // console.group('responseAll', response);
         this.setState({showLoading: false});
         if (response.code === 200) {
           this.setState({items: response.data.items});
@@ -70,7 +70,7 @@ class AllClients extends Component {
         } else {
         }
       });
-    console.group(this.state.acceptedItems, 'ssjsjsj');
+   // console.group(this.state.acceptedItems, 'ssjsjsj');
     this.setState({
       acceptedItems: this.state.acceptedItems.reverse(),
       rejectedItems: this.state.rejectedItems.reverse(),
@@ -107,7 +107,7 @@ class AllClients extends Component {
     );
   };
   render() {
-    console.group('stts', this.state.acceptedItems);
+   // console.group('stts', this.state.acceptedItems);
     const {
       acceptedItems,
       pendingItems,
@@ -132,7 +132,7 @@ class AllClients extends Component {
               />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
 
@@ -258,7 +258,7 @@ const styles = ScaledSheet.create({
   rowItem: {
     borderTopWidth: 1,
     borderColor: '#e6e6e6',
-    height: moderateScale(30),
+    height: moderateScale(50),
     justifyContent: 'center',
   },
 });

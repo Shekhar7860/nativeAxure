@@ -45,7 +45,7 @@ class AllProducts extends Component {
   }
   componentDidMount = () => {
     const {online, products} = this.props;
-    console.log('productsss', products);
+   // console.log('productsss', products);
     if (online) {
       this.setState({showLoading: true});
       setTimeout(() => {
@@ -93,7 +93,7 @@ class AllProducts extends Component {
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}></View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
 

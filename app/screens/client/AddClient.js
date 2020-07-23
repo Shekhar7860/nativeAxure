@@ -227,7 +227,7 @@ if(clientname && first3letters && email){
       userInfo.reseller_id
         )
         .then((response) => {
-          console.log('ddd', response)
+         // console.log('ddd', response)
           this.setState({showLoading: false});
           if (response.code === 200) {
             Toast.show(response.message)
@@ -285,8 +285,8 @@ if(clientname && first3letters && email){
   };
 
   setSame = (add1, add2, city, country, postalCode, isRememberMe) => {
-    console.log('selected', this.state.countries[this.state.countryIndex])
-    console.log('isRememberME', isRememberMe)
+    // console.log('selected', this.state.countries[this.state.countryIndex])
+    // console.log('isRememberME', isRememberMe)
     if(isRememberMe !== true){
      this.setState({
        contAdd1 : add1,
@@ -313,7 +313,7 @@ if(clientname && first3letters && email){
   }
  
   handleDatePicked = (date, val) => {
-    console.log("A date has been picked: ", date);
+    // console.log("A date has been picked: ", date);
     var selectedDate= moment(date).format("MM/DD/YYYY")
     // console.log('jjs,', selectedDate)
     if(val == "regDatePickerVisible")

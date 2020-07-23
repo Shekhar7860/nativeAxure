@@ -62,7 +62,7 @@ export default class AddProduct extends PureComponent {
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}></View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
         </TouchableOpacity>

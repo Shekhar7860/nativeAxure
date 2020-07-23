@@ -33,6 +33,14 @@ export const getQuoteDetails = (quoteID) => {
   };
 };
 
+export const searchQuote = (VAL) => {
+  return (dispatch) => {
+    return API.searchQuote(VAL).then((response) => {
+      return response;
+    });
+  };
+};
+
 export const updateQuote = (
   quoteId,
   type,

@@ -98,11 +98,11 @@ openImagePicker = (setProfilePic, props) => {
       //console.group('Response = ', response);
 
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+      //  console.log('User cancelled image picker');
       } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
+       // console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
+      //  console.log('User tapped custom button: ', response.customButton);
       } else {
        // console.log('uri,', response)
         const source = {uri: response.uri};
@@ -137,7 +137,7 @@ const Sidebar = (props) => {
     props
       .updateProfilePic(image)
       .then((response) => {
-        console.log('insideApi', response);
+       // console.log('insideApi', response);
         if (response.code === 200) {
           SET_LOADING(false);
           Toast.show('Profile Pic Updated Successfully');

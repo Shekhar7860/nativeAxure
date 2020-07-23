@@ -42,7 +42,7 @@ class AllQuotes extends Component {
     };
   }
   componentDidMount = () => {
-    console.group('prii', this.props.quotes);
+   // console.log('prii', this.props.quotes);
     for (var i = 0; i < this.props.quotes.items.length; i++) {
       if (this.props.quotes.items[i].status == 'Pending') {
         this.state.pendingItems.push(this.props.quotes.items[i]);
@@ -53,7 +53,7 @@ class AllQuotes extends Component {
         this.state.rejectedItems.push(this.props.quotes.items[i]);
       }
     }
-    console.log('this', this.state.acceptedItems);
+   // console.log('this', this.state.acceptedItems);
     this.setState({showLoading: true});
     setTimeout(() => {
       this.setState({
@@ -124,7 +124,7 @@ class AllQuotes extends Component {
                 />
               </View>
               <View style={{marginRight: moderateScale(-10)}}>
-                <ContainerSearch />
+                {/* <ContainerSearch /> */}
               </View>
             </View>
 

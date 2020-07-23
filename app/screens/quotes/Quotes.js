@@ -10,19 +10,22 @@ import {
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
-  SEE_ALL_BUTTON_COLOR
+  SEE_ALL_BUTTON_COLOR,
+  BORDER_COLOR
 } from '../../constants/colors';
 import {commafy} from '../../util/utils';
-import {USER, leftArrow} from '../../constants/Images';
+import {USER, leftArrow, SEARCH, CROSS2} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
+import SearchWithCross from '../../components/SearchWithCross';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import HR from '../../components/HR';
-import {getQuotesList} from '../../redux/reducers/quotes';
+import {getQuotesList, searchQuote} from '../../redux/reducers/quotes';
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
+import TouchableImage from '../../components/TouchableImage';
 
 
 import {
@@ -54,7 +57,8 @@ class Quotes extends PureComponent {
       acceptedItemsTotal: 0,
       rejectedItemsTotal: 0,
       quoteCurrency : "",
-      searchBar : false
+      searchBar : false,
+      searchResult : false
     };
   }
   componentDidMount = () => {
@@ -65,7 +69,43 @@ class Quotes extends PureComponent {
      
   };
 
+  imagePressed = () => {
+    this.setState({searchBar : false, searchResult : false})
+    this.init()
+  }
+
+  searchText = (value) => {
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .searchQuote(value)
+        .then((response) => {
+        //  console.log('response', response);
+          if (response.code === 200) {
+             this.setState({showLoading: false, searchResult : true, items: response.data.items.reverse()});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+    
+  }
+
   init = () => {
+  
     setTimeout(()=>{ 
       const {online} = this.props;
       if (online) {
@@ -73,7 +113,7 @@ class Quotes extends PureComponent {
         this.props
           .getQuotesList()
           .then((response) => {
-            console.log('quotes', response);
+          //  console.log('quotes', response);
             this.setState({showLoading: false});
             if (response.code === 200) {
               let pendingSum = 0;
@@ -198,7 +238,8 @@ class Quotes extends PureComponent {
       pendingItems,
       acceptedItems, 
       rejectedItems,
-      searchBar
+      searchBar,
+      searchResult
     } = this.state;
 
     return (
@@ -210,21 +251,23 @@ class Quotes extends PureComponent {
         />
         <KeyboardAwareScrollView
           contentContainerStyle={{...commonStyles.content}}>
-          <TouchableOpacity style={styles.rowContent}>
           {!searchBar ?
             <>
+            <TouchableOpacity style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
                 onPress={() => this.openScreen('AddQuote')}
               />
             </View>
-            <TouchableOpacity style={{marginRight: moderateScale(-10)}} >
+            <TouchableOpacity style={{marginRight: moderateScale(-20)}} >
               <ContainerSearch onPress={() => this.showSearch()}/>
             </TouchableOpacity>
+            </TouchableOpacity>
             </>
-            : <View><Text>Hiiii</Text></View>}
-          </TouchableOpacity>
+            : <><TouchableOpacity style={styles.rowContent2}><SearchWithCross onSearchPress={(value) => this.searchText(value)} onImagePress={() => this.imagePressed()}/></TouchableOpacity></>}
+          {!searchResult ?
+          <>
           <CardWithIcon
             color={APP_MAIN_BLUE}
             count={pendingItemsCount}
@@ -266,6 +309,10 @@ class Quotes extends PureComponent {
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
+          </>
+           : null}
+           
+           {items.length !==0 ? <>
           <FlatList
             style={styles.parentFlatList}
             data={items}
@@ -273,6 +320,8 @@ class Quotes extends PureComponent {
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) => this.listItem(item, index)}
           />
+          </>
+          : <><Text style={commonStyles.noRecordFound}>No Quote Found </Text></>}
         </KeyboardAwareScrollView>
         <OverlaySpinner
           cancelable
@@ -326,7 +375,13 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: moderateScale(20),
-    marginHorizontal: moderateScale(20),
+    marginHorizontal: moderateScale(25),
+  },
+  rowContent2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(10),
+    marginHorizontal: moderateScale(5),
   },
   recentText: {
     fontSize: moderateScale(12),
@@ -371,6 +426,12 @@ const styles = ScaledSheet.create({
   statusTextStyle : {
     fontSize : moderateScale(13),
     fontWeight : 'bold'
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(20),
+    marginHorizontal: moderateScale(20),
   }
 });
 
@@ -379,7 +440,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  getQuotesList
+  getQuotesList,
+  searchQuote
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Quotes);

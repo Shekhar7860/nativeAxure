@@ -37,6 +37,7 @@ import UploadedOrders from './screens/orders/UploadedOrders';
 import AddProduct from './screens/products/AddProduct';
 import Requests from './screens/requests/Requests';
 import Notifications from './screens/user/Notifications';
+import StatusWiseUsers from './screens/user/StatusWiseUsers'
 import StatusWiseQuotes from './screens/quotes/StatusWiseQuotes';
 import AddQuoteClient from './screens/common/AddQuoteClient';
 import ResourceHub from './screens/user/ResourceHub';
@@ -137,6 +138,7 @@ function UsersStackNavigator() {
       <Stack.Screen name="UsersStack" component={Users} />
       <Stack.Screen name="AllUsers" component={AllUsers} />
       <Stack.Screen name="UserDetail" component={UserDetail} />
+      <Stack.Screen name="StatusUsers" component={StatusWiseUsers} />
     </Stack.Navigator>
   );
 }
@@ -174,7 +176,16 @@ getTabBarVisibility = (route) => {
   return true;
 };
 
+const ChatNull = () => {
+  return null
+}
+
+
+selectedTab = () => {
+  alert('hiiiiii')
+}
 function TabNavigator() {
+ 
   return (
     <Tab.Navigator
       tabBarOptions={{
@@ -206,6 +217,7 @@ function TabNavigator() {
           ),
         }}
         component={QuoteStackNavigator}
+        
       />
       <Tab.Screen
         options={{
@@ -233,7 +245,7 @@ function TabNavigator() {
           ),
           tabBarVisible: getTabBarVisibility(route),
         })}
-        component={ChatStackNavigator}
+        component={ChatNull}
       />
       <Tab.Screen
         options={{

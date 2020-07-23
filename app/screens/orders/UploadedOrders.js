@@ -50,7 +50,7 @@ import OverlaySpinner from '../../components/OverlaySpinner';
       this.props
         .getUploadedOrdersList()
         .then((response) => {
-         console.group('response', response);
+        // console.log('response', response);
          if (response.code === 200) {
           this.setState({showLoading: false});
           this.setState({items: response.data.items});

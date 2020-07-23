@@ -19,10 +19,11 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
+import SearchWithCross from '../../components/SearchWithCross';
 import HR from '../../components/HR';
 import {commafy} from '../../util/utils';
 import {connect} from 'react-redux';
-import {getOrdersList} from '../../redux/reducers/orders';
+import {getOrdersList, searchOrder} from '../../redux/reducers/orders';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {
   View,
@@ -60,6 +61,8 @@ class Orders extends Component {
       partiallyShippedItemsTotal: 0,
       completedItemsTotal: 0,
       cancelledItemsTotal: 0,
+      searchBar : false,
+      searchResult : false
     };
   }
   componentDidMount = () => {
@@ -127,7 +130,7 @@ class Orders extends Component {
             let arr = response.data.items
               .slice(Math.max(response.data.items.length - 5, 1))
               .reverse();
-              console.log('this is array', arr);
+            //  console.log('this is array', arr);
            this.setState({items: arr});
           //  this.setState({items: response.data.items});
           }
@@ -152,6 +155,46 @@ class Orders extends Component {
   addQuote = () => {
     this.props.navigation.navigate('AddQuote');
   };
+
+  showSearch = () => {
+    this.setState({searchBar : true})
+  }
+
+  imagePressed = () => {
+    this.setState({searchBar : false, searchResult : false})
+    this.componentDidMount()
+  }
+
+  searchText = (value) => {
+    this.setState({searchResult : true});
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .searchOrder(value)
+        .then((response) => {
+         // console.log('response', response);
+          if (response.code === 200) {
+             this.setState({showLoading: false, searchResult : true, items: response.data.items.reverse()});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+    
+  }
 
 
   goToScreen = (screen, param) => {
@@ -188,6 +231,8 @@ class Orders extends Component {
   render() {
     const {
       items,
+      searchBar,
+      searchResult,
       showLoading,
       shippedItemsCount,
       acceptedItemsCount,
@@ -214,7 +259,7 @@ class Orders extends Component {
           title="ORDERS"
         />
         <TouchableOpacity style={{...commonStyles.content, flex : 1}}>
-          <View style={styles.rowContent}>
+        {!searchBar ? <TouchableOpacity style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
               {/* <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
@@ -222,11 +267,13 @@ class Orders extends Component {
               /> */}
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              <ContainerSearch onPress={() => this.showSearch()}/>
             </View>
-          </View>
+          </TouchableOpacity> : <TouchableOpacity style={styles.rowContent2}><SearchWithCross onSearchPress={(value) => this.searchText(value)} onImagePress={() => this.imagePressed()}/></TouchableOpacity>}
 
           <KeyboardAwareScrollView>
+          {!searchResult ?
+          <>
               <CardWithIcon
                 color={ORANGE_COLOR}
                 count={shippedItemsCount}
@@ -284,14 +331,16 @@ class Orders extends Component {
                     <Text style={styles.seeText}>SEE ALL</Text>
                   </TouchableOpacity>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity></>
+              : null}
+            {items.length !==0 ? <>
               <FlatList
                 style={styles.parentFlatList}
                 data={items}
                 extraData={this.state}
                 keyExtractor={(item, index) => '' + index}
                 renderItem={({item, index}) => this.listItem(item, index)}
-              />
+              /></> : <><Text style={commonStyles.noRecordFound}>No Order Found </Text></>}
           </KeyboardAwareScrollView>
         </TouchableOpacity>
 
@@ -392,7 +441,13 @@ const styles = ScaledSheet.create({
   statusTextStyle : {
     fontSize : moderateScale(13),
     fontWeight : 'bold'
-  }
+  },
+  rowContent2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(10),
+    marginHorizontal: moderateScale(5)
+  },
 });
 
 const mapStateToProps = (state) => ({
@@ -401,6 +456,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getOrdersList,
+  searchOrder
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Orders);

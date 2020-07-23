@@ -398,6 +398,26 @@ export default class Api {
     return response;
   }
 
+  static searchQuote(VAL) {
+    let response = this.sendRequest('GET', `quotes?key=${VAL}`);
+    return response;
+  }
+
+  static searchUser(VAL) {
+    let response = this.sendRequest('GET', `users?key=${VAL}`);
+    return response;
+  }
+
+  static searchOrder(VAL) {
+    let response = this.sendRequest('GET', `orders?key=${VAL}`);
+    return response;
+  }
+
+  static searchProduct(VAL) {
+    let response = this.sendRequest('GET', `products?key=${VAL}`);
+    return response;
+  }
+
   static sendRequest(method, path, opts = {}, skipAuth = false) {
     let fetchOpts = {
       method,
@@ -408,7 +428,7 @@ export default class Api {
       'X-Auth-Token': API_AUTH_TOKEN,
       'Client-id': API_CLIENT_ID,
     };
-    console.log('this.authToken: ' + this.authToken);
+   // console.log('this.authToken: ' + this.authToken);
     if (!skipAuth && this.authToken) {
       headers.authorization = `Bearer ${this.authToken}`;
     }
@@ -434,7 +454,7 @@ export default class Api {
 
     const url = urlTo(fullPath, opts.publicApi);
     const requestBody = jsonBody || formDataToObject(formData) || query || '';
-    console.log('Request:', fetchOpts.headers, url, requestBody);
+   // console.log('Request:', fetchOpts.headers, url, requestBody);
     return fetch(url, fetchOpts)
       .then(async (res) => {
         let data = res;
@@ -484,7 +504,7 @@ export default class Api {
         }
       })
       .catch((error) => {
-        console.log('err', error);
+      //  console.log('err', error);
       });
   }
 

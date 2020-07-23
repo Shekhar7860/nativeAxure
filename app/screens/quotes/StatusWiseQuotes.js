@@ -52,7 +52,7 @@ class StatusWiseQuotes extends Component {
   };
 
   listItem = (item, index, status) => {
-      console.log('status', item.status)
+     // console.log('status', item.status)
     return (
       <TouchableOpacity style={styles.rowItem} onPress={() => this.openScreen('Quote', item)}>
         <View style={styles.bottomQuotesRow}>

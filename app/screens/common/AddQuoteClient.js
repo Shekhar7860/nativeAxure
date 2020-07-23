@@ -111,17 +111,17 @@ class AddQuoteClient extends PureComponent {
   }
   componentDidMount = () => {
     const {countries} = this.props;
-    console.log('here are countries', countries);
+   //  console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
     }
     if (this.props.route.params) {
-      console.log('params', this.props.route.params);
+     // console.log('params', this.props.route.params);
       if (this.props.route.params.quoteData !== undefined) {
       this.setState({quoteData : this.props.route.params.quoteData})
       var id = this.props.route.params.quoteData.id;
       // as input value does not show integer, so connverting to string
-      console.log('id is this', id);
+     // console.log('id is this', id);
       if(id !== undefined){
         this.setState({quoteId : id.toString()});
       }
@@ -142,7 +142,7 @@ class AddQuoteClient extends PureComponent {
       }
 
     }
-    console.log('soosos', this.props.products)
+   // console.log('soosos', this.props.products)
     // adding products into array
     for (var i = 0; i < this.props.products.items.length; i++) {
       this.state.products.push(this.props.products.items[i].name);
@@ -151,11 +151,11 @@ class AddQuoteClient extends PureComponent {
   };
 
   selectData = (val) => {
-  console.log('products', this.state.quantity);
+ // console.log('products', this.state.quantity);
       //creating an copy and pushing array
 
     for (var i = 0; i < this.state.items.length; i++) {
-      console.log('fired', this.state.items[i].name)
+    //  console.log('fired', this.state.items[i].name)
         if (this.state.items[i].name === this.state.products[val]) {
             this.state.items[i].qty++;
             this.setState({
@@ -178,7 +178,7 @@ addTotal = () => {
   var num =  this.multiply(this.state.items[i].price_gbp, this.state.items[i].qty)
   sum += num;
     }
-    console.log('suuus', sum)
+   // console.log('suuus', sum)
     this.setState({productSum : sum})
   return '£' + sum;
 
@@ -234,7 +234,7 @@ addQuoteItem = (product_id, qty, val, status) => {
   }
   total = () => {
     const {productSum, shipping, vat} = this.state;
-    console.log('productSum', productSum)
+   // console.log('productSum', productSum)
     return parseInt(productSum) + parseInt(shipping) + parseInt(vat)
 
   }
@@ -243,7 +243,7 @@ addQuoteItem = (product_id, qty, val, status) => {
     this.props
       .deleteQuoteItem(val.product_id)
       .then((response) => {
-        console.log('deleteQuoteresponse', response);
+        // console.log('deleteQuoteresponse', response);
         if (response.code === 200) {
               this.setState(prevState => {
               const items = prevState.items.filter(item => item.name !== val.name);
@@ -394,7 +394,7 @@ addQuoteItem = (product_id, qty, val, status) => {
           shippingPostalCode
         )
         .then((response) => {
-          console.log(response, 'update')
+          // console.log(response, 'update')
           this.setState({showLoading: false});
           if (response.code === 200) {
             Toast.show(response.message)
@@ -425,7 +425,7 @@ addQuoteItem = (product_id, qty, val, status) => {
   };
 
   setSame = (billingCompanyName, billingFirstName, billingLastName, billingEmail, billingAdd1, billingAdd2, billingCity, billingCountry, billingPostalCode, isRememberMe) => {
-    console.log('isRememberME', isRememberMe)
+  //  console.log('isRememberME', isRememberMe)
     if(isRememberMe !== true){
      this.setState({
        shippingCompanyName : billingCompanyName,

@@ -67,12 +67,12 @@ class UserDetail extends PureComponent {
   }
   componentDidMount = () => {
     const {countries} = this.props;
-    console.log('here are countries', countries);
+   // console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
     }
     if (this.props.route.params) {
-      console.log('here are params', this.props.route.params);
+    //  console.log('here are params', this.props.route.params);
       if(this.props.route.params.userData !== undefined)
       {
       this.setState({userData : this.props.route.params.userData, email : this.props.route.params.userData.email,
@@ -106,7 +106,7 @@ class UserDetail extends PureComponent {
       phone, mobile, postalCode, newPassword, confirmPassword,
       city, userId, groupId
     } = this.state;
-    if(email && firstName && surName && newPassword && confirmPassword){
+    if(firstName){
      if(newPassword == confirmPassword)
      {
        if(isEmailValid(email)){
@@ -212,7 +212,7 @@ class UserDetail extends PureComponent {
   }
   }
   else {
-    Alert.alert('', 'Please enter details')
+    Alert.alert('', 'Please enter first Name')
   }
   }
 

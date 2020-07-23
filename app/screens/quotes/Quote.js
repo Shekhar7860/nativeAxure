@@ -60,7 +60,7 @@ class Quote extends PureComponent {
       this.props
         .getQuoteDetails(id)
         .then((response) => {
-          console.group('response', response);
+        //  console.log('response', response);
            this.setState({showLoading: false});
           if (response.code === 200) {
             this.setState({quote: response.data});
@@ -102,7 +102,7 @@ class Quote extends PureComponent {
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}></View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
 

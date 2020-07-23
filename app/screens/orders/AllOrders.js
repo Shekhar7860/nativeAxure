@@ -52,7 +52,7 @@ class AllOrders extends PureComponent {
   }
   componentDidMount = () => {
     const {online, orders} = this.props;
-    console.log('orders', orders);
+   // console.log('orders', orders);
     for (var i = 0; i < orders.items.length; i++) {
       if (orders.items[i].status == 'Shipped') {
         this.state.shippedItems.push(orders.items[i]);
@@ -74,7 +74,7 @@ class AllOrders extends PureComponent {
         );
       }
     }
-    console.log('shippedItems', this.state.shippedItems)
+   // console.log('shippedItems', this.state.shippedItems)
     if (online) {
       this.setState({showLoading: true});
       setTimeout(() => {
@@ -154,7 +154,7 @@ class AllOrders extends PureComponent {
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}></View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
 

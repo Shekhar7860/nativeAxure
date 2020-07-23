@@ -18,6 +18,14 @@ export const getProductsList = () => {
   };
 };
 
+export const searchProduct = (VAL) => {
+  return (dispatch) => {
+    return API.searchProduct(VAL).then((response) => {
+      return response;
+    });
+  };
+};
+
 const INITAIL_STATE = {
   patientList: [],
   addAppointment: [],

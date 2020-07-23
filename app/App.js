@@ -33,10 +33,16 @@ class App extends PureComponent {
     setTimeout(()=>{
       SplashScreen.hide();
     }, 2000); 
-    
-    this.getToken();
-  }
+    OneSignal.promptForPushNotificationsWithUserResponse(this.myiOSPromptCallback);
 
+   
+    
+    // this.getToken();
+  }
+  
+ myiOSPromptCallback(permission){
+  
+}
   handleConnectionChange = (isConnected) => {
     status = isConnected;
   };

@@ -39,7 +39,7 @@ class AllUsers extends Component {
     };
   }
   componentDidMount = () => {
-  console.group('allusers', this.props.users);
+ // console.log('allusers', this.props.users);
   for (var i = 0; i < this.props.users.items.length; i++) {
     if (this.props.users.items[i].is_active == 1) {
       this.state.activeUsers.push(this.props.users.items[i]);
@@ -77,7 +77,7 @@ class AllUsers extends Component {
           </View>
           <View style={{width: '35%'}} />
           <View style={{width: '5%'}}>
-            <Image source={leftArrow} style={commonStyles.icon} />
+            {/* <Image source={leftArrow} style={commonStyles.icon} /> */}
           </View>
         </View>
       </TouchableOpacity>
@@ -103,7 +103,7 @@ class AllUsers extends Component {
               />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
 

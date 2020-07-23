@@ -110,6 +110,14 @@ const INITAIL_STATE = {
   usersList: [],
 };
 
+export const searchUser = (VAL) => {
+  return (dispatch) => {
+    return API.searchUser(VAL).then((response) => {
+      return response;
+    });
+  };
+};
+
 export default function reducer(state = INITAIL_STATE, action) {
   switch (action.type) {
     case SET_USERS_LIST:

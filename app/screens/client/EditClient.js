@@ -115,7 +115,7 @@ class EditClient extends PureComponent {
     }
     if (this.props.route.params) {
       if (this.props.route.params.clientData !== undefined) {
-         console.log('djdjdjd', this.props.route.params);
+         // console.log('djdjdjd', this.props.route.params);
         this.setState({
           clientDetail: this.props.route.params.clientData.clientDetail,
           clientname : this.props.route.params.clientData.clientDetail.name,
@@ -175,7 +175,7 @@ class EditClient extends PureComponent {
 
   setSame = (add1, add2, city, country, postalCode, isRememberMe) => {
    // console.log('selected', this.state.countries[this.state.countryIndex])
-    console.log('isRememberME', isRememberMe)
+  //  console.log('isRememberME', isRememberMe)
     if(isRememberMe !== true){
      this.setState({
        contAdd1 : add1,
@@ -223,7 +223,7 @@ class EditClient extends PureComponent {
  
   
   handleDatePicked = (date, val) => {
-    console.log("A date has been picked: ", date);
+   // console.log("A date has been picked: ", date);
     var selectedDate= moment(date).format("MM/DD/YYYY")
     // console.log('jjs,', selectedDate)
     if(val == "regDatePickerVisible")
@@ -348,7 +348,7 @@ if(clientname && first3letters && email){
         .then((response) => {
           this.setState({showLoading: false});
           if (response.code === 200) {
-            console.log('shhh', response)
+           // console.log('shhh', response)
           Toast.show(response.message)
           this.props.navigation.navigate('AllClients')
           } else {
@@ -449,7 +449,7 @@ if(clientname && first3letters && email){
               }}
             />
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
         </TouchableOpacity>

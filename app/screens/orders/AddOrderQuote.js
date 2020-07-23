@@ -87,17 +87,18 @@ class AddOrderQuote extends PureComponent {
       total : 0,
       shipping : 0.00,
       vat : 0.00,
-      countries : []
+      countries : [],
+      quantity : "1"
     };
   }
   componentDidMount = () => {
     const {countries} = this.props;
-    console.log('here are countries', countries);
+  //  console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
     }
       if (this.props.route.params) {
-        console.log('sdddsd', this.props.route.params)
+     //   console.log('sdddsd', this.props.route.params)
         if (this.props.route.params.orderData !== undefined) {
           var id = this.props.route.params.orderData.id;
           // as input value does not show integer, so connverting to string
@@ -116,7 +117,7 @@ class AddOrderQuote extends PureComponent {
         }
         }
       }
-      console.log('products', this.props.products)
+     // console.log('products', this.props.products)
       //adding products into array
       for (var i = 0; i < this.props.products.items.length; i++) {
         this.state.products.push(this.props.products.items[i].name);
@@ -129,18 +130,18 @@ class AddOrderQuote extends PureComponent {
   //   console.log('products', this.state.products[val], 'prices', this.state.prices[val]);
       //creating an copy and pushing array
     for (var i = 0; i < this.state.items.length; i++) {
-      console.log('fired', this.state.items[i].name)
+     // console.log('fired', this.state.items[i].name)
         if (this.state.items[i].name === this.state.products[val]) {
             this.state.items[i].qty++;
             this.setState({
            items: [...this.state.items]
            })
-           this.addOrderItem(this.state.prices[val].product_id, 1, val, false)
+           this.addOrderItem(this.state.prices[val].product_id, this.state.quantity, val, false)
            return;                       // exit loop and function
         }
       }
     //  console.log('ajjaj', this.state.items)
-      this.addOrderItem(this.state.prices[val].product_id, 1, val, true)
+      this.addOrderItem(this.state.prices[val].product_id, this.state.quantity, val, true)
 
 
   };
@@ -173,7 +174,7 @@ class AddOrderQuote extends PureComponent {
     var num =  this.multiply(this.state.items[i].price_gbp, this.state.items[i].qty)
     sum += num;
       }
-      console.log('suuus', sum)
+     // console.log('suuus', sum)
       this.setState({productSum : sum})
     return '£' + sum;
 
@@ -182,7 +183,7 @@ class AddOrderQuote extends PureComponent {
   addOrderItem = (product_id, qty, val, status) => {
     if(status){
     var newArray = this.state.items.slice(); // Create a copy
-    newArray.push({name:this.state.products[val], price_gbp : this.state.prices[val].price_gbp, sku :  this.state.prices[val].sku, qty : this.state.prices[val].qty, product_id :  this.state.prices[val].product_id})
+    newArray.push({name:this.state.products[val], price_gbp : this.state.prices[val].price_gbp, sku :  this.state.prices[val].sku, qty : this.state.quantity, product_id :  this.state.prices[val].product_id})
     this.setState({ items: newArray })}
 
 
@@ -202,7 +203,7 @@ class AddOrderQuote extends PureComponent {
     }
     total = () => {
       const {productSum, shipping, vat} = this.state;
-      console.log('productSum', productSum)
+     // console.log('productSum', productSum)
       var total =  parseInt(productSum) + parseInt(shipping) + parseInt(vat);
       return total;
 
@@ -261,7 +262,7 @@ class AddOrderQuote extends PureComponent {
 
 
   updateOrder = () => {
-    console.log('city. ', this.state.billingCity)
+   // console.log('city. ', this.state.billingCity)
     const {
       userOrderId,
       mphId,
@@ -358,7 +359,7 @@ class AddOrderQuote extends PureComponent {
   };
 
   render() {
-    const {total, subTotal, shipping, vat, invoiceItems,products,items, showLoading, orderId, orderTitle, client, mphId, poPreference, status, quoteCurrency, paymentTerm, shippingCost, vatPercentage,
+    const {total, quantity, subTotal, shipping, vat, invoiceItems,products,items, showLoading, orderId, orderTitle, client, mphId, poPreference, status, quoteCurrency, paymentTerm, shippingCost, vatPercentage,
     billingAdd1, billingCity, billingAdd2, billingEmail, billingCountry, billingFirstName, billingLastName, billingPostalCode, shippingAdd2, shippingAdd1, shippingFirstName, shippingLastName, shippingCity, shippingCountry,
   shippingEmail, shippingPostalCode, billingCompanyName, shippingCompanyName, terms, countries} = this.state;
 
@@ -385,7 +386,7 @@ class AddOrderQuote extends PureComponent {
               }}
             />
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
         </TouchableOpacity>
@@ -777,9 +778,7 @@ class AddOrderQuote extends PureComponent {
                 <View style={styles.listWidth}>
                   <Text style={styles.listRowText}>PRODUCT</Text>
                 </View>
-                <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>UNIT PRICE</Text>
-                </View>
+                
                 <View style={styles.listWidth}>
                   <Text style={styles.listRowText}>BUY PRICE</Text>
                 </View>
@@ -903,7 +902,20 @@ class AddOrderQuote extends PureComponent {
               isIconVisible={true}
             />
           </View>
-
+          <Text style={styles.labelText}>Quantity</Text>
+          <InputBox
+                  placeHolder=""
+                  maxLines={5}
+                  maxLength={50}
+                  boxStyle={{
+                    ...styles.inputBoxStyle3,
+                  }}
+                  inputStyle={styles.input2}
+                  onChangeText={(value) => this.setState({quantity: value})}
+                  value={quantity}
+                  keyboardType={'numeric'}
+                  maxLength={1}
+                />
             <ButtonDefault onPress={() => this.updateOrder()}>
               SAVE
             </ButtonDefault>
@@ -1007,6 +1019,16 @@ const styles = ScaledSheet.create({
     marginHorizontal: moderateScale(10),
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  inputBoxStyle3: {
+    
+    height: moderateScale(40),
+    borderRadius: 0,
+    borderWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: DARK_BLUE,
+    width : '15%',
+    marginHorizontal : moderateScale(20)
   },
 });
 

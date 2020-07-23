@@ -6,7 +6,6 @@ import {
   SEMI_TRANSPARENT,
   WHITE,
   DARK_BLUE,
-  ORANGE_COLOR,
   NOTIFICATION_COUNT_BG_COLOR,
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
@@ -32,7 +31,7 @@ import {
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
 
-class StatusWiseOrders extends Component {
+class StatusWiseUsers extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -43,8 +42,14 @@ class StatusWiseOrders extends Component {
   }
   componentDidMount = () => {
     if (this.props.route.params) {
-     //   console.log('pareama', this.props.route.params)
-        this.setState({items : this.props.route.params.orderStatusData.list.reverse(), status : this.props.route.params.orderStatusData.status})
+       // console.log('pareama', this.props.route.params)
+        this.setState({items : this.props.route.params.userData.reverse()})
+        if(this.props.route.params.userData[0].is_active == 1){
+          this.setState({status : "ACTIVE"})
+        }
+        else {
+          this.setState({status : "INACTIVE"})
+        }
       }
   };
 
@@ -52,41 +57,25 @@ class StatusWiseOrders extends Component {
     this.props.navigation.navigate(screen, {clientData: param});
   };
 
-  dotStyle = (status) => {
-    let style = styles.dotRed
-    switch(status) {
-      case "Shipped":
-        style = styles.dotOrange;
-        break;
-      case "Accepted":
-        style = styles.dotGreen;
-        break;
-      case "Partially_Shipped":
-          style = styles.dotDarkblue;
-          break;
-      case "Completed":
-       style = styles.dotLightBlue;
-          break;
-      default:
-        style = styles.dotRed;
-        // code block
-    } 
-    return style
-  }
-
-  listItem = (item) => {
-    //  console.log('status', item.status)
+  listItem = (item, index, status) => {
+      //console.log('status', item)
     return (
       <TouchableOpacity style={styles.rowItem} onPress={() => this.openScreen('Quote', item)}>
         <View style={styles.bottomQuotesRow}>
-        <View style={this.dotStyle(item.status)}  />
+          <View
+            style={
+            item.is_active == 1
+                ? styles.dotGreen
+                : styles.dotRed
+            }
+          />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
             <Text style={styles.labelText}>{item.name}</Text>
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£{item.grand_total}</Text>
+
           </View>
         </View>
       </TouchableOpacity>
@@ -105,7 +94,7 @@ class StatusWiseOrders extends Component {
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
-          title={status + " " +  'ORDERS'}
+          title={status + " " +  'USERS'}
           leftImage={BACK}
         />
 
@@ -173,6 +162,28 @@ const styles = ScaledSheet.create({
   rowItem: {
     height: moderateScale(30),
   },
+  dotBlue: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: APP_MAIN_BLUE,
+  },
+  dotGreen: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: APP_MAIN_GREEN,
+  },
+  dotRed: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: APP_MAIN_COLOR,
+  },
+
   rowContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -215,41 +226,6 @@ const styles = ScaledSheet.create({
     height: moderateScale(30),
     justifyContent: 'center',
   },
-  dotOrange: {
-    marginTop: moderateScale(5),
-    height: moderateScale(12),
-    width: moderateScale(12),
-    borderRadius: moderateScale(6),
-    backgroundColor: ORANGE_COLOR,
-  },
-  dotGreen: {
-    marginTop: moderateScale(5),
-    height: moderateScale(12),
-    width: moderateScale(12),
-    borderRadius: moderateScale(6),
-    backgroundColor: APP_MAIN_GREEN,
-  },
-  dotDarkblue: {
-    marginTop: moderateScale(5),
-    height: moderateScale(12),
-    width: moderateScale(12),
-    borderRadius: moderateScale(6),
-    backgroundColor: DARK_BLUE,
-  },
-  dotLightBlue: {
-    marginTop: moderateScale(5),
-    height: moderateScale(12),
-    width: moderateScale(12),
-    borderRadius: moderateScale(6),
-    backgroundColor: APP_MAIN_BLUE,
-  },
-  dotRed: {
-    marginTop: moderateScale(5),
-    height: moderateScale(12),
-    width: moderateScale(12),
-    borderRadius: moderateScale(6),
-    backgroundColor: APP_MAIN_COLOR,
-  },
 });
 
 const mapStateToProps = (state) => ({
@@ -258,4 +234,4 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {};
 
-export default connect(mapStateToProps, mapDispatchToProps)(StatusWiseOrders);
+export default connect(mapStateToProps, mapDispatchToProps)(StatusWiseUsers);

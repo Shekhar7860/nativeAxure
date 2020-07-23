@@ -88,7 +88,7 @@ class Home extends PureComponent {
         this.props
           .getCountriesList()
           .then((response) => {
-            console.log('Countries', response);
+          //  console.log('Countries', response);
             this.setState({showLoading: false});
             if (response.code === 200) {
               this.setState({items: response.data.items});

@@ -155,9 +155,6 @@ const styles = ScaledSheet.create({
   parentFlatList: {
     marginTop: moderateScale(10),
   },
-  rowItem: {
-    height: moderateScale(30),
-  },
   dotBlue: {
     marginTop: moderateScale(5),
     height: moderateScale(12),

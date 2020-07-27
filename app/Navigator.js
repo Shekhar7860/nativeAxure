@@ -37,7 +37,7 @@ import UploadedOrders from './screens/orders/UploadedOrders';
 import AddProduct from './screens/products/AddProduct';
 import Requests from './screens/requests/Requests';
 import Notifications from './screens/user/Notifications';
-import StatusWiseUsers from './screens/user/StatusWiseUsers'
+import StatusWiseUsers from './screens/user/StatusWiseUsers';
 import StatusWiseQuotes from './screens/quotes/StatusWiseQuotes';
 import AddQuoteClient from './screens/common/AddQuoteClient';
 import ResourceHub from './screens/user/ResourceHub';
@@ -48,6 +48,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 // import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons';
 import commonStyles from './commonStyles/commonStyles';
 import {HOME, CART, CHAT, SETTING, MAIL, CALCULATOR} from './constants/Images';
+import {ROUTES} from './constants/routes';
 import {PINK_COLOR, WHITE} from './constants/colors';
 import Sidebar from './screens/Sidebar';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -61,15 +62,21 @@ const Tab = createBottomTabNavigator();
 function TabStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Tab1" component={Home} />
-      <Stack.Screen name="Search" component={Search} />
-      <Stack.Screen name="Quotes" component={QuoteStackNavigator} />
-      <Stack.Screen name="Clients" component={ClientStackNavigator} />
-      <Stack.Screen name="Users" component={UsersStackNavigator} />
-      <Stack.Screen name="Orders" component={OrdersStackNavigator} />
-      <Stack.Screen name="Products" component={ProductStackNavigator} />
-      <Stack.Screen name="UploadOrders" component={UploadOrdersStackNavigator} />
-      <Stack.Screen name="Support Requests" component={RequestsStackNavigator} />
+      <Stack.Screen name={ROUTES.Tab1} component={Home} />
+      <Stack.Screen name={ROUTES.Search} component={Search} />
+      <Stack.Screen name={ROUTES.Quotes} component={QuoteStackNavigator} />
+      <Stack.Screen name={ROUTES.Clients} component={ClientStackNavigator} />
+      <Stack.Screen name={ROUTES.Users} component={UsersStackNavigator} />
+      <Stack.Screen name={ROUTES.Orders} component={OrdersStackNavigator} />
+      <Stack.Screen name={ROUTES.Products} component={ProductStackNavigator} />
+      <Stack.Screen
+        name={ROUTES.UploadOrders}
+        component={UploadOrdersStackNavigator}
+      />
+      <Stack.Screen
+        name={ROUTES.SupportRequests}
+        component={RequestsStackNavigator}
+      />
     </Stack.Navigator>
   );
 }
@@ -77,8 +84,8 @@ function TabStackNavigator() {
 function UploadOrdersStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="UploadOrderStack" component={UploadedOrders} />
-      <Stack.Screen name="UploadOrder" component={UploadOrderWithFile} />
+      <Stack.Screen name={ROUTES.UploadOrderStack} component={UploadedOrders} />
+      <Stack.Screen name={ROUTES.UploadOrder} component={UploadOrderWithFile} />
     </Stack.Navigator>
   );
 }
@@ -86,7 +93,7 @@ function UploadOrdersStackNavigator() {
 function RequestsStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="RequestsStack" component={Requests} />
+      <Stack.Screen name={ROUTES.RequestsStack} component={Requests} />
     </Stack.Navigator>
   );
 }
@@ -94,9 +101,9 @@ function RequestsStackNavigator() {
 function ProductStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="ProductsStack" component={RecentProducts} />
-      <Stack.Screen name="AllProducts" component={AllProducts} />
-      <Stack.Screen name="AddProduct" component={AddProduct} />
+      <Stack.Screen name={ROUTES.ProductsStack} component={RecentProducts} />
+      <Stack.Screen name={ROUTES.AllProducts} component={AllProducts} />
+      <Stack.Screen name={ROUTES.AddProduct} component={AddProduct} />
     </Stack.Navigator>
   );
 }
@@ -104,11 +111,11 @@ function ProductStackNavigator() {
 function ClientStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="ClientStack" component={Clients} />
-      <Stack.Screen name="AllClients" component={AllClients} />
-      <Stack.Screen name="AddClient" component={AddClient} />
-      <Stack.Screen name="Client" component={Client} />
-      <Stack.Screen name="EditClient" component={EditClient} />
+      <Stack.Screen name={ROUTES.ClientStack} component={Clients} />
+      <Stack.Screen name={ROUTES.AllClients} component={AllClients} />
+      <Stack.Screen name={ROUTES.AddClient} component={AddClient} />
+      <Stack.Screen name={ROUTES.Client} component={Client} />
+      <Stack.Screen name={ROUTES.EditClient} component={EditClient} />
     </Stack.Navigator>
   );
 }
@@ -116,18 +123,24 @@ function ClientStackNavigator() {
 function QuoteStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="QuoteStack" component={Quotes} />
-      <Stack.Screen name="Clients" component={ClientStackNavigator} />
-      <Stack.Screen name="Users" component={UsersStackNavigator} />
-      <Stack.Screen name="Orders" component={OrdersStackNavigator} />
-      <Stack.Screen name="Products" component={ProductStackNavigator} />
-      <Stack.Screen name="UploadOrders" component={UploadOrdersStackNavigator} />
-      <Stack.Screen name="Support Requests" component={RequestsStackNavigator} />
-      <Stack.Screen name="StatusQuotes" component={StatusWiseQuotes} />
-      <Stack.Screen name="AllQuotes" component={AllQuotes} />
-      <Stack.Screen name="AddQuote" component={AddQuote} />
-      <Stack.Screen name="Quote" component={Quote} />
-      <Stack.Screen name="EditQuote" component={AddQuoteClient} />
+      <Stack.Screen name={ROUTES.QuoteStack} component={Quotes} />
+      <Stack.Screen name={ROUTES.Clients} component={ClientStackNavigator} />
+      <Stack.Screen name={ROUTES.Users} component={UsersStackNavigator} />
+      <Stack.Screen name={ROUTES.Orders} component={OrdersStackNavigator} />
+      <Stack.Screen name={ROUTES.Products} component={ProductStackNavigator} />
+      <Stack.Screen
+        name={ROUTES.UploadOrders}
+        component={UploadOrdersStackNavigator}
+      />
+      <Stack.Screen
+        name={ROUTES.SupportRequests}
+        component={RequestsStackNavigator}
+      />
+      <Stack.Screen name={ROUTES.StatusQuotes} component={StatusWiseQuotes} />
+      <Stack.Screen name={ROUTES.AllQuotes} component={AllQuotes} />
+      <Stack.Screen name={ROUTES.AddQuote} component={AddQuote} />
+      <Stack.Screen name={ROUTES.Quote} component={Quote} />
+      <Stack.Screen name={ROUTES.EditQuote} component={AddQuoteClient} />
     </Stack.Navigator>
   );
 }
@@ -135,10 +148,10 @@ function QuoteStackNavigator() {
 function UsersStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="UsersStack" component={Users} />
-      <Stack.Screen name="AllUsers" component={AllUsers} />
-      <Stack.Screen name="UserDetail" component={UserDetail} />
-      <Stack.Screen name="StatusUsers" component={StatusWiseUsers} />
+      <Stack.Screen name={ROUTES.UsersStack} component={Users} />
+      <Stack.Screen name={ROUTES.AllUsers} component={AllUsers} />
+      <Stack.Screen name={ROUTES.UserDetail} component={UserDetail} />
+      <Stack.Screen name={ROUTES.StatusUsers} component={StatusWiseUsers} />
     </Stack.Navigator>
   );
 }
@@ -146,11 +159,11 @@ function UsersStackNavigator() {
 function OrdersStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="OrdersStack" component={Orders} />
-      <Stack.Screen name="AddOrder" component={AddOrder} />
-      <Stack.Screen name="AddOrderQuote" component={AddOrderQuote} />
-      <Stack.Screen name="AllOrders" component={AllOrders} />
-      <Stack.Screen name="StatusOrders" component={StatusWiseOrders} />
+      <Stack.Screen name={ROUTES.OrdersStack} component={Orders} />
+      <Stack.Screen name={ROUTES.AddOrder} component={AddOrder} />
+      <Stack.Screen name={ROUTES.AddOrderQuote} component={AddOrderQuote} />
+      <Stack.Screen name={ROUTES.AllOrders} component={AllOrders} />
+      <Stack.Screen name={ROUTES.StatusOrders} component={StatusWiseOrders} />
     </Stack.Navigator>
   );
 }
@@ -158,8 +171,8 @@ function OrdersStackNavigator() {
 function ChatStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="ChatStack" component={Chat} />
-      <Stack.Screen name="ChatScreen" component={ChatScreen} />
+      <Stack.Screen name={ROUTES.ChatStack} component={Chat} />
+      <Stack.Screen name={ROUTES.ChatScreen} component={ChatScreen} />
     </Stack.Navigator>
   );
 }
@@ -177,15 +190,13 @@ getTabBarVisibility = (route) => {
 };
 
 const ChatNull = () => {
-  return null
-}
-
+  return null;
+};
 
 selectedTab = () => {
-  alert('hiiiiii')
-}
+  alert('hiiiiii');
+};
 function TabNavigator() {
- 
   return (
     <Tab.Navigator
       tabBarOptions={{
@@ -208,16 +219,15 @@ function TabNavigator() {
           borderBottomWidth: 2,
         },
       }}
-      initialRouteName="TabHome3">
+      initialRouteName={ROUTES.TabHome3}>
       <Tab.Screen
-        name="TabHome"
+        name={ROUTES.TabHome}
         options={{
           tabBarIcon: ({color, size}) => (
             <Image source={CALCULATOR} style={commonStyles.icon} />
           ),
         }}
         component={QuoteStackNavigator}
-        
       />
       <Tab.Screen
         options={{
@@ -225,7 +235,7 @@ function TabNavigator() {
             <Image source={CART} style={commonStyles.icon} />
           ),
         }}
-        name="Cart"
+        name={ROUTES.Cart}
         component={OrdersStackNavigator}
       />
       <Tab.Screen
@@ -234,11 +244,11 @@ function TabNavigator() {
             <Image source={HOME} style={commonStyles.largeIcon} />
           ),
         }}
-        name="TabHome3"
+        name={ROUTES.TabHome3}
         component={TabStackNavigator}
       />
       <Tab.Screen
-        name="TabHome4"
+        name={ROUTES.TabHome4}
         options={({route}) => ({
           tabBarIcon: ({color, size}) => (
             <Image source={CHAT} style={commonStyles.icon} />
@@ -253,7 +263,7 @@ function TabNavigator() {
             <Image source={MAIL} style={commonStyles.smallMailIcon} />
           ),
         }}
-        name="TabHome5"
+        name={ROUTES.TabHome5}
         component={Notifications}
       />
     </Tab.Navigator>
@@ -271,7 +281,7 @@ function DrawerNavigator() {
         borderBottomRightRadius: moderateScale(25),
       }}
       drawerContent={(props) => <Sidebar {...props} />}>
-      <Drawer.Screen name="Drawer" component={TabNavigator} />
+      <Drawer.Screen name={ROUTES.Drawer} component={TabNavigator} />
     </Drawer.Navigator>
   );
 }
@@ -280,10 +290,10 @@ function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Landing" component={Landing} />
-        <Stack.Screen name="Help" component={HelpSteps} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Home" component={DrawerNavigator} />
+        <Stack.Screen name={ROUTES.Landing} component={Landing} />
+        <Stack.Screen name={ROUTES.Help} component={HelpSteps} />
+        <Stack.Screen name={ROUTES.Login} component={Login} />
+        <Stack.Screen name={ROUTES.Home} component={DrawerNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

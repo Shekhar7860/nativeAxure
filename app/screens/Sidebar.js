@@ -8,7 +8,7 @@ import {
   FlatList,
   Alert,
   Linking,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import commonStyles from '../commonStyles/commonStyles';
 import BoldText from '../components/ClickableText';
@@ -18,7 +18,8 @@ import {
   APP_MAIN_COLOR_DISABLE,
 } from '../constants/colors';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {PROFILE_PIC,CROSS, CROSS2} from '../constants/Images';
+import {PROFILE_PIC, CROSS, CROSS2} from '../constants/Images';
+import {ROUTES} from '../constants/routes';
 import {showErrorPopup} from '../util/utils';
 import Toast from 'react-native-simple-toast';
 import OverlaySpinner from '../components/OverlaySpinner';
@@ -29,7 +30,7 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import ImagePicker from 'react-native-image-picker';
 import {updateProfilePic} from '../redux/reducers/session';
 import {DEFAULT_IMG_URL} from '../constants/const';
-import { ScrollView } from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const ITEMS = [
   {name: 'Profile'},
@@ -62,12 +63,11 @@ openScreen = (screenName, props) => {
     screenName == 'Support Requests' ||
     screenName == 'Products'
   ) {
+     // alert(ROUTES.Clients);
     props.navigation.navigate(screenName);
-  }
-  else if(screenName == "Resource Hub"){
-    Linking.openURL('https://resourcehub.mphgroup.uk')
-  }
-  else if(screenName == "Upload Orders"){
+  } else if (screenName == 'Resource Hub') {
+    Linking.openURL('https://resourcehub.mphgroup.uk');
+  } else if (screenName == 'Upload Orders') {
     props.navigation.navigate('UploadOrders');
   } else if (screenName == 'Logout') {
     Alert.alert('', 'Are you sure to logout?', [
@@ -98,13 +98,13 @@ openImagePicker = (setProfilePic, props) => {
       //console.group('Response = ', response);
 
       if (response.didCancel) {
-      //  console.log('User cancelled image picker');
+        //  console.log('User cancelled image picker');
       } else if (response.error) {
-       // console.log('ImagePicker Error: ', response.error);
+        // console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
-      //  console.log('User tapped custom button: ', response.customButton);
+        //  console.log('User tapped custom button: ', response.customButton);
       } else {
-       // console.log('uri,', response)
+        // console.log('uri,', response)
         const source = {uri: response.uri};
         setProfilePic(response.uri);
 
@@ -122,11 +122,11 @@ openImagePicker = (setProfilePic, props) => {
 getRowItem = (item, index, props) => {
   return (
     <>
-    <TouchableOpacity
-      style={styles.rowItem}
-      onPress={() => openScreen(item.name, props)}>
-      <Text style={styles.itemText}>{item.name}</Text>
-    </TouchableOpacity>
+      <TouchableOpacity
+        style={commonStyles.rowItem}
+        onPress={() => openScreen(item.name, props)}>
+        <Text style={commonStyles.itemText}>{item.name}</Text>
+      </TouchableOpacity>
     </>
   );
 };
@@ -137,7 +137,7 @@ const Sidebar = (props) => {
     props
       .updateProfilePic(image)
       .then((response) => {
-       // console.log('insideApi', response);
+        // console.log('insideApi', response);
         if (response.code === 200) {
           SET_LOADING(false);
           Toast.show('Profile Pic Updated Successfully');
@@ -156,7 +156,7 @@ const Sidebar = (props) => {
         }
       });
   };
-  
+
   const {userInfo, screenStatus} = props;
   // if(screenStatus.screenStatus == true) {
   //   props.navigation.navigate('HomePage')
@@ -164,43 +164,45 @@ const Sidebar = (props) => {
   const isDrawerOpen = useIsDrawerOpen();
   const [USER_PROFILE_PIC, setProfilePic] = useState(userInfo.profile_pic);
   return (
-    <SafeAreaView style={{flex : 1}}>
-       
-      <Image source={CROSS2} style={{...commonStyles.icon, ...styles.crossImage}} />
-      <View style={styles.menuMargin}>
+    <SafeAreaView style={{flex: 1}}>
+      <Image
+        source={CROSS2}
+        style={{...commonStyles.icon, ...styles.crossImage}}
+      />
+      <View style={commonStyles.marginTop20}>
         <View style={styles.imageTextRow}>
           <View style={styles.columnStyle}>
-            <Text style={styles.boldText}>{userInfo.name}</Text>
+            <Text style={commonStyles.boldText}>{userInfo.name}</Text>
             <Text style={styles.partnerText}>Partner</Text>
           </View>
           <View style={{width: '0%'}} />
           {/* showing profile only when drawe is open*/}
           {isDrawerOpen ? (
             <>
-            <TouchableOpacity
-              onPress={() => openImagePicker(setProfilePic, props)}>
-              {USER_PROFILE_PIC ? (
-                <Image
-                  source={{uri: USER_PROFILE_PIC}}
-                  style={styles.profilePic}
-                />
-              ) : (
-                <Image source={PROFILE_PIC} style={styles.profilePic} />
-              )}
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => openImagePicker(setProfilePic, props)}>
+                {USER_PROFILE_PIC ? (
+                  <Image
+                    source={{uri: USER_PROFILE_PIC}}
+                    style={styles.profilePic}
+                  />
+                ) : (
+                  <Image source={PROFILE_PIC} style={styles.profilePic} />
+                )}
+              </TouchableOpacity>
             </>
           ) : null}
         </View>
-        </View>
-        <KeyboardAwareScrollView>
+      </View>
+      <KeyboardAwareScrollView>
         <FlatList
           style={styles.parentFlatList}
           data={ITEMS}
           keyExtractor={(item, index) => '' + index}
           renderItem={({item, index}) => getRowItem(item, index, props)}
         />
-        </KeyboardAwareScrollView>
-      
+      </KeyboardAwareScrollView>
+
       <OverlaySpinner
         cancelable
         visible={SHOW_LOADING}
@@ -217,16 +219,12 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     marginHorizontal: moderateScale(20),
   },
-  boldText: {
-    color: WHITE,
-    fontWeight: 'bold',
-    fontSize: moderateScale(20),
-  },
-  crossImage : {
-   alignSelf : 'flex-end',
-   marginRight : moderateScale(10),
-   marginTop : moderateScale(30),
-   tintColor : WHITE
+
+  crossImage: {
+    alignSelf: 'flex-end',
+    marginRight: moderateScale(10),
+    marginTop: moderateScale(30),
+    tintColor: WHITE,
   },
   partnerText: {
     color: WHITE,
@@ -234,37 +232,20 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(15),
     marginTop: moderateScale(5),
   },
-  signInText: {
-    marginTop: moderateScale(10),
-    textAlign: 'center',
-    fontSize: moderateScale(18),
-    fontWeight: 'normal',
-  },
-  menuMargin: {
-    marginTop: moderateScale(20),
-  },
-  rowItem: {
-    marginHorizontal: moderateScale(20),
-    marginBottom: moderateScale(25),
-  },
-  itemText: {
-    color: WHITE,
-    fontSize: moderateScale(15),
-  },
   parentFlatList: {
-    marginTop: moderateScale(40)
+    marginTop: moderateScale(40),
   },
   columnStyle: {
     flexDirection: 'column',
     width: '70%',
   },
   profilePic: {
-    marginLeft : moderateScale(40),
+    marginLeft: moderateScale(40),
     width: moderateScale(80),
     height: moderateScale(80),
     borderRadius: moderateScale(40),
-    borderWidth : moderateScale(4),
-    borderColor : WHITE
+    borderWidth: moderateScale(4),
+    borderColor: WHITE,
   },
 });
 
@@ -275,7 +256,7 @@ const mapDispatchToProps = {
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
   userInfo: state.session.userInfo,
-  screenStatus : state.screenStatus
+  screenStatus: state.screenStatus,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);

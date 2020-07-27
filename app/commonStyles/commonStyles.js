@@ -11,9 +11,10 @@ import {
   LINE_COLOR,
 } from '../constants/colors';
 import {fonts} from '../constants/fonts';
+import {fontSizes} from '../constants/fontSizes';
 
-const ADD_NOTE_BTN = 40;
-const NOTES_TEXT_PADDING = 25;
+const ADD_NOTE_BTN = fontSizes.font40;
+const NOTES_TEXT_PADDING = fontSizes.font25;
 
 const commonStyles = ScaledSheet.create({
   ketboardAvoidingContainer: {
@@ -23,12 +24,12 @@ const commonStyles = ScaledSheet.create({
   appNmetextStyle: {
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: moderateScale(30),
+    fontSize: fontSizes.font30,
   },
   inputBoxStyle: {
-    marginBottom: moderateScale(40),
-    height: moderateScale(15),
-    borderRadius: 25,
+    marginBottom: fontSizes.font40,
+    height: fontSizes.font15,
+    borderRadius: fontSizes.font25,
   },
   scroll: {flexGrow: 1},
   checkBoxContainer: {
@@ -37,57 +38,65 @@ const commonStyles = ScaledSheet.create({
     marginLeft: 0,
     paddingHorizontal: 0,
   },
+  rowItem: {
+    marginHorizontal: fontSizes.font20,
+    marginBottom: fontSizes.font25
+  },
+  itemText: {
+    color: WHITE,
+    fontSize: fontSizes.font15,
+  },
   checkBoxText: {
     color: WHITE,
     fontWeight: null,
-    fontSize: moderateScale(14),
+    fontSize: fontSizes.font14,
   },
   forgotPassText: {
-    fontSize :  12,
+    fontSize: fontSizes.fontTen,
   },
   checkBoxText: {
     fontWeight: null,
-    fontSize: moderateScale(11),
+    fontSize: fontSizes.font11,
   },
   otherButtons: {
     backgroundColor: PINK_COLOR,
-    height: 60,
+    height:  fontSizes.font60,
     flex: null,
-    marginBottom: 10,
-    borderRadius: 30,
+    marginBottom: fontSizes.fontTen,
+    borderRadius: fontSizes.font30,
     width: '80%',
     alignSelf: 'center',
   },
   otherButtonText: {
     color: 'white',
-    fontSize: 13,
+    fontSize: fontSizes.font13,
     textAlign: 'center',
   },
   icon: {
-    width: moderateScale(20),
-    height: moderateScale(20)
+    width: fontSizes.font20,
+    height: fontSizes.font20,
   },
   smallIcon: {
-    width: moderateScale(10),
-    height: moderateScale(10),
+    width: fontSizes.fontTen,
+    height: fontSizes.fontTen,
   },
   smallMailIcon: {
-    width: moderateScale(35),
-    height: moderateScale(35),
-    tintColor: '#2d3436'
+    width: fontSizes.font35,
+    height: fontSizes.font35,
+    tintColor: '#2d3436',
   },
   largeIcon: {
-    width: moderateScale(56),
-    height: moderateScale(57),
+    width: fontSizes.font56,
+    height: fontSizes.font57
   },
   content: {
-    marginHorizontal: moderateScale(10),
+    marginHorizontal: fontSizes.fontTen
   },
   space: {
-    marginTop: moderateScale(20),
+    marginTop: fontSizes.font20
   },
   shadowLayout: {
-    marginTop: 10,
+    marginTop: fontSizes.fontTen,
     justifyContent: 'center',
     borderRadius: ADD_NOTE_BTN / 2,
     flex: 1,
@@ -98,8 +107,8 @@ const commonStyles = ScaledSheet.create({
     },
     shadowOpacity: 0.5,
     elevation: 2,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: fontSizes.fontTen,
+    paddingBottom: fontSizes.fontTen,
     paddingLeft: NOTES_TEXT_PADDING,
   },
   textWhite: {
@@ -109,25 +118,33 @@ const commonStyles = ScaledSheet.create({
     color: RED,
   },
   dropDownStyle: {
-    marginHorizontal: moderateScale(20),
-    marginTop: moderateScale(-20),
+    marginHorizontal: fontSizes.font20,
+    marginTop: fontSizes.negativeFont20,
     flexDirection: 'row',
     borderBottomWidth: moderateScale(1),
     borderBottomColor: LINE_COLOR,
   },
   topMargin: {
-    marginTop: moderateScale(30),
+    marginTop: fontSizes.font30,
   },
   noRecordFound: {
-    marginTop: moderateScale(20),
+    marginTop: fontSizes.font20,
     textAlign: 'center',
-    fontSize: moderateScale(20),
+    fontSize: fontSizes.font20
   },
   logoIcon: {
     alignSelf: 'center',
   },
   smallLogoIcon: {
     alignSelf: 'center',
+  },
+  boldText: {
+    color: WHITE,
+    fontWeight: 'bold',
+    fontSize: fontSizes.font20,
+  },
+  marginTop20: {
+    marginTop: fontSizes.font20,
   },
 });
 

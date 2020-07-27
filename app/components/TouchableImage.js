@@ -1,5 +1,4 @@
 import React, {PureComponent} from 'react';
-
 import {TouchableOpacity, StyleSheet, Image} from 'react-native';
 import {HEADER_ITEMS_MARGIN_LEFT_RIGHT} from '../constants/const';
 import {DRAWER_MENU} from '../constants/Images';

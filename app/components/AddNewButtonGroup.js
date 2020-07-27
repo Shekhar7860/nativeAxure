@@ -16,7 +16,7 @@ const AddNewButtonGroup = (props) => {
           type="ionicon"
           size={moderateScale(25)}
           color={WHITE}
-          style={{marginLeft : moderateScale(5), marginTop : moderateScale(2)}}
+          style={{marginLeft: moderateScale(5), marginTop: moderateScale(2)}}
         />
         <View style={{width: '8%'}} />
         <View style={{justifyContent: 'center'}}>

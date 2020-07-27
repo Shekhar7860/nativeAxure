@@ -206,6 +206,7 @@ class AddQuote extends PureComponent {
             <Text style={styles.labelText}>Type</Text>
             <SimpleDropdown
               placeHolder="Please select type"
+             
               style={commonStyles.dropDownStyle}
               drowdownArray={arrDataType}
               dropDownWidth={'85%'}

@@ -42,14 +42,16 @@ class StatusWiseUsers extends Component {
   }
   componentDidMount = () => {
     if (this.props.route.params) {
-       // console.log('pareama', this.props.route.params)
+       // console.log('pareama', this.props.route.params.userData)
         this.setState({items : this.props.route.params.userData.reverse()})
+        if(this.props.route.params.userData.length !== 0){
         if(this.props.route.params.userData[0].is_active == 1){
           this.setState({status : "ACTIVE"})
         }
-        else {
-          this.setState({status : "INACTIVE"})
-        }
+      }
+      else {
+        this.setState({status : "INACTIVE"})
+      }
       }
   };
 

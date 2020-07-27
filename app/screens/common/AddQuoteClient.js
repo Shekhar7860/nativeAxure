@@ -11,6 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
   BLACK,
+  GRAY
 } from '../../constants/colors';
 import {
   USER,
@@ -38,9 +39,9 @@ import ButtonDefault from '../../components/ButtonDefault';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {CheckBox} from 'react-native-elements';
 import {connect} from 'react-redux';
-import {updateQuote, addQuoteItem, deleteQuoteItem} from '../../redux/reducers/quotes';
+import {updateQuote, addQuoteItem, deleteQuoteItem, getQuoteItem} from '../../redux/reducers/quotes';
 import Toast from 'react-native-simple-toast';
-const arrDataStatus = ['Pending'];
+const arrDataStatus = ['Pending', 'Accepted', 'Rejected'];
 const arrDataVat= ['Exempted'];
 import {
   View,
@@ -106,7 +107,8 @@ class AddQuoteClient extends PureComponent {
       clientIds : [],
       country : "",
       countries : [],
-      quantity : '1'
+      quantity : '1',
+      shippingCountry : "Please Select Country"
     };
   }
   componentDidMount = () => {
@@ -131,7 +133,8 @@ class AddQuoteClient extends PureComponent {
       shippingFirstName : this.props.route.params.quoteData.shipping_first_name, billingAdd1 : this.props.route.params.quoteData.billing_add1, billingAdd2 : this.props.route.params.quoteData.billing_add2, shippingAdd1 : this.props.route.params.quoteData.shipping_add1, shippingAdd2 : this.props.route.params.quoteData.shipping_add2,
       shippingLastName : this.props.route.params.quoteData.shipping_last_name,   shippingEmail : this.props.route.params.quoteData.shipping_email,   shippingCountry : this.props.route.params.quoteData.shipping_country,   shippingCity : this.props.route.params.quoteData.shipping_city,   shippingPostalCode : this.props.route.params.quoteData.shipping_zip_code, shippingCompanyName : this.props.route.params.quoteData.shipping_company_name
     })
-    var text = this.props.route.params.quoteData.terms .replace(/<\/?[^>]+>/ig, " ");
+   // this.getQuoteItems(id)
+    var text = this.props.route.params.quoteData.terms.replace(/<\/?[^>]+>/ig, " ");
     this.setState({paymentTerm :  text, terms : text})
     // this.setState({quoteId : id.toString(), userquoteId : id})
     if (this.props.route.params.quoteData.client !== undefined) {
@@ -149,6 +152,35 @@ class AddQuoteClient extends PureComponent {
       this.state.prices.push({'price_gbp' : this.props.products.items[i].price_gbp, 'sku' : this.props.products.items[i].sku, product_id :this.props.products.items[i].id,  qty : 1})
     }
   };
+
+
+  getQuoteItems = (quoteId) => {
+    const {online} = this.props;
+    if (online) {
+      this.props
+        .getQuoteItem(quoteId)
+        .then((response) => {
+         // console.log('quoteItems response', response);
+          if (response.code === 200) {
+            // this.setState({showLoading: false, searchResult : true, items: response.data.items.reverse()});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  }
 
   selectData = (val) => {
  // console.log('products', this.state.quantity);
@@ -328,6 +360,7 @@ addQuoteItem = (product_id, qty, val, status) => {
   };
 
   updateQuote = () => {
+   // alert(this.state.status)
     const {
       quoteId,
       type,
@@ -421,11 +454,10 @@ addQuoteItem = (product_id, qty, val, status) => {
         });
     } else {
       Alert.alert('', 'No Internet Connection');
-    }
+   }
   };
 
   setSame = (billingCompanyName, billingFirstName, billingLastName, billingEmail, billingAdd1, billingAdd2, billingCity, billingCountry, billingPostalCode, isRememberMe) => {
-  //  console.log('isRememberME', isRememberMe)
     if(isRememberMe !== true){
      this.setState({
        shippingCompanyName : billingCompanyName,
@@ -448,7 +480,7 @@ addQuoteItem = (product_id, qty, val, status) => {
         shippingAdd1 : "",
         shippingAdd2 : "",
         shippingCity : "",
-        shippingCountry : "",
+        shippingCountry : "Please Select Country",
         shippingPostalCode : "",
       })
     }
@@ -843,7 +875,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
                   <SimpleDropdown
-              placeHolder="Please select Country"
+              placeHolder={shippingCountry}
               style={commonStyles.dropDownStyle}
               drowdownArray={countries}
               dropDownWidth={'85%'}
@@ -924,9 +956,9 @@ addQuoteItem = (product_id, qty, val, status) => {
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Shipping Cost</Text>
                   <InputBox
-                   disabled
+                    disabled
                     placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
+                    boxStyle={styles.inputBoxStyleBackground}
                     inputStyle={styles.input}
                     onChangeText={(value) =>
                       this.setState({shippingCost: value})
@@ -1186,7 +1218,7 @@ const styles = ScaledSheet.create({
   },
   inputBoxStyle: {
     marginTop: moderateScale(-20),
-    height: moderateScale(30),
+    height: moderateScale(30)
   },
   inputBoxStyle2: {
     marginTop: moderateScale(-10),
@@ -1195,6 +1227,17 @@ const styles = ScaledSheet.create({
     borderWidth: 1,
     borderBottomWidth: 1,
     borderColor: DARK_BLUE,
+  },
+  inputBoxStyleBackground: {
+    marginTop: moderateScale(-10),
+    height: moderateScale(45),
+    backgroundColor : GRAY,
+    borderBottomWidth : 0,
+    borderWidth : 0,
+    borderRadius : 0,
+    width : '90%',
+    alignSelf : 'center',
+    borderBottomColor : WHITE
   },
   inputBoxStyle3: {
     
@@ -1245,7 +1288,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   updateQuote,
   addQuoteItem,
-  deleteQuoteItem
+  deleteQuoteItem,
+  getQuoteItem
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddQuoteClient);

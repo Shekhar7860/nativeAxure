@@ -50,6 +50,7 @@ class AddClient extends PureComponent {
       items: [1, 2, 3, 4],
       isRememberMe: false,
       showLoading: false,
+      contCountry : "Please select Country",
       clientname: '',
       first3letters: '',
       mphId: '',
@@ -292,7 +293,7 @@ if(clientname && first3letters && email){
        contAdd1 : add1,
        contAdd2 : add2,
        contCity : city,
-       contCountry : this.state.countries[this.state.countryIndex],
+       contCountry : country,
        contPostalCode : postalCode,
        
        
@@ -303,7 +304,7 @@ if(clientname && first3letters && email){
         contAdd1 : "",
        contAdd2 : "",
        contCity : "",
-       contCountry : "",
+       contCountry : "Please Select Country",
        contPostalCode : ""
       })
     }
@@ -654,7 +655,7 @@ if(clientname && first3letters && email){
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
                   <SimpleDropdown
-              placeHolder="Please select Country"
+              placeHolder={contCountry}
               style={commonStyles.dropDownStyle}
               drowdownArray={countries}
               dropDownWidth={'85%'}

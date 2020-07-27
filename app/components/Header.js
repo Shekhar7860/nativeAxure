@@ -1,4 +1,3 @@
-'use strict';
 
 import React, {PureComponent} from 'react';
 
@@ -87,8 +86,7 @@ class Header extends PureComponent {
       leftImage,
     } = this.props;
     const statusBarHeight = this.getStatusBarHeight();
-    const paddingTop =
-      Platform.OS === 'android' ? {paddingTop: moderateScale(0)} : {};
+    const paddingTop = {marginTop: moderateScale(10)};
     return (
       <>
       <SafeAreaView style={styles.topSafeArea} />

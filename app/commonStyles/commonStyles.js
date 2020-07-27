@@ -10,16 +10,15 @@ import {
   RED,
   LINE_COLOR,
 } from '../constants/colors';
-
+import {fonts} from '../constants/fonts';
 
 const ADD_NOTE_BTN = 40;
 const NOTES_TEXT_PADDING = 25;
 
-
 const commonStyles = ScaledSheet.create({
   ketboardAvoidingContainer: {
     flex: 1,
-    backgroundColor : WHITE
+    backgroundColor: WHITE,
   },
   appNmetextStyle: {
     textAlign: 'center',
@@ -44,7 +43,7 @@ const commonStyles = ScaledSheet.create({
     fontSize: moderateScale(14),
   },
   forgotPassText: {
-    fontSize: moderateScale(14),
+    fontSize :  12,
   },
   checkBoxText: {
     fontWeight: null,
@@ -66,17 +65,16 @@ const commonStyles = ScaledSheet.create({
   },
   icon: {
     width: moderateScale(20),
-    height: moderateScale(20),
+    height: moderateScale(20)
   },
   smallIcon: {
     width: moderateScale(10),
     height: moderateScale(10),
   },
-  smallMailIcon : {
+  smallMailIcon: {
     width: moderateScale(35),
     height: moderateScale(35),
-    tintColor : "#b2bec3"
-    
+    tintColor: '#2d3436'
   },
   largeIcon: {
     width: moderateScale(56),
@@ -104,12 +102,6 @@ const commonStyles = ScaledSheet.create({
     paddingBottom: 10,
     paddingLeft: NOTES_TEXT_PADDING,
   },
-  nurseAppotNotesAndOtherText: {
-    fontSize: 12,
-    color: APP_MAIN_BLUE_COLOR,
-    paddingTop: 3,
-    paddingBottom: 3,
-  },
   textWhite: {
     color: WHITE,
   },
@@ -126,18 +118,17 @@ const commonStyles = ScaledSheet.create({
   topMargin: {
     marginTop: moderateScale(30),
   },
-  noRecordFound : {
-    marginTop : moderateScale(20),
-    textAlign : 'center',
-    fontSize : moderateScale(20)
+  noRecordFound: {
+    marginTop: moderateScale(20),
+    textAlign: 'center',
+    fontSize: moderateScale(20),
   },
-  logoIcon :{
-    alignSelf : 'center'
+  logoIcon: {
+    alignSelf: 'center',
   },
-  smallLogoIcon :{
-    alignSelf : 'center'
-    
-  }
+  smallLogoIcon: {
+    alignSelf: 'center',
+  },
 });
 
 export default commonStyles;

@@ -107,9 +107,6 @@ class UserDetail extends PureComponent {
       city, userId, groupId
     } = this.state;
     if(firstName){
-     if(newPassword == confirmPassword)
-     {
-       if(isEmailValid(email)){
       if (online) {
       this.setState({showLoading: true});
   if(userId == "") {
@@ -203,13 +200,6 @@ class UserDetail extends PureComponent {
     } else {
       Alert.alert('', 'No Internet Connection');
     }
-  } else {
-    Alert.alert('', 'Please Enter Valid Email Address');
-  }
-  }
-  else {
-      Alert.alert('', 'Password Do Not Match')
-  }
   }
   else {
     Alert.alert('', 'Please enter first Name')

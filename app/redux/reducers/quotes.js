@@ -161,6 +161,14 @@ export const deleteQuoteItem = (quoteItemID) => {
   };
 };
 
+export const getQuoteItem = (quoteItemID) => {
+  return (dispatch) => {
+    return API.getQuoteItem(quoteItemID).then((response) => {
+      return response;
+    });
+  };
+};
+
 const INITAIL_STATE = {
   quotesList: [],
 };

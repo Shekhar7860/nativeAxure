@@ -290,7 +290,7 @@ class Orders extends Component {
                 amount={ '£' + ' ' + commafy(acceptedItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
-                onPress={() => this.openScreen('StatusOrders', acceptedItems, 'ACCEPED')}
+                onPress={() => this.openScreen('StatusOrders', acceptedItems, 'ACCEPTED')}
               />
               <CardWithIcon
                 color={CARD_DARK_BLUE}

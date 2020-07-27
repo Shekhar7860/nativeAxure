@@ -1,7 +1,5 @@
-'use strict';
 
 import React, {PureComponent} from 'react';
-
 import {StyleSheet, View} from 'react-native';
 import {ADD} from '../constants/Images';
 import ClickableText from './ClickableText';

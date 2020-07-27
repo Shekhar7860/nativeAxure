@@ -193,7 +193,6 @@ class Users extends Component {
             count={''}
             status={''}
             amount={activeUsersCount + ' ' + 'Active'}
-            amountStyle={styles.amountStyle}
             onPress={() => this.openScreen('StatusUsers', activeUsers, 'PENDING')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
@@ -203,9 +202,7 @@ class Users extends Component {
             count={''}
             status={''}
             onPress={() => this.openScreen('StatusUsers', inActiveUsers, 'PENDING')}
-            amount={inActiveUsersCount + ' ' +  'InActive'}
-            amountStyle={styles.amountStyle}
-            onPress={this.onClickListen}
+            amount={inActiveUsersCount + ' ' +  'Inactive'}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />

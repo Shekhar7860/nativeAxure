@@ -225,6 +225,13 @@ export default class Api {
     return response;
   }
 
+
+  static getQuoteItem(ID) {
+    let response = this.sendRequest('GET', `quote-items/${ID}`);
+    return response;
+  }
+
+
   static deleteQuoteItem(ID) {
     let response = this.sendRequest('DELETE', `quote-items/${ID}`);
     return response;
@@ -454,7 +461,7 @@ export default class Api {
 
     const url = urlTo(fullPath, opts.publicApi);
     const requestBody = jsonBody || formDataToObject(formData) || query || '';
-   // console.log('Request:', fetchOpts.headers, url, requestBody);
+   console.log('Request:', fetchOpts.headers, url, requestBody);
     return fetch(url, fetchOpts)
       .then(async (res) => {
         let data = res;

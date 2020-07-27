@@ -34,7 +34,7 @@ class App extends PureComponent {
       SplashScreen.hide();
     }, 2000); 
     OneSignal.promptForPushNotificationsWithUserResponse(this.myiOSPromptCallback);
-
+    OneSignal.addEventListener('ids', this.onIds);
    
     
     // this.getToken();
@@ -42,6 +42,10 @@ class App extends PureComponent {
   
  myiOSPromptCallback(permission){
   
+}
+
+onIds(device) {
+  console.log('Device info: ', device);
 }
   handleConnectionChange = (isConnected) => {
     status = isConnected;

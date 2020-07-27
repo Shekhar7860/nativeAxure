@@ -1,4 +1,3 @@
-'use strict';
 
 import React, {PureComponent} from 'react';
 
@@ -87,8 +86,7 @@ class HeaderWithLogo extends PureComponent {
       leftImage,
     } = this.props;
     const statusBarHeight = this.getStatusBarHeight();
-    const paddingTop =
-      Platform.OS === 'android' ? {paddingTop: moderateScale(0)} : {};
+    const paddingTop = {marginTop: moderateScale(10)};
     return (
       <SafeArea style={[styles.container, paddingTop]}>
         <StatusBar backgroundColor={WHITE} barStyle="dark-content"/>
@@ -136,12 +134,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderBottomWidth : 0,
     borderTopColor : "white",
-    backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: { width: 1, height: 1 },
-        shadowOpacity:  0.4,
-        shadowRadius: 3,
-        elevation: 5,
+    backgroundColor: '#fff'
   },
   leftView: {
     flex: 1,

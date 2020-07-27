@@ -160,7 +160,7 @@ class Quote extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.amountText}></Text>
+                <Text style={styles.amountText}>{quote.po_reference}</Text>
               </View>
             </View>
 

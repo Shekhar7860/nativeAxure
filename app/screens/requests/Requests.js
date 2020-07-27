@@ -156,7 +156,7 @@ export default class Requests extends Component {
               title="New Contact"
               textContainerStyle={styles.buttonContainer}
               textStyle={styles.textStyle}
-              >
+              >   
               <Icon name="md-create" style={styles.actionButtonIcon} />
             </ActionButton.Item>
             <ActionButton.Item

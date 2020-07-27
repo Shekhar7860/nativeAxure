@@ -1,5 +1,3 @@
-'use strict';
-
 import React, {PureComponent} from 'react';
 import ModalDropdown from 'react-native-modal-dropdown';
 import {StyleSheet, View, Image} from 'react-native';
@@ -36,6 +34,7 @@ class SimpleDropdown extends PureComponent {
       isIconVisible,
       dropDownWidth,
       imageStyle,
+      defaultIndex,
     } = this.props;
     let dropDownHeight = 0;
     if (drowdownArray) {

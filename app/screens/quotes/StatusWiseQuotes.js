@@ -17,6 +17,7 @@ import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import HR from '../../components/HR';
+import {commafy} from '../../util/utils';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   View,
@@ -71,7 +72,7 @@ class StatusWiseQuotes extends Component {
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>
-            <Text style={styles.amountText}>£{item.grand_total}</Text>
+            <Text style={styles.amountText}>£{commafy(item.grand_total)}</Text>
           </View>
         </View>
       </TouchableOpacity>

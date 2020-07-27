@@ -11,7 +11,8 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
   BLACK,
-  GRAY
+  GRAY,
+  BORDER_COLOR
 } from '../../constants/colors';
 import {
   USER,
@@ -21,7 +22,8 @@ import {
   CROSS,
   rightArrow,
   PRINTER,
-  LISTINGICON
+  LISTINGICON,
+  SEARCH
 } from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
@@ -53,7 +55,8 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
-  Alert
+  Alert,
+  TextInput
 } from 'react-native';
 const arrDataMethod = ['FedEx', 'FedEx1Day@Fright', 'FedEx2Day@', 'FedEx2Day@ A.M', 'FedEx2Day@ Frieght', 'FedEx3Day@ Frieght', 'FedEx Europe First International Priority@', 'FedEx Express Saver@', 'FedEx First Overnight@', 'FedEx First@Frieght','FedEx Frieght', 'FedEx Frieght@Economy', 'FedEx Frieght@Priority',  'FedEx Ground@', 'FedEx Home Delivery@', 'FedEx International Economy@', 'FedEx International Economy@Frieght', 'FedEx International Priority@', 'FedEx International Priority@Frieght', 'FedEx International Priority@Frieght', 'FedEx SmartPost@', 'FedEx StandardOvernight@', 'Flsmidth'];
 
@@ -738,6 +741,11 @@ addQuoteItem = (product_id, qty, val, status) => {
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
+                  <View style={commonStyles.commonRow}>
+                 <TextInput style={{width:'88%', marginTop : moderateScale(0), borderBottomWidth : 1}} />
+          <TouchableImage image={SEARCH} imageStyle={{...commonStyles.icon,marginTop : moderateScale(10)}} />
+        </View>
+        <View style={commonStyles.space}>
                   <SimpleDropdown
               placeHolder="Please select Country"
               style={commonStyles.dropDownStyle}
@@ -747,6 +755,7 @@ addQuoteItem = (product_id, qty, val, status) => {
               isIconVisible={true}
               onSelect={(value) => this.selectItem(value, 'billingCountry')}
             />
+            </View>
                 </View>
 
                 <View style={commonStyles.space}>

@@ -32,6 +32,7 @@ import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 import {WHITE} from '../../constants/colors';
+import {ROUTES} from '../../constants/routes';
 
 class Home extends PureComponent {
   constructor(props) {
@@ -145,16 +146,16 @@ class Home extends PureComponent {
   openScreen = (index) => {
     switch (index) {
       case 0:
-        this.props.navigation.navigate('Quotes');
+        this.props.navigation.navigate(ROUTES.Quotes);
         break;
       case 1:
-       this.props.navigation.navigate('Orders');
+       this.props.navigation.navigate(ROUTES.Orders);
       break;
       case 2:
-        this.props.navigation.navigate('Users');
+        this.props.navigation.navigate(ROUTES.Users);
         break;
       case 5:
-        Linking.openURL('https://resourcehub.mphgroup.uk');
+        Linking.openURL(RESOURCE_HUB_URL);
         break;
       default:
       // code block

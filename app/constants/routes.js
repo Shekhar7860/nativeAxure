@@ -47,5 +47,7 @@ export const ROUTES = {
   Quotes: 'Quotes',
   Search: 'Search',
   Tab1: 'Tab1',
+  QuoteStack : 'QuoteStack',
+  RequestsStack : 'RequestsStack'
   // PRIVATE ROUTES (service pages or require parameters):
 };

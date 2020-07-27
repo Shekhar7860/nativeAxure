@@ -19,6 +19,7 @@ import {CheckBox} from 'react-native-elements';
 import ClickableText from '../../components/ClickableText';
 import commonStyles from '../../commonStyles/commonStyles';
 import {connect} from 'react-redux';
+import {ROUTES} from '../../constants/routes';
 import {
   APP_MAIN_COLOR,
   WHITE,
@@ -26,7 +27,7 @@ import {
   BLACK,
 } from '../../constants/colors';
 import InputBox from '../../components/InputBox';
-import {APP_NAME} from '../../constants/const';
+import {SIGN_UP_URL} from '../../constants/const';
 import {loginUser} from '../../redux/reducers/session';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 import StoreDB from '../../storage/StoreDB';
@@ -89,9 +90,9 @@ class Login extends Component {
               }
               Api.setAuthToken(response.data.auth_token);
               StoreDB.loggedInUserData(response.data);
-              this.props.navigation.navigate('Home');
+              this.props.navigation.navigate(ROUTES.Home);
               this.props.navigation.reset({
-                routes: [{name: 'Home'}],
+                routes: [{name: ROUTES.Home}],
               });
             } else {
               if (response.validation_errors) {
@@ -184,7 +185,7 @@ class Login extends Component {
             textStyle={styles.registerText}
             isBoldText={true}
             onPress={() =>
-              this.openUrl('https://mphgroup.uk/beta/become-a-partner')
+              this.openUrl(SIGN_UP_URL)
             }>
             REGISTER
           </ClickableText>

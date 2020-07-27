@@ -29,7 +29,7 @@ import {connect} from 'react-redux';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import ImagePicker from 'react-native-image-picker';
 import {updateProfilePic} from '../redux/reducers/session';
-import {DEFAULT_IMG_URL} from '../constants/const';
+import {RESOURCE_HUB_URL} from '../constants/const';
 import {ScrollView} from 'react-native-gesture-handler';
 
 const ITEMS = [
@@ -49,9 +49,9 @@ const ITEMS = [
 logOut = (props) => {
   StoreDB.logoutUser();
   props.navigation.reset({
-    routes: [{name: 'Login'}],
+    routes: [{name: ROUTES.Login}],
   });
-  props.navigation.navigate('Login');
+  props.navigation.navigate(ROUTES.Login);
 };
 
 openScreen = (screenName, props) => {
@@ -66,7 +66,7 @@ openScreen = (screenName, props) => {
      // alert(ROUTES.Clients);
     props.navigation.navigate(screenName);
   } else if (screenName == 'Resource Hub') {
-    Linking.openURL('https://resourcehub.mphgroup.uk');
+    Linking.openURL(RESOURCE_HUB_URL);
   } else if (screenName == 'Upload Orders') {
     props.navigation.navigate('UploadOrders');
   } else if (screenName == 'Logout') {

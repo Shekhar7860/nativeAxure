@@ -146,6 +146,10 @@ const commonStyles = ScaledSheet.create({
   marginTop20: {
     marginTop: fontSizes.font20,
   },
+  commonRow  : {
+  flexDirection: 'row',
+  marginHorizontal: fontSizes.font20
+  }
 });
 
 export default commonStyles;

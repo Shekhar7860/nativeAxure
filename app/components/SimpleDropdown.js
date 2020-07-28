@@ -14,15 +14,30 @@ class SimpleDropdown extends PureComponent {
     defaultValue: '',
   };
 
+  componentDidMount = () => {
+    // console.log('dropDownStatus', this.dropDown.show());
+  };
   openDropDown = () => {
     this.dropDown.show();
   };
 
   handleDropdownSelect = (index, value) => {
+    // alert(value);
     const {onSelect} = this.props;
     if (onSelect) {
       onSelect(index, value);
     }
+  };
+
+  showDropDown = (value) => {
+    alert(value);
+    // const {showDropDownMenu} = this.props;
+    // showDropDownMenu(value);
+  };
+
+  callDropdown = (obj) => {
+    const {callDropdownButton} = this.props;
+    callDropdownButton(obj);
   };
 
   render() {
@@ -49,7 +64,7 @@ class SimpleDropdown extends PureComponent {
         <View style={([commonStyles.shadowLayout, styles.flexRow], style)}>
           <ModalDropdown
             ref={(obj) => {
-              this.dropDown = obj;
+              this.callDropdown(obj);
             }}
             defaultValue={placeHolder}
             style={styles.dropdownBtn}

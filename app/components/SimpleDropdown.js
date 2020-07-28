@@ -14,30 +14,22 @@ class SimpleDropdown extends PureComponent {
     defaultValue: '',
   };
 
-  componentDidMount = () => {
-    // console.log('dropDownStatus', this.dropDown.show());
-  };
-  openDropDown = () => {
+  showDropdown = () => {
     this.dropDown.show();
+    if (this.props.showDropDown !== undefined) {
+      this.props.showDropDown();
+    }
   };
 
+  hideDropdown = () => {
+    //this.dropDown.hide();
+    // this.props.hideDropDown()
+  };
   handleDropdownSelect = (index, value) => {
-    // alert(value);
     const {onSelect} = this.props;
     if (onSelect) {
       onSelect(index, value);
     }
-  };
-
-  showDropDown = (value) => {
-    alert(value);
-    // const {showDropDownMenu} = this.props;
-    // showDropDownMenu(value);
-  };
-
-  callDropdown = (obj) => {
-    const {callDropdownButton} = this.props;
-    callDropdownButton(obj);
   };
 
   render() {
@@ -64,10 +56,12 @@ class SimpleDropdown extends PureComponent {
         <View style={([commonStyles.shadowLayout, styles.flexRow], style)}>
           <ModalDropdown
             ref={(obj) => {
-              this.callDropdown(obj);
+              this.dropDown = obj;
             }}
             defaultValue={placeHolder}
             style={styles.dropdownBtn}
+            onDropdownWillShow={() => this.showDropdown()}
+            onDropdownWillHide={() => this.hideDropdown()}
             onSelect={(index, value) => this.handleDropdownSelect(index, value)}
             dropdownStyle={[
               styles.dropdownView,
@@ -81,6 +75,7 @@ class SimpleDropdown extends PureComponent {
               textStyle)
             }
             options={drowdownArray}
+            accessible={false}
           />
           {isIconVisible && (
             <Image

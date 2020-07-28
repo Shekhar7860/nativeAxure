@@ -142,7 +142,9 @@ class AddQuoteClient extends PureComponent {
       quantity: '1',
       shippingCountry: 'Please Select Country',
       showCountrySearch: false,
+      selectedCountries : []
     };
+    this.arrayholder = [];
     // this.inputRef = React.createRef();
   }
   componentDidMount = () => {
@@ -150,7 +152,9 @@ class AddQuoteClient extends PureComponent {
     //  console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
+      this.state.selectedCountries.push(countries.items[i].name);
     }
+
     if (this.props.route.params) {
       // console.log('params', this.props.route.params);
       if (this.props.route.params.quoteData !== undefined) {
@@ -222,9 +226,14 @@ class AddQuoteClient extends PureComponent {
     }
   };
 
-  setTextInputRef = (object) => {
-    console.log('obj', object);
+  showDropDown = () => {
+    this.setState({showCountrySearch: true});
   };
+
+  hideDropDown = () => {
+    // this.setState({showCountrySearch: false});
+  };
+
   getQuoteItems = (quoteId) => {
     const {online} = this.props;
     if (online) {
@@ -251,6 +260,10 @@ class AddQuoteClient extends PureComponent {
     } else {
       Alert.alert('', 'No Internet Connection');
     }
+  };
+
+  callFunction = (value) => {
+    console.log('this is value', value);
   };
 
   selectData = (val) => {
@@ -296,6 +309,25 @@ class AddQuoteClient extends PureComponent {
     return '£' + sum;
   };
 
+  searchCountries = (text) => {
+    // console.log('array holder', this.state.countries);
+    const newData = this.state.countries.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item ? item.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    console.log('data', newData)
+    if(text !== ""){
+    this.setState({countries: newData});
+    }
+    else {
+    this.setState({countries: this.state.selectedCountries});
+    }
+  };
+
+
+  
   addQuoteItem = (product_id, qty, val, status) => {
     this.props
       .addQuoteItem(this.state.userquoteId, product_id, qty)
@@ -384,10 +416,6 @@ class AddQuoteClient extends PureComponent {
     return price * quantity;
   };
 
-  showDropdownMenu = (value) => {
-    // alert(value)
-  };
-
   dropDownValue = (value) => {
     console.log('selected', value);
   };
@@ -397,7 +425,6 @@ class AddQuoteClient extends PureComponent {
     } else if (type == 'status') {
       this.setState({status: arrDataStatus[val]});
     } else if (type == 'billingCountry') {
-      this.setState({showCountrySearch: true});
       this.setState({billingCountry: this.state.countries[val]});
     } else if (type == 'shippingCountry') {
       this.setState({shippingCountry: this.state.countries[val]});
@@ -886,6 +913,7 @@ class AddQuoteClient extends PureComponent {
                           marginTop: moderateScale(0),
                           borderBottomWidth: 1,
                         }}
+                        onChangeText={(text) => this.searchCountries(text)}
                       />
                       <TouchableImage
                         image={SEARCH}
@@ -901,12 +929,15 @@ class AddQuoteClient extends PureComponent {
                       placeHolder="Please select Country"
                       style={commonStyles.dropDownStyle}
                       // ref={this.inputRef}
+
                       drowdownArray={countries}
                       dropDownWidth={'85%'}
                       imageStyle={{
                         marginTop: moderateScale(10),
                         ...commonStyles.icon,
                       }}
+                      showDropDown={() => this.showDropDown()}
+                      hideDropDown={() => this.hideDropDown()}
                       isIconVisible={true}
                       onSelect={(value) =>
                         this.selectItem(value, 'billingCountry')

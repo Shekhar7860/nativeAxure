@@ -511,7 +511,7 @@ export default class Api {
         }
       })
       .catch((error) => {
-      //  console.log('err', error);
+        console.log('err', error);
       });
   }
 

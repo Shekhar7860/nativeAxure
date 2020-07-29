@@ -34,6 +34,7 @@ export const loginUser = (email, password) => {
   return (dispatch) => {
     return API.login({email, password})
       .then((response) => {
+        console.log('insidelogin', response);
         if (response.code === 200) {
           // console.log('insidelogin', response);
           dispatch(setUserInfo(response.data));

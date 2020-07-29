@@ -114,7 +114,6 @@ class AddQuoteClient extends PureComponent {
       shippingAdd1: '',
       shippingAdd2: '',
       shippingCity: '',
-      shippingCountry: '',
       shippingPostalCode: '',
       billingCompanyName: '',
       billingfirstName: '',
@@ -142,7 +141,9 @@ class AddQuoteClient extends PureComponent {
       quantity: '1',
       shippingCountry: 'Please Select Country',
       showCountrySearch: false,
-      selectedCountries : []
+      selectedCountries : [],
+      showShippingCountrySearch  : false, 
+      shippingCountries : []
     };
     this.arrayholder = [];
     // this.inputRef = React.createRef();
@@ -152,6 +153,7 @@ class AddQuoteClient extends PureComponent {
     //  console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
+      this.state.shippingCountries.push(countries.items[i].name);
       this.state.selectedCountries.push(countries.items[i].name);
     }
 
@@ -226,8 +228,14 @@ class AddQuoteClient extends PureComponent {
     }
   };
 
-  showDropDown = () => {
-    this.setState({showCountrySearch: true});
+  showDropDown = (value) => {
+    if(value=="billing")
+    {
+    this.setState({showCountrySearch: true})
+    }
+    else {
+      this.setState({showShippingCountrySearch: true}) 
+    }
   };
 
   hideDropDown = () => {
@@ -309,7 +317,7 @@ class AddQuoteClient extends PureComponent {
     return '£' + sum;
   };
 
-  searchCountries = (text) => {
+  searchCountries = (text, value) => {
     // console.log('array holder', this.state.countries);
     const newData = this.state.countries.filter(function (item) {
       //applying filter for the inserted text in search bar
@@ -319,7 +327,12 @@ class AddQuoteClient extends PureComponent {
     });
     console.log('data', newData)
     if(text !== ""){
-    this.setState({countries: newData});
+      if (value == "billing"){
+      this.setState({countries: newData});  
+    }
+    else {
+    this.setState({shippingCountries: newData});
+    }
     }
     else {
     this.setState({countries: this.state.selectedCountries});
@@ -567,7 +580,7 @@ class AddQuoteClient extends PureComponent {
     }
   };
   checkAlert = () => {
-    alert('jiiii');
+    //alert('jiiii');
   };
 
   setSame = (
@@ -654,6 +667,8 @@ class AddQuoteClient extends PureComponent {
       countries,
       billingEmail,
       shippingEmail,
+      shippingCountries,
+      showShippingCountrySearch
     } = this.state;
 
     return (
@@ -913,7 +928,7 @@ class AddQuoteClient extends PureComponent {
                           marginTop: moderateScale(0),
                           borderBottomWidth: 1,
                         }}
-                        onChangeText={(text) => this.searchCountries(text)}
+                        onChangeText={(text) => this.searchCountries(text, 'billing')}
                       />
                       <TouchableImage
                         image={SEARCH}
@@ -936,8 +951,8 @@ class AddQuoteClient extends PureComponent {
                         marginTop: moderateScale(10),
                         ...commonStyles.icon,
                       }}
-                      showDropDown={() => this.showDropDown()}
-                      hideDropDown={() => this.hideDropDown()}
+                      showDropDown={() => this.showDropDown('billing')}
+                      hideDropDown={() => this.hideDropDown('billing')}
                       isIconVisible={true}
                       onSelect={(value) =>
                         this.selectItem(value, 'billingCountry')
@@ -1083,10 +1098,27 @@ class AddQuoteClient extends PureComponent {
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
+                  {showShippingCountrySearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                       style={styles.commonTextBorder}
+                        onChangeText={(text) => this.searchCountries(text, 'shipping')}
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
                   <SimpleDropdown
                     placeHolder={shippingCountry}
                     style={commonStyles.dropDownStyle}
-                    drowdownArray={countries}
+                    drowdownArray={shippingCountries}
+                    showDropDown={() => this.showDropDown('shipping')}
+                    hideDropDown={() => this.hideDropDown('shipping')}
                     dropDownWidth={'85%'}
                     imageStyle={{
                       marginTop: moderateScale(10),

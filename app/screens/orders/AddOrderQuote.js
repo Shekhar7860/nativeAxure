@@ -12,7 +12,7 @@ import {
   APP_MAIN_COLOR,
 } from '../../constants/colors';
 const arrDataVat= ['Exempted'];
-import {USER, BACK, TASK, DRAWER_MENU, CROSS, LISTINGICON} from '../../constants/Images';
+import {USER, BACK, TASK, DRAWER_MENU, CROSS, LISTINGICON, SEARCH} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ClickableText from '../../components/ClickableText';
@@ -35,7 +35,8 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
-  Alert
+  Alert,
+  TextInput
 } from 'react-native';
 import {connect} from 'react-redux';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
@@ -88,7 +89,11 @@ class AddOrderQuote extends PureComponent {
       shipping : 0.00,
       vat : 0.00,
       countries : [],
-      quantity : "1"
+      quantity : "1",
+      showCountrySearch: false,
+      selectedCountries : [],
+      showShippingCountrySearch  : false, 
+      shippingCountries : []
     };
   }
   componentDidMount = () => {
@@ -96,6 +101,8 @@ class AddOrderQuote extends PureComponent {
   //  console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
+      this.state.shippingCountries.push(countries.items[i].name);
+      this.state.selectedCountries.push(countries.items[i].name);
     }
       if (this.props.route.params) {
      //   console.log('sdddsd', this.props.route.params)
@@ -145,6 +152,43 @@ class AddOrderQuote extends PureComponent {
 
 
   };
+
+  showDropDown = (value) => {
+    if(value=="billing")
+    {
+    this.setState({showCountrySearch: true})
+    }
+    else {
+      this.setState({showShippingCountrySearch: true}) 
+    }
+  };
+
+  hideDropDown = () => {
+    // this.setState({showCountrySearch: false});
+  };
+
+  searchCountries = (text, value) => {
+    // console.log('array holder', this.state.countries);
+    const newData = this.state.countries.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item ? item.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    console.log('data', newData)
+    if(text !== ""){
+      if (value == "billing"){
+      this.setState({countries: newData});  
+    }
+    else {
+    this.setState({shippingCountries: newData});
+    }
+    }
+    else {
+    this.setState({countries: this.state.selectedCountries});
+    }
+  };
+
 
   selectItem = (val, type) => {
     if (type == 'type') {
@@ -361,7 +405,8 @@ class AddOrderQuote extends PureComponent {
   render() {
     const {total, quantity, subTotal, shipping, vat, invoiceItems,products,items, showLoading, orderId, orderTitle, client, mphId, poPreference, status, quoteCurrency, paymentTerm, shippingCost, vatPercentage,
     billingAdd1, billingCity, billingAdd2, billingEmail, billingCountry, billingFirstName, billingLastName, billingPostalCode, shippingAdd2, shippingAdd1, shippingFirstName, shippingLastName, shippingCity, shippingCountry,
-  shippingEmail, shippingPostalCode, billingCompanyName, shippingCompanyName, terms, countries} = this.state;
+  shippingEmail, shippingPostalCode, billingCompanyName, shippingCompanyName, terms, countries,  shippingCountries,
+  showShippingCountrySearch, showCountrySearch} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -617,11 +662,32 @@ class AddOrderQuote extends PureComponent {
 
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>Country</Text>
+                {showCountrySearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={{
+                          width: '88%',
+                          marginTop: moderateScale(0),
+                          borderBottomWidth: 1,
+                        }}
+                        onChangeText={(text) => this.searchCountries(text, 'billing')}
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
                 <SimpleDropdown
               placeHolder="Please select Country"
               style={commonStyles.dropDownStyle}
               drowdownArray={countries}
               dropDownWidth={'85%'}
+              showDropDown={() => this.showDropDown('billing')}
+              hideDropDown={() => this.hideDropDown('billing')}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
               isIconVisible={true}
               onSelect={(value) => this.selectItem(value, 'billingCountry')}
@@ -724,11 +790,28 @@ class AddOrderQuote extends PureComponent {
 
               <View style={commonStyles.space}>
                 <Text style={styles.labelText}>Country</Text>
+                {showShippingCountrySearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                       style={commonStyles.commonTextBorder}
+                        onChangeText={(text) => this.searchCountries(text, 'shipping')}
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
                 <SimpleDropdown
               placeHolder="Please select Country"
               style={commonStyles.dropDownStyle}
-              drowdownArray={countries}
+              drowdownArray={shippingCountries}
               dropDownWidth={'85%'}
+              showDropDown={() => this.showDropDown('shipping')}
+                    hideDropDown={() => this.hideDropDown('shipping')}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
               isIconVisible={true}
               onSelect={(value) => this.selectItem(value, 'shippingCountry')}

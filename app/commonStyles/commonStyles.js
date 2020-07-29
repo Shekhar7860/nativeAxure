@@ -149,6 +149,11 @@ const commonStyles = ScaledSheet.create({
   commonRow  : {
   flexDirection: 'row',
   marginHorizontal: fontSizes.font20
+  },
+  commonTextBorder : {
+    width: '88%',
+    marginTop: moderateScale(0),
+    borderBottomWidth: 1,
   }
 });
 

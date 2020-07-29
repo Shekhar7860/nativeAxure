@@ -14,7 +14,8 @@ import {
   BLACK,
   GRAY
 } from '../../constants/colors';
-import {USER, BACK, TASK} from '../../constants/Images';
+import {USER, BACK, TASK, SEARCH} from '../../constants/Images';
+import TouchableImage from '../../components/TouchableImage';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import ExpandCollapseLayout from '../../components/ExpandCollapseLayout';
 import InputBox from '../../components/InputBox';
@@ -35,6 +36,7 @@ import {
   FlatList,
   Dimensions,
   Alert,
+  TextInput
 } from 'react-native';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {connect} from 'react-redux';
@@ -103,7 +105,11 @@ class AddClient extends PureComponent {
       website : "",
       note : "",
       countries : [],
-      countryIndex : 0
+      countryIndex : 0,
+      showContactSearch: false,
+      selectedCountries : [],
+      showSearch  : false, 
+      contactCountries : []
     };
   }
   componentDidMount = () => {
@@ -113,8 +119,24 @@ class AddClient extends PureComponent {
    // console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
+      this.state.contactCountries.push(countries.items[i].name);
+      this.state.selectedCountries.push(countries.items[i].name);
     }
     //this.props.navigation.navigate('Cart')
+  };
+
+  showDropDown = (value) => {
+    if(value=="address")
+    {
+    this.setState({showSearch: true})
+    }
+    else {
+    this.setState({showContactSearch: true}) 
+    }
+  };
+
+  hideDropDown = () => {
+    // this.setState({showCountrySearch: false});
   };
 
   addEditClient = () => {
@@ -285,6 +307,30 @@ if(clientname && first3letters && email){
     }
   };
 
+  searchCountries = (text, value) => {
+    // console.log('array holder', this.state.countries);
+    const newData = this.state.countries.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item ? item.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    console.log('data', newData)
+    if(text !== ""){
+      if (value == "address"){
+      this.setState({countries: newData});  
+    }
+    else {
+    this.setState({contactCountries: newData});
+    }
+    }
+    else {
+    this.setState({countries: this.state.selectedCountries});
+    }
+  };
+
+
+
   setSame = (add1, add2, city, country, postalCode, isRememberMe) => {
     // console.log('selected', this.state.countries[this.state.countryIndex])
     // console.log('isRememberME', isRememberMe)
@@ -345,7 +391,8 @@ if(clientname && first3letters && email){
   };
 
   render() {
-    const {countries, add1, add2, city, country, postalCode, contAdd1, contAdd2, contCity, contCountry, contPostalCode, items, isRememberMe, showLoading} = this.state;
+    const {countries, add1, add2, city, country, postalCode, contAdd1, contAdd2, contCity, contCountry, contPostalCode, items, isRememberMe, showLoading,  shippingCountries,
+      showSearch, contactCountries, showContactSearch} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -543,12 +590,33 @@ if(clientname && first3letters && email){
                 </View>
 
                 <View style={commonStyles.space}>
+                {showSearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={{
+                          width: '88%',
+                          marginTop: moderateScale(0),
+                          borderBottomWidth: 1,
+                        }}
+                        onChangeText={(text) => this.searchCountries(text, 'address')}
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
                   <Text style={styles.labelText}>Country</Text>
                   <SimpleDropdown
               placeHolder="Please select Country"
               style={commonStyles.dropDownStyle}
               drowdownArray={countries}
               dropDownWidth={'85%'}
+              showDropDown={() => this.showDropDown('address')}
+              hideDropDown={() => this.hideDropDown('address')}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
               isIconVisible={true}
               onSelect={(value) => this.selectItem(value, 'country')}
@@ -654,11 +722,32 @@ if(clientname && first3letters && email){
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
+                  {showContactSearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={{
+                          width: '88%',
+                          marginTop: moderateScale(0),
+                          borderBottomWidth: 1,
+                        }}
+                        onChangeText={(text) => this.searchCountries(text, 'contact')}
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
                   <SimpleDropdown
               placeHolder={contCountry}
               style={commonStyles.dropDownStyle}
-              drowdownArray={countries}
+              drowdownArray={contactCountries}
               dropDownWidth={'85%'}
+              showDropDown={() => this.showDropDown('contact')}
+              hideDropDown={() => this.hideDropDown('contact')}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
               isIconVisible={true}
               onSelect={(value) => this.selectItem(value, 'contCountry')}

@@ -11,7 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER, BACK, TASK, DRAWER_MENU} from '../../constants/Images';
+import {USER, BACK, SEARCH} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ClickableText from '../../components/ClickableText';
@@ -33,7 +33,8 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
-  Alert
+  Alert,
+  TextInput
 } from 'react-native';
 import ButtonDefault from '../../components/ButtonDefault';
 import {addUSER, updateUser} from '../../redux/reducers/users';
@@ -62,7 +63,9 @@ class UserDetail extends PureComponent {
       mobile : "",
       countries : [],
       userId : "",
-      groupId : [21]
+      groupId : [21],
+      showCountrySearch: false,
+      selectedCountries : [],
     };
   }
   componentDidMount = () => {
@@ -70,6 +73,7 @@ class UserDetail extends PureComponent {
    // console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
+      this.state.selectedCountries.push(countries.items[i].name);
     }
     if (this.props.route.params) {
     //  console.log('here are params', this.props.route.params);
@@ -98,6 +102,30 @@ class UserDetail extends PureComponent {
     //this.props.navigation.navigate('Cart')
   };
 
+  showDropDown = (value) => {
+    this.setState({showCountrySearch: true})
+  };
+
+  hideDropDown = () => {
+    // this.setState({showCountrySearch: false});
+  };
+
+  searchCountries = (text, value) => {
+    // console.log('array holder', this.state.countries);
+    const newData = this.state.countries.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item ? item.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    console.log('data', newData)
+    if(text !== ""){
+      this.setState({countries: newData});  
+    }
+    else {
+    this.setState({countries: this.state.selectedCountries});
+    }
+  };
   saveUser = () => {
     const {online, userInfo} = this.props;
     console.log('this grp id', this.state.groupId)
@@ -211,7 +239,7 @@ class UserDetail extends PureComponent {
   };
 
   render() {
-    const {items, userData, showLoading, email, firstName, surName, add1, add2, city, country, postalCode, emailVerified, group, partner, phone, mobile, countries} = this.state;
+    const {items, userData, showLoading, email, firstName, surName, add1, add2, city, country, postalCode, emailVerified, group, partner, phone, mobile, countries, showCountrySearch} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -359,9 +387,30 @@ class UserDetail extends PureComponent {
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
+                  {showCountrySearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={{
+                          width: '88%',
+                          marginTop: moderateScale(0),
+                          borderBottomWidth: 1,
+                        }}
+                        onChangeText={(text) => this.searchCountries(text, 'billing')}
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
                   <SimpleDropdown
               placeHolder="Please select Country"
               style={commonStyles.dropDownStyle}
+              showDropDown={() => this.showDropDown('billing')}
+              hideDropDown={() => this.hideDropDown('billing')}
               drowdownArray={countries}
               dropDownWidth={'85%'}
               imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}

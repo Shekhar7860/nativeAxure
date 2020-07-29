@@ -567,7 +567,7 @@ class AddQuoteClient extends PureComponent {
     }
   };
   checkAlert = () => {
-    alert('jiiii');
+    
   };
 
   setSame = (

@@ -141,9 +141,9 @@ class AddQuoteClient extends PureComponent {
       quantity: '1',
       shippingCountry: 'Please Select Country',
       showCountrySearch: false,
-      selectedCountries : [],
-      showShippingCountrySearch  : false, 
-      shippingCountries : []
+      selectedCountries: [],
+      showShippingCountrySearch: false,
+      shippingCountries: [],
     };
     this.arrayholder = [];
     // this.inputRef = React.createRef();
@@ -229,12 +229,10 @@ class AddQuoteClient extends PureComponent {
   };
 
   showDropDown = (value) => {
-    if(value=="billing")
-    {
-    this.setState({showCountrySearch: true})
-    }
-    else {
-      this.setState({showShippingCountrySearch: true}) 
+    if (value == 'billing') {
+      this.setState({showCountrySearch: true});
+    } else {
+      this.setState({showShippingCountrySearch: true});
     }
   };
 
@@ -325,22 +323,18 @@ class AddQuoteClient extends PureComponent {
       const textData = text.toUpperCase();
       return itemData.indexOf(textData) > -1;
     });
-    console.log('data', newData)
-    if(text !== ""){
-      if (value == "billing"){
-      this.setState({countries: newData});  
-    }
-    else {
-    this.setState({shippingCountries: newData});
-    }
-    }
-    else {
-    this.setState({countries: this.state.selectedCountries});
+    console.log('data', newData);
+    if (text !== '') {
+      if (value == 'billing') {
+        this.setState({countries: newData});
+      } else {
+        this.setState({shippingCountries: newData});
+      }
+    } else {
+      this.setState({countries: this.state.selectedCountries});
     }
   };
 
-
-  
   addQuoteItem = (product_id, qty, val, status) => {
     this.props
       .addQuoteItem(this.state.userquoteId, product_id, qty)
@@ -517,7 +511,11 @@ class AddQuoteClient extends PureComponent {
       shippingPostalCode,
     } = this.state;
     const {online} = this.props;
-
+ if((poPreference == '' || poPreference == null) && status == "Accepted")
+ {
+   Alert.alert('', 'In Order to accept quote, you must input value in po Reference')
+ }
+ else {
     if (online) {
       this.setState({showLoading: true});
       this.props
@@ -578,6 +576,7 @@ class AddQuoteClient extends PureComponent {
     } else {
       Alert.alert('', 'No Internet Connection');
     }
+  }
   };
   checkAlert = () => {
     //alert('jiiii');
@@ -668,7 +667,7 @@ class AddQuoteClient extends PureComponent {
       billingEmail,
       shippingEmail,
       shippingCountries,
-      showShippingCountrySearch
+      showShippingCountrySearch,
     } = this.state;
 
     return (
@@ -928,7 +927,9 @@ class AddQuoteClient extends PureComponent {
                           marginTop: moderateScale(0),
                           borderBottomWidth: 1,
                         }}
-                        onChangeText={(text) => this.searchCountries(text, 'billing')}
+                        onChangeText={(text) =>
+                          this.searchCountries(text, 'billing')
+                        }
                       />
                       <TouchableImage
                         image={SEARCH}
@@ -1101,8 +1102,10 @@ class AddQuoteClient extends PureComponent {
                   {showShippingCountrySearch ? (
                     <View style={commonStyles.commonRow}>
                       <TextInput
-                       style={styles.commonTextBorder}
-                        onChangeText={(text) => this.searchCountries(text, 'shipping')}
+                        style={commonStyles.commonTextBorder}
+                        onChangeText={(text) =>
+                          this.searchCountries(text, 'shipping')
+                        }
                       />
                       <TouchableImage
                         image={SEARCH}
@@ -1113,22 +1116,24 @@ class AddQuoteClient extends PureComponent {
                       />
                     </View>
                   ) : null}
-                  <SimpleDropdown
-                    placeHolder={shippingCountry}
-                    style={commonStyles.dropDownStyle}
-                    drowdownArray={shippingCountries}
-                    showDropDown={() => this.showDropDown('shipping')}
-                    hideDropDown={() => this.hideDropDown('shipping')}
-                    dropDownWidth={'85%'}
-                    imageStyle={{
-                      marginTop: moderateScale(10),
-                      ...commonStyles.icon,
-                    }}
-                    isIconVisible={true}
-                    onSelect={(value) =>
-                      this.selectItem(value, 'shippingCountry')
-                    }
-                  />
+                  <View style={commonStyles.space}>
+                    <SimpleDropdown
+                      placeHolder={shippingCountry}
+                      style={commonStyles.dropDownStyle}
+                      drowdownArray={shippingCountries}
+                      showDropDown={() => this.showDropDown('shipping')}
+                      hideDropDown={() => this.hideDropDown('shipping')}
+                      dropDownWidth={'85%'}
+                      imageStyle={{
+                        marginTop: moderateScale(10),
+                        ...commonStyles.icon,
+                      }}
+                      isIconVisible={true}
+                      onSelect={(value) =>
+                        this.selectItem(value, 'shippingCountry')
+                      }
+                    />
+                  </View>
                 </View>
 
                 <View style={commonStyles.space}>

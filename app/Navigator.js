@@ -194,7 +194,7 @@ const ChatNull = () => {
 };
 
 selectedTab = () => {
-  alert('hiiiiii');
+ // alert('hiiiiii');
 };
 function TabNavigator() {
   return (
@@ -255,7 +255,7 @@ function TabNavigator() {
           ),
           tabBarVisible: getTabBarVisibility(route),
         })}
-        component={ChatNull}
+        component={ChatStackNavigator}
       />
       <Tab.Screen
         options={{

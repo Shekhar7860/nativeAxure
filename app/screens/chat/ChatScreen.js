@@ -16,12 +16,12 @@ import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
 import {USER, BACK, TASK} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {GiftedChat} from 'react-native-gifted-chat';
-// import {
-//   Freshchat,
-//   FreshchatConfig,
-//   FreshchatMessage,
-//   FreshchatUser,
-// } from 'react-native-freshchat-sdk';
+import {
+  Freshchat,
+  FreshchatConfig,
+  FreshchatMessage,
+  FreshchatUser,
+} from 'react-native-freshchat-sdk';
 
 import {
   View,
@@ -85,15 +85,15 @@ export default class ChatScreen extends PureComponent {
     });
   }
   onSend(messages = []) {
-    // var freshchatMessage = new FreshchatMessage();
-    // freshchatMessage.tag = 'premium';
-    // freshchatMessage.message = 'text message';
-    // Freshchat.sendMessage(freshchatMessage);
-    this.setState((previousState) => {
-      return {
-        messages: GiftedChat.append(previousState.messages, messages),
-      };
-    });
+    var freshchatMessage = new FreshchatMessage();
+    freshchatMessage.tag = 'premium';
+    freshchatMessage.message = 'second message';
+    Freshchat.sendMessage(freshchatMessage);
+    // this.setState((previousState) => {
+    //   return {
+    //     messages: GiftedChat.append(previousState.messages, messages),
+    //   };
+    // });
   }
 
   render() {

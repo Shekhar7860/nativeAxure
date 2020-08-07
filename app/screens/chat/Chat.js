@@ -22,7 +22,7 @@ import {
 import {APP_MAIN_BLUE} from '../../constants/colors';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
- import {Freshchat, FreshchatConfig} from 'react-native-freshchat-sdk';
+ import {Freshchat, FreshchatConfig, FreshchatUser } from 'react-native-freshchat-sdk';
  import { ConversationOptions } from 'react-native-freshchat-sdk';
 
 export default class Chat extends PureComponent {
@@ -37,11 +37,37 @@ export default class Chat extends PureComponent {
       FRESH_CHAT_APP_ID,
       FRESH_CHAT_ID_APP_KEY,
     );
+    freshchatConfig.domain = "https://msdk.in.freshchat.com";
+    freshchatConfig.cameraCaptureEnabled = false;
     Freshchat.init(freshchatConfig);
-    var conversationOptions = new ConversationOptions();
-conversationOptions.tags = ["premium"];
-conversationOptions.filteredViewTitle = "Premium Support"; 
-Freshchat.showConversations(conversationOptions);
+
+    Freshchat.showConversations();
+   // freshchatConfig.domain = "https://msdk.in.freshchat.com";
+    var freshchatUser = new FreshchatUser();
+freshchatUser.firstName = "John";
+freshchatUser.lastName = "Doe";
+freshchatUser.email = "johndoe@dead.man";
+freshchatUser.phoneCountryCode = "+91";
+freshchatUser.phone = "1234234123";
+// Freshchat.setUser(freshchatUser, (error) => {
+//     alert('hiii')
+// });
+Freshchat.getFreshchatUserId((data) => {
+ console.log('uswerid', data)
+  });
+//   Freshchat.showFAQs();
+//   var freshchatConfig2 = new FreshchatConfig(FRESH_CHAT_APP_ID,FRESH_CHAT_ID_APP_KEY);
+// freshchatConfig2.teamMemberInfoVisible = true;
+// freshchatConfig2.cameraCaptureEnabled = true;
+// freshchatConfig2.gallerySelectionEnabled = true;
+// freshchatConfig2.responseExpectationEnabled = true
+// Freshchat.init(freshchatConfig2);
+//     var conversationOptions = new ConversationOptions();
+// conversationOptions.tags = ["premium"];
+// conversationOptions.filteredViewTitle = "Premium Support"; 
+// Freshchat.showFAQs();
+//  Freshchat.showConversations();
+//  Freshchat.sharedInstance().showConversations()
    // this.props.navigation.navigate('Cart')
   };
 

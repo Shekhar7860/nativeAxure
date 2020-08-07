@@ -447,7 +447,7 @@ export default class Api {
 
     const url = urlTo(fullPath, opts.publicApi);
     const requestBody = jsonBody || formDataToObject(formData) || query || '';
-    console.log('Request:', fetchOpts.headers, url, requestBody);
+ //   console.log('Request:', fetchOpts.headers, url, requestBody);
     return fetch(url, fetchOpts)
       .then(async (res) => {
         let data = res;
@@ -457,7 +457,7 @@ export default class Api {
           console.log('Response parse error: ', parseError);
         }
 
-        console.log('Response:', res, data);
+    //    console.log('Response:', res, data);
 
         switch (res.status) {
           case 200: {

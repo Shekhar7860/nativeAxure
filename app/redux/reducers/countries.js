@@ -7,7 +7,7 @@ const setCountriesList = (value) => ({type: SET_COUNTRIES_LIST, value});
 export const getCountriesList = () => {
   return (dispatch) => {
     return API.getCountriesList().then((response) => {
-      console.log('response', response);
+     // console.log('response', response);
       if (response.code === 200) {
         if (response.data) {
           dispatch(setCountriesList(response.data));

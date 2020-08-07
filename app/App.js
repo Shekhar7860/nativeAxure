@@ -28,6 +28,7 @@ const {store, persistor} = createStore();
 class App extends PureComponent {
   componentDidMount() {
     console.disableYellowBox = true;
+   
     OneSignal.setLogLevel(6, 0);
     OneSignal.init("6c356504-bbfc-4036-bb77-07245ccdb10e", {kOSSettingsKeyAutoPrompt : false, kOSSettingsKeyInAppLaunchURL: false, kOSSettingsKeyInFocusDisplayOption:2});
     setTimeout(()=>{
@@ -37,7 +38,7 @@ class App extends PureComponent {
     OneSignal.addEventListener('ids', this.onIds);
    
     
-    // this.getToken();
+     this.getToken();
   }
   
  myiOSPromptCallback(permission){
@@ -47,13 +48,16 @@ class App extends PureComponent {
 onIds(device) {
   console.log('Device info: ', device);
 }
+
+
   handleConnectionChange = (isConnected) => {
     status = isConnected;
   };
 
   // checking if app opened from notification or not
   async getToken() {
-    const token = await messaging().getInitialNotification();
+   const token = await messaging().getToken();
+   console.log('token', token)
   }
 
   render() {

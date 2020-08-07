@@ -44,17 +44,20 @@ export default class Chat extends PureComponent {
     Freshchat.showConversations();
    // freshchatConfig.domain = "https://msdk.in.freshchat.com";
     var freshchatUser = new FreshchatUser();
-freshchatUser.firstName = "John";
-freshchatUser.lastName = "Doe";
-freshchatUser.email = "johndoe@dead.man";
+freshchatUser.firstName = "Shanky";
+freshchatUser.lastName = "Chugh";
+freshchatUser.email = "ShankyChugh@gmail.com";
 freshchatUser.phoneCountryCode = "+91";
-freshchatUser.phone = "1234234123";
-// Freshchat.setUser(freshchatUser, (error) => {
-//     alert('hiii')
-// });
+freshchatUser.phone = "8837826904";
+// Freshchat.setPushRegistrationToken(device.pushToken);
+Freshchat.setUser(freshchatUser, (error) => {
+   // alert('hiii')
+});
 Freshchat.getFreshchatUserId((data) => {
  console.log('uswerid', data)
   });
+
+  
 //   Freshchat.showFAQs();
 //   var freshchatConfig2 = new FreshchatConfig(FRESH_CHAT_APP_ID,FRESH_CHAT_ID_APP_KEY);
 // freshchatConfig2.teamMemberInfoVisible = true;

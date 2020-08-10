@@ -795,6 +795,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ER8GT5ZEAJ;
@@ -811,9 +812,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.avonbeta;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mphbeta;
 				PRODUCT_NAME = mphBeta;
-				PROVISIONING_PROFILE_SPECIFIER = Avon_Devolpement_Provisoning;
+				PROVISIONING_PROFILE_SPECIFIER = MPH_Beta_Provisoning_Developement;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -826,6 +827,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ER8GT5ZEAJ;
@@ -837,9 +839,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.avonbeta;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mphbeta;
 				PRODUCT_NAME = mphBeta;
-				PROVISIONING_PROFILE_SPECIFIER = Avon_Devolpement_Provisoning;
+				PROVISIONING_PROFILE_SPECIFIER = MPH_Beta_Provisoning_Developement;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

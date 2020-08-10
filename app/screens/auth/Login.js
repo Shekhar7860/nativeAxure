@@ -132,7 +132,7 @@ class Login extends Component {
         behavior={Platform.OS === 'android' ? null : 'padding'}
         enabled>
         <View style={styles.loginAppName}>
-          <Image source={LOGO} style={commonStyles.logoIcon}/>
+          <Image source={LOGO} style={commonStyles.smallLogoIcon}/>
           <Text style={styles.signInText}>Sign In</Text>
           <View style={styles.contentMargin}>
             <InputBox

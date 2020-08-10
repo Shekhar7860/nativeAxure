@@ -24,15 +24,19 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
  import {Freshchat, FreshchatConfig, FreshchatUser } from 'react-native-freshchat-sdk';
  import { ConversationOptions } from 'react-native-freshchat-sdk';
+ import {connect} from 'react-redux';
 
-export default class Chat extends PureComponent {
+ class Chat extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      imagesList: [1, 2],
+      imagesList: []
     };
   }
   componentDidMount = () => {
+    console.log('this.prss', this.props)
+    const {userInfo} = this.props;
+    if(userInfo) {
     var freshchatConfig = new FreshchatConfig(
       FRESH_CHAT_APP_ID,
       FRESH_CHAT_ID_APP_KEY,
@@ -44,9 +48,9 @@ export default class Chat extends PureComponent {
     Freshchat.showConversations();
    // freshchatConfig.domain = "https://msdk.in.freshchat.com";
     var freshchatUser = new FreshchatUser();
-freshchatUser.firstName = "Shanky";
-freshchatUser.lastName = "Chugh";
-freshchatUser.email = "ShankyChugh@gmail.com";
+freshchatUser.firstName = userInfo.first_name;
+freshchatUser.lastName = userInfo.last_name;
+freshchatUser.email =  userInfo.email;
 freshchatUser.phoneCountryCode = "+91";
 freshchatUser.phone = "8837826904";
 // Freshchat.setPushRegistrationToken(device.pushToken);
@@ -56,6 +60,7 @@ Freshchat.setUser(freshchatUser, (error) => {
 Freshchat.getFreshchatUserId((data) => {
  console.log('uswerid', data)
   });
+}
 
   
 //   Freshchat.showFAQs();
@@ -163,3 +168,14 @@ const styles = ScaledSheet.create({
     backgroundColor: APP_MAIN_BLUE,
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+  userInfo: state.session.userInfo,
+});
+
+// const mapDispatchToProps = {
+//   getQuoteDetails,
+// };
+
+export default connect(mapStateToProps, null)(Chat);

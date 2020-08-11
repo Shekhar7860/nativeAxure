@@ -1,5 +1,3 @@
-'use strict';
-
 import React, {PureComponent} from 'react';
 import ModalDropdown from 'react-native-modal-dropdown';
 import {StyleSheet, View, Image} from 'react-native';
@@ -16,10 +14,17 @@ class SimpleDropdown extends PureComponent {
     defaultValue: '',
   };
 
-  openDropDown = () => {
+  showDropdown = () => {
     this.dropDown.show();
+    if (this.props.showDropDown !== undefined) {
+      this.props.showDropDown();
+    }
   };
 
+  hideDropdown = () => {
+    //this.dropDown.hide();
+    // this.props.hideDropDown()
+  };
   handleDropdownSelect = (index, value) => {
     const {onSelect} = this.props;
     if (onSelect) {
@@ -36,6 +41,7 @@ class SimpleDropdown extends PureComponent {
       isIconVisible,
       dropDownWidth,
       imageStyle,
+      defaultIndex,
     } = this.props;
     let dropDownHeight = 0;
     if (drowdownArray) {
@@ -54,6 +60,8 @@ class SimpleDropdown extends PureComponent {
             }}
             defaultValue={placeHolder}
             style={styles.dropdownBtn}
+            onDropdownWillShow={() => this.showDropdown()}
+            onDropdownWillHide={() => this.hideDropdown()}
             onSelect={(index, value) => this.handleDropdownSelect(index, value)}
             dropdownStyle={[
               styles.dropdownView,
@@ -67,6 +75,7 @@ class SimpleDropdown extends PureComponent {
               textStyle)
             }
             options={drowdownArray}
+            accessible={false}
           />
           {isIconVisible && (
             <Image

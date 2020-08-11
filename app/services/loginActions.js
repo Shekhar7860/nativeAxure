@@ -9,10 +9,10 @@ export const sendbirdLogin = ({ userId, nickname }) => {
   return dispatch => {
     return sbConnect(userId, nickname)
       .then(user => {
-        console.log("user login called******", user);
+       // console.log("user login called******", user);
         loginSuccess(dispatch, user)})
       .catch(error =>{
-        console.log("user login error ******", error);
+     //   console.log("user login error ******", error);
         loginFail(dispatch, error)
       });
   };

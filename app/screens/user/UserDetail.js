@@ -11,7 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER, BACK, TASK, DRAWER_MENU} from '../../constants/Images';
+import {USER, BACK, SEARCH} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ClickableText from '../../components/ClickableText';
@@ -20,7 +20,7 @@ import ExpandCollapseLayout from '../../components/ExpandCollapseLayout';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import InputBox from '../../components/InputBox';
-import HR from '../../components/HR';
+import SimpleDropdown from '../../components/SimpleDropdown';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {connect} from 'react-redux';
 import {
@@ -33,81 +33,242 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
-  Alert
+  Alert,
+  TextInput,
 } from 'react-native';
 import ButtonDefault from '../../components/ButtonDefault';
-import {addUSER} from '../../redux/reducers/users';
+import {addUSER, updateUser} from '../../redux/reducers/users';
 import Toast from 'react-native-simple-toast';
-import {showErrorPopup} from '../../util/utils';
+import {isEmailValid, showErrorPopup} from '../../util/utils';
 
 class UserDetail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      userData : {},
-      showLoading : false,
-      email : "",
-      firstName : "",
-      surName : ""
+      userData: {},
+      showLoading: false,
+      email: '',
+      firstName: '',
+      surName: '',
+      password: '',
+      confirmPassword: '',
+      add1: '',
+      add2: '',
+      city: '',
+      country: '',
+      postalCode: '',
+      group: '',
+      partner: '',
+      phone: '',
+      mobile: '',
+      countries: [],
+      userId: '',
+      groupId: [21],
+      showCountrySearch: false,
+      selectedCountries: [],
     };
   }
   componentDidMount = () => {
+    const {countries} = this.props;
+    // console.log('here are countries', countries);
+    for (var i = 0; i < countries.items.length; i++) {
+      this.state.countries.push(countries.items[i].name);
+      this.state.selectedCountries.push(countries.items[i].name);
+    }
     if (this.props.route.params) {
-      console.log('here are params', this.props.route.params);
-      if(this.props.route.params.userData !== undefined)
-      {
-      this.setState({userData : this.props.route.params.userData})
+      //  console.log('here are params', this.props.route.params);
+      if (this.props.route.params.userData !== undefined) {
+        this.setState({
+          userData: this.props.route.params.userData,
+          email: this.props.route.params.userData.email,
+          firstName: this.props.route.params.userData.first_name,
+          surName: this.props.route.params.userData.last_name,
+          add1: this.props.route.params.userData.address1,
+          add2: this.props.route.params.userData.address2,
+          phone: this.props.route.params.userData.phone,
+          mobile: this.props.route.params.userData.mobile,
+          postalCode: this.props.route.params.userData.zip_code,
+          userId: this.props.route.params.userData.id,
+          emailVerified: this.props.route.params.userData.email_verified_at,
+        });
+
+        if (this.props.route.params.userData.type == 'reseller-user') {
+          this.setState({group: 'Partner user'});
+        } else {
+          this.setState({group: 'Partner admin'});
+        }
+        if (this.props.route.params.userData.reseller_id == 27) {
+          this.setState({partner: 'Yantra Test Reseller'});
+        }
       }
     }
     //this.props.navigation.navigate('Cart')
   };
 
-  saveUser = () => {
-    const {online} = this.props;
-    const {
-      email, firstName, surName
-    } = this.state;
-    if (online) {
-      this.setState({showLoading: true});
-      this.props
-        .addUSER(
-          email,
-          firstName,
-          surName     
-        )
-        .then((response) => {
-          console.log('ddd', response)
-          this.setState({showLoading: false});
-          if (response.code === 200) {
-            Toast.show(response.message)
-            this.props.navigation.navigate('AllUsers')
-          } else {
-            if (response.validation_errors) {
-              showErrorPopup(response.validation_errors);
-            } else {
-              showErrorPopup(response.message);
-            }
-          }
-        })
-        .catch((error) => {
-          this.setState({showLoading: false});
-          if (error.code === 'unauthorized') {
-            showErrorPopup(
-              "Couldn't validate those credentials.\nPlease try again",
-            );
-          } else {
-            showErrorPopup(
-              'There was an unexpected error.\nPlease wait a few minutes and try again.',
-            );
-          }
-        });
+  showDropDown = (value) => {
+    this.setState({showCountrySearch: true});
+  };
+
+  hideDropDown = () => {
+    // this.setState({showCountrySearch: false});
+  };
+
+  searchCountries = (text, value) => {
+    // console.log('array holder', this.state.countries);
+    const newData = this.state.countries.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item ? item.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    console.log('data', newData);
+    if (text !== '') {
+      this.setState({countries: newData});
     } else {
-      Alert.alert('', 'No Internet Connection');
+      this.setState({countries: this.state.selectedCountries});
     }
-  }
+  };
+  saveUser = () => {
+    const {online, userInfo} = this.props;
+    console.log('this grp id', this.state.groupId);
+    const {
+      email,
+      firstName,
+      surName,
+      add1,
+      add2,
+      phone,
+      mobile,
+      postalCode,
+      newPassword,
+      confirmPassword,
+      city,
+      userId,
+      groupId,
+    } = this.state;
+    if (firstName) {
+      if (online) {
+        this.setState({showLoading: true});
+        if (userId == '') {
+          this.props
+            .addUSER(
+              email,
+              firstName,
+              surName,
+              userInfo.reseller_id,
+              newPassword,
+              add1,
+              add2,
+              phone,
+              mobile,
+              postalCode,
+              city,
+              confirmPassword,
+              groupId,
+            )
+            .then((response) => {
+              console.log('ddd', response);
+              this.setState({showLoading: false});
+              if (response.code === 200) {
+                Toast.show(response.message);
+                this.props.navigation.navigate('AllUsers');
+              } else {
+                if (response.validation_errors) {
+                  showErrorPopup(response.validation_errors);
+                } else {
+                  showErrorPopup(response.message);
+                }
+              }
+            })
+            .catch((error) => {
+              this.setState({showLoading: false});
+              if (error.code === 'unauthorized') {
+                showErrorPopup(
+                  "Couldn't validate those credentials.\nPlease try again",
+                );
+              } else {
+                showErrorPopup(
+                  'There was an unexpected error.\nPlease wait a few minutes and try again.',
+                );
+              }
+            });
+        } else {
+          this.props
+            .updateUser(
+              userId,
+              email,
+              firstName,
+              surName,
+              userInfo.reseller_id,
+              newPassword,
+              add1,
+              add2,
+              phone,
+              mobile,
+              postalCode,
+              city,
+              confirmPassword,
+            )
+            .then((response) => {
+              console.log('ddd', response);
+              this.setState({showLoading: false});
+              if (response.code === 200) {
+                Toast.show(response.message);
+                this.props.navigation.navigate('AllUsers');
+              } else {
+                if (response.validation_errors) {
+                  showErrorPopup(response.validation_errors);
+                } else {
+                  showErrorPopup(response.message);
+                }
+              }
+            })
+            .catch((error) => {
+              this.setState({showLoading: false});
+              if (error.code === 'unauthorized') {
+                showErrorPopup(
+                  "Couldn't validate those credentials.\nPlease try again",
+                );
+              } else {
+                showErrorPopup(
+                  'There was an unexpected error.\nPlease wait a few minutes and try again.',
+                );
+              }
+            });
+        }
+      } else {
+        Alert.alert('', 'No Internet Connection');
+      }
+    } else {
+      Alert.alert('', 'Please enter first Name');
+    }
+  };
+
+  selectData = (val) => {
+    this.setState({country: this.state.countries[val]});
+  };
 
   render() {
-    const {items, userData, showLoading} = this.state;
+    const {
+      items,
+      userData,
+      showLoading,
+      email,
+      firstName,
+      surName,
+      add1,
+      add2,
+      city,
+      country,
+      postalCode,
+      emailVerified,
+      group,
+      partner,
+      phone,
+      mobile,
+      countries,
+      showCountrySearch,
+    } = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -127,7 +288,7 @@ class UserDetail extends PureComponent {
               boxStyle={styles.inputBoxStyle}
               inputStyle={styles.input}
               onChangeText={(value) => this.setState({email: value})}
-              value={userData.email}
+              value={email}
             />
 
             <View style={commonStyles.space}>
@@ -137,7 +298,7 @@ class UserDetail extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({firstName: value})}
-                value={userData.first_name}
+                value={firstName}
               />
             </View>
 
@@ -147,27 +308,31 @@ class UserDetail extends PureComponent {
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
-                onChangeText={(value) => this.setState({surname: value})}
-                value={userData.last_name}
+                onChangeText={(value) => this.setState({surName: value})}
+                value={surName}
               />
             </View>
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Group</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({group: value})}
+                value={group}
               />
             </View>
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Partner</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
+                value={partner}
                 onChangeText={(value) => this.setState({partner: value})}
               />
             </View>
@@ -206,6 +371,7 @@ class UserDetail extends PureComponent {
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({emailVerified: value})}
+                value={emailVerified}
               />
             </View>
 
@@ -220,6 +386,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({add1: value})}
+                    value={add1}
                   />
                 </View>
 
@@ -232,6 +399,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({add2: value})}
+                    value={add2}
                   />
                 </View>
 
@@ -242,17 +410,49 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({city: value})}
+                    value={city}
                   />
                 </View>
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({country: value})}
-                  />
+                  {showCountrySearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={{
+                          width: '88%',
+                          marginTop: moderateScale(0),
+                          borderBottomWidth: 1,
+                        }}
+                        onChangeText={(text) =>
+                          this.searchCountries(text, 'billing')
+                        }
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                  <View style={commonStyles.space}>
+                    <SimpleDropdown
+                      placeHolder="Please select Country"
+                      style={commonStyles.dropDownStyle}
+                      showDropDown={() => this.showDropDown('billing')}
+                      hideDropDown={() => this.hideDropDown('billing')}
+                      drowdownArray={countries}
+                      dropDownWidth={'85%'}
+                      imageStyle={{
+                        marginTop: moderateScale(10),
+                        ...commonStyles.icon,
+                      }}
+                      isIconVisible={true}
+                      onSelect={(value) => this.selectData(value, 'country')}
+                    />
+                  </View>
                 </View>
 
                 <View style={commonStyles.space}>
@@ -263,6 +463,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({postalCode: value})}
+                    value={postalCode}
                   />
                 </View>
 
@@ -274,6 +475,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({phone: value})}
+                    value={phone}
                   />
                 </View>
 
@@ -285,6 +487,7 @@ class UserDetail extends PureComponent {
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
                     onChangeText={(value) => this.setState({mobile: value})}
+                    value={mobile}
                   />
                 </View>
               </ExpandCollapseLayout>
@@ -315,34 +518,7 @@ class UserDetail extends PureComponent {
                 </View>
               </ExpandCollapseLayout>
             </View>
-            <View style={commonStyles.space}>
-              <ExpandCollapseLayout title="+ Token">
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Auth Token</Text>
-                  <InputBox
-                    placeHolder=""
-                    maxLines={5}
-                    maxLength={50}
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({authToken: value})}
-                  />
-                </View>
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Device Token</Text>
-                  <InputBox
-                    placeHolder=""
-                    maxLines={5}
-                    maxLength={50}
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({deviceToken: value})
-                    }
-                  />
-                </View>
-              </ExpandCollapseLayout>
-            </View>
+
             <ButtonDefault onPress={() => this.saveUser('AddOrderQuote')}>
               SAVE
             </ButtonDefault>
@@ -432,10 +608,13 @@ const styles = ScaledSheet.create({
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
+  userInfo: state.session.userInfo,
+  countries: state.countries.countriesList,
 });
 
 const mapDispatchToProps = {
   addUSER,
+  updateUser,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserDetail);

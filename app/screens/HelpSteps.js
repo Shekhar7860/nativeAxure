@@ -26,12 +26,7 @@ import TouchableImage from '../components/TouchableImage';
 import {TEST, HELP_STEP_2, HELP_STEP_3, rightArrow} from '../constants/Images';
 import {WHITE, LIGHT_GREEN, APP_MAIN_COLOR} from '../constants/colors';
 
-let PAGE_1 = TEST;
-let PAGE_2 = HELP_STEP_2;
-let PAGE_3 = HELP_STEP_3;
-let PAGE_1_L = TEST;
-let PAGE_2_L = HELP_STEP_2;
-let PAGE_3_L = HELP_STEP_3;
+
 
 const DOTS_WIDTH_HEIGHT = 12;
 const NEXT = 'NEXT';
@@ -136,7 +131,7 @@ class HelpSteps extends PureComponent {
           <ImageBackground
             resizeMode="cover"
             style={styles.image}
-            source={isPortrait ? PAGE_1 : PAGE_1_L}>
+            source={TEST}>
             <Text style={styles.labelTextStyle}>
               Create and {'\n'} view Quotes
             </Text>
@@ -144,7 +139,7 @@ class HelpSteps extends PureComponent {
           <ImageBackground
             resizeMode="cover"
             style={styles.image}
-            source={isPortrait ? PAGE_2 : PAGE_2_L}>
+            source={HELP_STEP_2}>
             <Text style={styles.labelTextStyle}>
               Access list {'\n'} of Orders
             </Text>
@@ -152,7 +147,7 @@ class HelpSteps extends PureComponent {
           <ImageBackground
             resizeMode="cover"
             style={styles.image}
-            source={isPortrait ? PAGE_3 : PAGE_3_L}>
+            source={HELP_STEP_3}>
             <Text style={styles.labelTextStyle}>View Invoices</Text>
           </ImageBackground>
         </Swiper>
@@ -217,20 +212,20 @@ const styles = StyleSheet.create({
     borderRadius: BUTTON_HEIGHT / 2,
   },
   activeDotStyle: {
-    width: moderateScale(50),
-    height: moderateScale(15),
+    width: moderateScale(35),
+    height: moderateScale(10),
     backgroundColor: APP_MAIN_COLOR,
-    borderRadius: DOTS_WIDTH_HEIGHT / 2,
+    borderRadius: moderateScale(10) / 2,
     marginLeft: moderateScale(5),
-    marginBottom: 80,
+    marginBottom: moderateScale(70),
   },
   inactiveDotStyle: {
-    width: DOTS_WIDTH_HEIGHT,
-    height: DOTS_WIDTH_HEIGHT,
+    width: moderateScale(10),
+    height: moderateScale(10),
     backgroundColor: WHITE,
-    borderRadius: DOTS_WIDTH_HEIGHT / 2,
+    borderRadius: moderateScale(10) / 2,
     marginLeft: moderateScale(5),
-    marginBottom: 80,
+    marginBottom: moderateScale(70),
   },
   buttonText: {
     color: WHITE,

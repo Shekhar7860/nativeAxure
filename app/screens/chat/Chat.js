@@ -22,22 +22,60 @@ import {
 import {APP_MAIN_BLUE} from '../../constants/colors';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
-// import {Freshchat, FreshchatConfig} from 'react-native-freshchat-sdk';
+ import {Freshchat, FreshchatConfig, FreshchatUser } from 'react-native-freshchat-sdk';
+ import {connect} from 'react-redux';
 
-export default class Chat extends PureComponent {
+ class Chat extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      imagesList: [1, 2],
+      imagesList: []
     };
   }
   componentDidMount = () => {
-    // var freshchatConfig = new FreshchatConfig(
-    //   FRESH_CHAT_APP_ID,
-    //   FRESH_CHAT_ID_APP_KEY,
-    // );
-    // Freshchat.init(freshchatConfig);
-    //this.props.navigation.navigate('Cart')
+    console.log('this.prss', this.props)
+    const {userInfo} = this.props;
+    if(userInfo) {
+    var freshchatConfig = new FreshchatConfig(
+      FRESH_CHAT_APP_ID,
+      FRESH_CHAT_ID_APP_KEY,
+    );
+    freshchatConfig.domain = "https://msdk.in.freshchat.com";
+    freshchatConfig.cameraCaptureEnabled = false;
+    Freshchat.init(freshchatConfig);
+
+    Freshchat.showConversations();
+   // freshchatConfig.domain = "https://msdk.in.freshchat.com";
+    var freshchatUser = new FreshchatUser();
+freshchatUser.firstName = userInfo.first_name;
+freshchatUser.lastName = userInfo.last_name;
+freshchatUser.email =  userInfo.email;
+freshchatUser.phoneCountryCode = "+91";
+freshchatUser.phone = "8837826904";
+// Freshchat.setPushRegistrationToken(device.pushToken);
+Freshchat.setUser(freshchatUser, (error) => {
+   // alert('hiii')
+});
+Freshchat.getFreshchatUserId((data) => {
+ console.log('uswerid', data)
+  });
+}
+
+  
+//   Freshchat.showFAQs();
+//   var freshchatConfig2 = new FreshchatConfig(FRESH_CHAT_APP_ID,FRESH_CHAT_ID_APP_KEY);
+// freshchatConfig2.teamMemberInfoVisible = true;
+// freshchatConfig2.cameraCaptureEnabled = true;
+// freshchatConfig2.gallerySelectionEnabled = true;
+// freshchatConfig2.responseExpectationEnabled = true
+// Freshchat.init(freshchatConfig2);
+//     var conversationOptions = new ConversationOptions();
+// conversationOptions.tags = ["premium"];
+// conversationOptions.filteredViewTitle = "Premium Support"; 
+// Freshchat.showFAQs();
+//  Freshchat.showConversations();
+//  Freshchat.sharedInstance().showConversations()
+   // this.props.navigation.navigate('Cart')
   };
 
   openScreen = (screen, param) => {
@@ -129,3 +167,14 @@ const styles = ScaledSheet.create({
     backgroundColor: APP_MAIN_BLUE,
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+  userInfo: state.session.userInfo,
+});
+
+// const mapDispatchToProps = {
+//   getQuoteDetails,
+// };
+
+export default connect(mapStateToProps, null)(Chat);

@@ -58,7 +58,7 @@ class Client extends PureComponent {
       this.props
         .getClientDetails(id)
         .then((response) => {
-          console.group('response', response);
+         // console.log('response', response);
           this.setState({showLoading: false});
           if (response.code === 200) {
             this.setState({client: response.data});

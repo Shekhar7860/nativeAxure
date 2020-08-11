@@ -14,8 +14,9 @@ const AddNewButtonGroup = (props) => {
         <Icon
           name="ios-add-circle-outline"
           type="ionicon"
-          size={moderateScale(30)}
+          size={moderateScale(25)}
           color={WHITE}
+          style={{marginLeft: moderateScale(5), marginTop: moderateScale(2)}}
         />
         <View style={{width: '8%'}} />
         <View style={{justifyContent: 'center'}}>

@@ -12,7 +12,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER, BACK, TASK, DRAWER_MENU} from '../../constants/Images';
+import {USER, BACK, TASK, DRAWER_MENU, LISTINGICON} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import SimpleDropdown from '../../components/SimpleDropdown';
@@ -56,11 +56,11 @@ class AddOrder extends PureComponent {
     };
   }
   componentDidMount = () => {
-    console.log('reseller_id',this.props.userInfo.reseller_id)
+   // console.log('reseller_id',this.props.userInfo.reseller_id)
     const {online} = this.props;
       if (online) {
     for(var i = 0; i< this.props.clients.items.length; i++) {
-      console.log('skskks')
+     // console.log('skskks')
      this.state.clientItems.push(this.props.clients.items[i].name);
      this.state.clientIds.push(this.props.clients.items[i].id);
     }
@@ -71,11 +71,11 @@ class AddOrder extends PureComponent {
     this.setState({clientItems: this.state.clientItems, clientIds: this.state.clientIds});
   };
 
-  addClientQuote = () => {
-    this.props.navigation.navigate('AddQuoteClient');
+  goToOrders = () => {
+    this.props.navigation.navigate('AllOrders');
   };
 
-  openScreen = (screen, param) => {
+   createOrder= (screen, param) => {
     const {
       clientId,
       type,
@@ -157,7 +157,8 @@ class AddOrder extends PureComponent {
               <AddNewButtonGroup color={APP_MAIN_GREEN} />
             </View>
             <TouchableImage
-              image={DRAWER_MENU}
+              image={LISTINGICON}
+              onPress={()=> this.goToOrders()}
               imageStyle={{
                 ...commonStyles.icon,
                 marginLeft: moderateScale(-18),
@@ -165,7 +166,7 @@ class AddOrder extends PureComponent {
               }}
             />
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
         </TouchableOpacity>
@@ -197,6 +198,7 @@ class AddOrder extends PureComponent {
             <View>
               <Text style={styles.labelText}>MPH ID</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
@@ -205,9 +207,9 @@ class AddOrder extends PureComponent {
             </View>
 
             <View style={commonStyles.space}>
-              <Text style={styles.labelText}>PO Preference</Text>
+              <Text style={styles.labelText}>PO Reference</Text>
               <InputBox
-                placeHolder=""
+                placeHolder=""s
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
                 onChangeText={(value) => this.setState({poPreference: value})}
@@ -227,7 +229,7 @@ class AddOrder extends PureComponent {
               />
             </View>
 
-            <ButtonDefault onPress={() => this.openScreen('AddOrderQuote')}>
+            <ButtonDefault onPress={() => this.createOrder('AddOrderQuote')}>
               NEXT
             </ButtonDefault>
           </View>

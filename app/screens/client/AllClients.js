@@ -48,13 +48,11 @@ class AllClients extends Component {
     this.props
       .getClientsList()
       .then((response) => {
-        console.group('responseAll', response);
+       // console.group('responseAll', response);
         this.setState({showLoading: false});
         if (response.code === 200) {
           this.setState({items: response.data.items});
-
           for (var i = 0; i <= response.data.items.length; i++) {
-            console.group('ddd', response.data.items[i].is_active);
             if (response.data.items[i].is_active == 1) {
               this.state.acceptedItems.push(response.data.items[i]);
             } else {
@@ -72,10 +70,10 @@ class AllClients extends Component {
         } else {
         }
       });
-    console.group(this.state.acceptedItems, 'ssjsjsj');
+   // console.group(this.state.acceptedItems, 'ssjsjsj');
     this.setState({
-      acceptedItems: this.state.acceptedItems,
-      rejectedItems: this.state.rejectedItems,
+      acceptedItems: this.state.acceptedItems.reverse(),
+      rejectedItems: this.state.rejectedItems.reverse(),
     });
   };
 
@@ -109,7 +107,7 @@ class AllClients extends Component {
     );
   };
   render() {
-    console.group('stts', this.state.acceptedItems);
+   // console.group('stts', this.state.acceptedItems);
     const {
       acceptedItems,
       pendingItems,
@@ -134,7 +132,7 @@ class AllClients extends Component {
               />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
 
@@ -260,7 +258,7 @@ const styles = ScaledSheet.create({
   rowItem: {
     borderTopWidth: 1,
     borderColor: '#e6e6e6',
-    height: moderateScale(30),
+    height: moderateScale(50),
     justifyContent: 'center',
   },
 });

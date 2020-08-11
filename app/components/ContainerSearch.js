@@ -9,15 +9,12 @@ import {SEARCH} from '../constants/Images';
 
 const ContainerSearch = (props) => {
 	return (
-		<View>
-			<TouchableOpacity style={styles.searchContainer}>
+			<TouchableOpacity style={styles.searchContainer} onPress={props.onPress}>
 				<TouchableImage
 					image={SEARCH}
 					imageStyle={styles.icon}
-					
 				/>
-			</TouchableOpacity>
-		</View>
+		   </TouchableOpacity>
 	);
 };
 
@@ -30,8 +27,8 @@ const styles = ScaledSheet.create({
 		justifyContent: 'center',
 	},
 	icon: {
-		width: moderateScale(18),
-		height: moderateScale(18),
+		width: moderateScale(15),
+		height: moderateScale(15),
 		alignSelf: 'flex-end',
 		marginRight: moderateScale(10),
 	},

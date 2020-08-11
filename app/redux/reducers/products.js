@@ -7,12 +7,20 @@ const setProductsList = (value) => ({type: SET_PRODUCTS_LIST, value});
 export const getProductsList = () => {
   return (dispatch) => {
     return API.getProductsList().then((response) => {
-      console.log('response', response);
+   //   console.log('response', response);
       if (response.code === 200) {
         if (response.data) {
           dispatch(setProductsList(response.data));
         }
       }
+      return response;
+    });
+  };
+};
+
+export const searchProduct = (VAL) => {
+  return (dispatch) => {
+    return API.searchProduct(VAL).then((response) => {
       return response;
     });
   };

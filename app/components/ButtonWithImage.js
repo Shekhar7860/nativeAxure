@@ -1,4 +1,3 @@
-'use strict';
 
 import React, {PureComponent} from 'react';
 import {rightArrow, ARROW} from '../constants/Images';
@@ -9,7 +8,7 @@ import {
   APP_MAIN_COLOR,
   APP_MAIN_COLOR_DISABLE,
 } from '../constants/colors';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 const BUTTON_HEIGHT = 35;
 const BUTTON_RADIUS = 15;
 const BUTTON_TEXT_SIZE = 14;

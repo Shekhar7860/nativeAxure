@@ -13,6 +13,7 @@ import {
   SEE_ALL_BUTTON_COLOR
 } from '../../constants/colors';
 import {USER} from '../../constants/Images';
+import SearchWithCross from '../../components/SearchWithCross';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
@@ -31,7 +32,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
-import {getClientsList} from '../../redux/reducers/clients';
+import {getClientsList, searchClient} from '../../redux/reducers/clients';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 
 class Clients extends PureComponent {
@@ -40,32 +41,84 @@ class Clients extends PureComponent {
     this.state = {
       items: [],
       showLoading: false,
+      searchBar : false,
+      searchResult : false
     };
   }
   componentDidMount = () => {
     const {online, clients} = this.props;
-    console.log('hshshs', clients);
+   // console.log('hshshs', clients);
     if (online) {
       this.setState({showLoading: true});
       setTimeout(() => {
         this.setState({
           showLoading: false
         });
-        this.setState({items:clients.items});
+       
+        let arr = clients.items
+                .slice(Math.max(clients.items.length - 5, 1))
+                .reverse();
+      this.setState({items:arr});
       }, 2000);
     } else {
       Alert.alert('', 'No Internet Connection');
     }
   };
 
+  goToScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {clientData: param});
+  };
+
+  showSearch = () => {
+    this.setState({searchBar : true})
+  }
+
+
   openScreen = (screen, param) => {
     this.props.navigation.navigate(screen, {clientData: param});
   };
+
+  imagePressed = () => {
+    this.setState({searchBar : false, searchResult : false})
+    this.componentDidMount()
+  }
+
+  searchText = (value) => {
+    this.setState({searchResult : true});
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .searchClient(value)
+        .then((response) => {
+         // console.log('response', response);
+          if (response.code === 200) {
+             this.setState({showLoading: false, searchResult : true, items: response.data.items.reverse()});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+    
+  }
 
   listItem = (item, index) => {
     return (
       <TouchableOpacity
         style={styles.rowItem}
+        onPress={() => this.goToScreen('Client', item)}
         >
         <View style={styles.bottomQuotesRow}>
           <View
@@ -83,8 +136,10 @@ class Clients extends PureComponent {
       </TouchableOpacity>
     );
   };
+
+  
   render() {
-    const {items, showLoading} = this.state;
+    const {items, showLoading,  searchBar, searchResult} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -94,7 +149,8 @@ class Clients extends PureComponent {
           title="CLIENTS"
         />
         <View style={commonStyles.content}>
-          <View style={styles.rowContent}>
+        {!searchBar ? <TouchableOpacity style={styles.rowContent}>
+            <>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
@@ -102,10 +158,11 @@ class Clients extends PureComponent {
               />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              <ContainerSearch onPress={() => this.showSearch()}/>
             </View>
-          </View>
-
+            </>
+          </TouchableOpacity>: <TouchableOpacity style={styles.rowContent2}><SearchWithCross onSearchPress={(value) => this.searchText(value)} onImagePress={() => this.imagePressed()}/></TouchableOpacity>}
+          {!searchResult ?
           <View style={styles.quotesRow}>
             <View style={{width: '60%'}}>
               <Text style={styles.recentText}>RECENT CLIENTS</Text>
@@ -119,13 +176,16 @@ class Clients extends PureComponent {
               </TouchableOpacity>
             </View>
           </View>
+          : null}
+          {items.length !==0 ? <>
           <FlatList
             style={styles.parentFlatList}
             data={items}
             extraData={this.state}
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) => this.listItem(item, index)}
-          />
+          /></>
+           : <><Text style={commonStyles.noRecordFound}>No Client Found </Text></>}
         </View>
         <OverlaySpinner
           cancelable
@@ -211,6 +271,12 @@ const styles = ScaledSheet.create({
     height: moderateScale(30),
     justifyContent: 'center',
   },
+  rowContent2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(10),
+    marginHorizontal: moderateScale(5)
+  },
 });
 
 const mapStateToProps = (state) => ({
@@ -220,6 +286,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getClientsList,
+  searchClient
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Clients);

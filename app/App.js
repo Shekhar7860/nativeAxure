@@ -8,27 +8,19 @@
 
 import React, {PureComponent} from 'react';
 import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
+  StyleSheet
 } from 'react-native';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
+  Colors
 } from 'react-native/Libraries/NewAppScreen';
 import AppNavigator from './Navigator';
 import SplashScreen from 'react-native-splash-screen';
 import messaging, {AuthorizationStatus} from '@react-native-firebase/messaging';
 import createStore from './redux/store';
+import OneSignal from 'react-native-onesignal';
+import {Freshchat} from 'react-native-freshchat-sdk';
 
 //import store from './redux/store';
 
@@ -36,10 +28,31 @@ const {store, persistor} = createStore();
 
 class App extends PureComponent {
   componentDidMount() {
-    console.disableYellowBox = true;
-    SplashScreen.hide();
-    this.getToken();
+     this.requestUserPermission()
+     this.getToken();
+    // console.disableYellowBox = true;
+   
+    // OneSignal.setLogLevel(6, 0);
+    // OneSignal.init("6c356504-bbfc-4036-bb77-07245ccdb10e", {kOSSettingsKeyAutoPrompt : false, kOSSettingsKeyInAppLaunchURL: false, kOSSettingsKeyInFocusDisplayOption:2});
+    // setTimeout(()=>{
+    //   SplashScreen.hide();
+    // }, 2000); 
+    // OneSignal.promptForPushNotificationsWithUserResponse(this.myiOSPromptCallback);
+    // OneSignal.addEventListener('ids', this.onIds);
+   
+    
+    
   }
+  
+ myiOSPromptCallback(permission){
+  
+}
+
+onIds(device) {
+  console.log('Device info: ', device);
+  
+}
+
 
   handleConnectionChange = (isConnected) => {
     status = isConnected;
@@ -47,7 +60,20 @@ class App extends PureComponent {
 
   // checking if app opened from notification or not
   async getToken() {
-    const token = await messaging().getInitialNotification();
+   const token = await messaging().getToken();
+   console.log('token', token)
+   Freshchat.setPushRegistrationToken(token);
+  }
+
+  async requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
   }
 
   render() {

@@ -11,6 +11,7 @@ import {
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
+  RED,
 } from '../../constants/colors';
 import {USER} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -33,7 +34,8 @@ import {
   Alert,
 } from 'react-native';
 import {getProductsList} from '../../redux/reducers/products';
-import {isEmailValid, showErrorPopup} from '../../util/utils';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
 
 class AllOrders extends PureComponent {
   constructor(props) {
@@ -41,16 +43,48 @@ class AllOrders extends PureComponent {
     this.state = {
       items: [1, 2, 3, 4],
       showLoading: false,
+      shippedItems: [],
+      acceptedItems: [],
+      partiallyShippedItems: [],
+      completedItems: [],
+      cancelledItems: [],
     };
   }
   componentDidMount = () => {
     const {online, orders} = this.props;
-    console.log('orders', orders);
+   // console.log('orders', orders);
+    for (var i = 0; i < orders.items.length; i++) {
+      if (orders.items[i].status == 'Shipped') {
+        this.state.shippedItems.push(orders.items[i]);
+      } else if (orders.items[i].status == 'Accepted') {
+        this.state.acceptedItems.push(
+          orders.items[i]
+        );
+      } else if (orders.items[i].status == 'Partially_Shipped') {
+        this.state.partiallyShippedItems.push(
+          orders.items[i]
+        );
+      } else if (orders.items[i].status == 'Completed') {
+        this.state.completedItems.push(
+         orders.items[i]
+        );
+      } else {
+        this.state.cancelledItems.push(
+          orders.items[i]
+        );
+      }
+    }
+   // console.log('shippedItems', this.state.shippedItems)
     if (online) {
       this.setState({showLoading: true});
       setTimeout(() => {
         this.setState({
-          showLoading: false
+          showLoading: false,
+          shippedItems: this.state.shippedItems,
+          acceptedItems: this.state.acceptedItems,
+          partiallyShippedItems: this.state.partiallyShippedItems,
+         completedItems: this.state.completedItems,
+         cancelledItems: this.state.cancelledItems
         });
         this.setState({items:orders.items});
       }, 2000);
@@ -64,13 +98,35 @@ class AllOrders extends PureComponent {
     this.props.navigation.navigate(screen, {orderData: param});
   };
 
-  listItem = (item, index) => {
+  dotStyle = (status) => {
+    let style = styles.dotRed
+    switch(status) {
+      case "SHIPPED":
+        style = styles.dotOrange;
+        break;
+      case "ACCEPTED":
+        style = styles.dotGreen;
+        break;
+      case "P_SHIPPED":
+          style = styles.dotDarkblue;
+          break;
+      case "COMPLETED":
+       style = styles.dotLightBlue;
+          break;
+      default:
+        style = styles.dotRed;
+        // code block
+    } 
+    return style
+  }
+
+  listItem = (item, index, status) => {
     return (
       <TouchableOpacity
         style={styles.rowItem}
         onPress={() => this.openScreen('AddOrderQuote', item)}>
         <View style={styles.bottomQuotesRow}>
-          <View style={!item.is_active == 1 ? styles.dotRed : styles.dotGreen}  />
+          <View style={this.dotStyle(status)}  />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
             <Text style={styles.labelText}>{item.name}</Text>
@@ -84,46 +140,105 @@ class AllOrders extends PureComponent {
     );
   };
   render() {
-    const {items, showLoading} = this.state;
+    const {items, showLoading, shippedItems, acceptedItems,  partiallyShippedItems, completedItems, cancelledItems } = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
+         <KeyboardAwareScrollView style={commonStyles.ketboardAvoidingContainer}>
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
-          title="ORDERS"
+          title="ALL ORDERS"
         />
         <TouchableOpacity style={commonStyles.content}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}></View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
 
           <TouchableOpacity style={styles.quotesRow}>
             <View style={{width: '60%'}}>
-              <Text style={styles.recentText}>ALL ORDERS</Text>
+              <Text style={styles.recentText}>SHIPPED</Text>
             </View>
             <View style={{width: '10%'}} />
             <View style={{width: '30%'}}></View>
           </TouchableOpacity>
-          <ScrollView>
-            <View
-              style={{
-                height: Dimensions.get('window').height,
-                marginBottom: moderateScale(20),
-              }}>
-              <FlatList
+           <FlatList
                 style={styles.parentFlatList}
-                data={items}
+                data={shippedItems}
                 extraData={this.state}
                 keyExtractor={(item, index) => '' + index}
-                renderItem={({item, index}) => this.listItem(item, index)}
-              />
-            </View>
-          </ScrollView>
+                renderItem={({item, index}) => this.listItem(item, index, 'SHIPPED')}
+            />
+          <TouchableOpacity style={styles.quotesRow}>
+              <View style={{width: '60%'}}>
+                <Text style={styles.recentText}>ACCEPTED</Text>
+              </View>
+              <View style={{width: '10%'}} />
+              <View style={{width: '30%'}}></View>
+            </TouchableOpacity>
+            <FlatList
+              style={styles.parentFlatList}
+              data={acceptedItems}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) =>
+                this.listItem(item, index, 'ACCEPTED')
+              }
+            />
+              <TouchableOpacity style={styles.quotesRow}>
+              <View style={{width: '60%'}}>
+                <Text style={styles.recentText}>PARTIALLY SHIPPED</Text>
+              </View>
+              <View style={{width: '10%'}} />
+              <View style={{width: '30%'}}></View>
+            </TouchableOpacity>
+            <FlatList
+              style={styles.parentFlatList}
+              data={partiallyShippedItems}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) =>
+                this.listItem(item, index, 'P_SHIPPED')
+              }
+            />
+            <TouchableOpacity style={styles.quotesRow}>
+              <View style={{width: '60%'}}>
+                <Text style={styles.recentText}>COMPLETED</Text>
+              </View>
+              <View style={{width: '10%'}} />
+              <View style={{width: '30%'}}></View>
+            </TouchableOpacity>
+            <FlatList
+              style={styles.parentFlatList}
+              data={completedItems}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) =>
+                this.listItem(item, index, 'COMPLETED')
+              }
+            />
+            <TouchableOpacity style={styles.quotesRow}>
+              <View style={{width: '60%'}}>
+                <Text style={styles.recentText}>CANCELLED</Text>
+              </View>
+              <View style={{width: '10%'}} />
+              <View style={{width: '30%'}}></View>
+            </TouchableOpacity>
+            <FlatList
+              style={styles.parentFlatList}
+              data={cancelledItems}
+              extraData={this.state}
+              keyExtractor={(item, index) => '' + index}
+              renderItem={({item, index}) =>
+                this.listItem(item, index, 'CANCELLED')
+              }
+            />
         </TouchableOpacity>
+        
+        </KeyboardAwareScrollView>
         <OverlaySpinner
           cancelable
           visible={showLoading}
@@ -165,6 +280,27 @@ const styles = ScaledSheet.create({
     width: moderateScale(12),
     borderRadius: moderateScale(6),
     backgroundColor: APP_MAIN_GREEN,
+  },
+  dotDarkblue: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: DARK_BLUE,
+  },
+  dotLightBlue: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: APP_MAIN_BLUE,
+  },
+  dotRed: {
+    marginTop: moderateScale(5),
+    height: moderateScale(12),
+    width: moderateScale(12),
+    borderRadius: moderateScale(6),
+    backgroundColor: APP_MAIN_COLOR,
   },
   rowContent: {
     flexDirection: 'row',

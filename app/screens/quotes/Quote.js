@@ -43,6 +43,7 @@ class Quote extends PureComponent {
     };
   }
   componentDidMount = () => {
+    this.props.navigation.navigate('TabHome3');
     // console.group('props', this.props.route.params.clientData.id);
     if (this.props.route.params) {
       this.setState({quoteId: this.props.route.params.clientData.id});
@@ -59,7 +60,7 @@ class Quote extends PureComponent {
       this.props
         .getQuoteDetails(id)
         .then((response) => {
-          console.group('response', response);
+        //  console.log('response', response);
            this.setState({showLoading: false});
           if (response.code === 200) {
             this.setState({quote: response.data});
@@ -90,7 +91,7 @@ class Quote extends PureComponent {
     const {items, quote, showLoading} = this.state;
 
     return (
-      <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
+      <View style={commonStyles.ketboardAvoidingContainer}>
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
@@ -101,7 +102,7 @@ class Quote extends PureComponent {
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}></View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              {/* <ContainerSearch /> */}
             </View>
           </View>
 
@@ -159,7 +160,7 @@ class Quote extends PureComponent {
               </View>
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
-                <Text style={styles.amountText}></Text>
+                <Text style={styles.amountText}>{quote.po_reference}</Text>
               </View>
             </View>
 
@@ -195,7 +196,7 @@ class Quote extends PureComponent {
           textContent="Please wait..."
           textStyle={{color: WHITE}}
         />
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -265,7 +266,7 @@ const styles = ScaledSheet.create({
     width: '5%',
   },
   emptyWidth: {
-    width: '10%',
+    width: '20%',
   },
   emptyWidth2: {
     width: '10%',
@@ -276,7 +277,7 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
   },
   lastTextWidth: {
-    width: '30%',
+    width: '20%',
   },
   lastTextWidth2: {
     width: '30%',

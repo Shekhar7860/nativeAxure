@@ -1,4 +1,3 @@
-'use strict';
 
 import React, {PureComponent} from 'react';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';

@@ -29,69 +29,35 @@ export const getUSERDetails = (USERID) => {
 };
 
 export const addUSER = (
-  client_id,
-  type,
-  status,
-  code,
-  name,
-  Code,
-  mph_id,
-  po_reference,
-  currency,
-  price_beta,
-  vat_percentage,
-  billing_company_name,
-  billing_first_name,
-  billing_last_name,
-  billing_email,
-  billing_address1,
-  billing_address2,
-  billing_city,
-  billing_country,
-  billing_zip_code,
-  shipping_cost,
-  shipping_first_name,
-  shipping_last_name,
-  shipping_email,
-  shipping_address1,
-  shipping_address2,
-  shipping_city,
-  shipping_country_name,
-  shipping_zip_code,
-  terms,
+  email,
+  first_name,
+  last_name,
+  reseller_id,
+  password,
+  address1,
+  address2,
+  phone,
+  mobile,
+  zip_code,
+  city,
+  password_confirmation,
+  group_ids
 ) => {
   return (dispatch) => {
     return API.addUSER({
-      client_id,
-      type,
-      status,
-      code,
-      name,
-      Code,
-      mph_id,
-      po_reference,
-      currency,
-      price_beta,
-      vat_percentage,
-      billing_company_name,
-      billing_first_name,
-      billing_last_name,
-      billing_email,
-      billing_address1,
-      billing_address2,
-      billing_city,
-      billing_country,
-      billing_zip_code,
-      shipping_cost,
-      shipping_first_name,
-      shipping_last_name,
-      shipping_email,
-      shipping_address1,
-      shipping_address2,
-      shipping_city,
-      shipping_country_name,
-      shipping_zip_code,
-      terms,
+     email,
+     first_name,
+     last_name,
+     reseller_id,
+     password,
+     address1,
+     address2,
+     phone,
+     mobile,
+     zip_code,
+     city,
+     password_confirmation,
+     group_ids
     }).then((response) => {
       if (response.code === 200) {
         if (response.data) {
@@ -102,8 +68,54 @@ export const addUSER = (
     });
   };
 };
+
+export const updateUser = (
+  userId,
+  email,
+  first_name,
+  last_name,
+  reseller_id,
+  password,
+  address1,
+  address2,
+  phone,
+  mobile,
+  zip_code,
+  city,
+  confirm_password
+) => {
+  return (dispatch) => {
+    return API.updateUser(userId, {
+     email,
+     first_name,
+     last_name,
+     reseller_id,
+     password,
+     address1,
+     address2,
+     phone,
+     mobile,
+     zip_code,
+     city,
+     confirm_password
+    }).then((response) => {
+      if (response.code === 200) {
+        
+      }
+      return response;
+    });
+  };
+};
 const INITAIL_STATE = {
   usersList: [],
+};
+
+export const searchUser = (VAL) => {
+  return (dispatch) => {
+    return API.searchUser(VAL).then((response) => {
+      return response;
+    });
+  };
 };
 
 export default function reducer(state = INITAIL_STATE, action) {

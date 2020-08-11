@@ -51,7 +51,7 @@ export default class Notifications extends PureComponent {
     const {buttonItems} = this.state;
 
     return (
-      <SafeAreaView>
+      <View style={{backgroundColor : 'white', flex :1}}>
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
@@ -64,7 +64,7 @@ export default class Notifications extends PureComponent {
           keyExtractor={(item, index) => '' + index}
           renderItem={({item, index}) => this.getNotificationItem(item, index)}
         />
-      </SafeAreaView>
+      </View>
     );
   }
 }

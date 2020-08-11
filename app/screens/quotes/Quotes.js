@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import Header from '../../components/Header';
 import commonStyles from '../../commonStyles/commonStyles';
 import {
@@ -10,18 +10,24 @@ import {
   APP_MAIN_GREEN,
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
-  SEE_ALL_BUTTON_COLOR
+  SEE_ALL_BUTTON_COLOR,
+  BORDER_COLOR
 } from '../../constants/colors';
-import {USER, leftArrow} from '../../constants/Images';
+import {commafy} from '../../util/utils';
+import {USER, leftArrow, SEARCH, CROSS2} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
+import SearchWithCross from '../../components/SearchWithCross';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import HR from '../../components/HR';
-import {getQuotesList} from '../../redux/reducers/quotes';
+import {getQuotesList, searchQuote} from '../../redux/reducers/quotes';
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
+import TouchableImage from '../../components/TouchableImage';
+
+
 import {
   View,
   Text,
@@ -31,10 +37,11 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  ScrollView
+  ScrollView,
+  StatusBar
 } from 'react-native';
 
-class Quotes extends Component {
+class Quotes extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -49,52 +56,34 @@ class Quotes extends Component {
       pendingItemsTotal: 0,
       acceptedItemsTotal: 0,
       rejectedItemsTotal: 0,
-      quoteCurrency : ""
+      quoteCurrency : "",
+      searchBar : false,
+      searchResult : false
     };
   }
   componentDidMount = () => {
-    const {online} = this.props;
+    this.init();
+    this._sub = this.props.navigation.addListener('didFocus', () => {
+      this.init();
+    });
+     
+  };
 
+  imagePressed = () => {
+    this.setState({searchBar : false, searchResult : false})
+    this.init()
+  }
+
+  searchText = (value) => {
+    const {online} = this.props;
     if (online) {
       this.setState({showLoading: true});
       this.props
-        .getQuotesList()
+        .searchQuote(value)
         .then((response) => {
-          console.log('quotes', response);
-          this.setState({showLoading: false});
+        //  console.log('response', response);
           if (response.code === 200) {
-            let pendingSum = 0;
-            let acceptedSum = 0;
-            let rejectedSum = 0;
-            let arr = response.data.items
-              .slice(Math.max(response.data.items.length - 5, 1))
-              .reverse();
-            this.setState({items: arr});
-            for (var i = 0; i < response.data.items.length; i++) {
-              if (response.data.items[i].status == 'Pending') {
-                this.state.pendingItems.push(response.data.items[i]);
-                pendingSum += response.data.items[i].grand_total;
-              } else if (response.data.items[i].status == 'Accepted') {
-                acceptedSum += response.data.items[i].grand_total;
-                this.state.acceptedItems.push(
-                  response.data.items[i].grand_total,
-                );
-              } else {
-                rejectedSum += response.data.items[i].grand_total;
-                this.state.rejectedItems.push(
-                  response.data.items[i].grand_total,
-                );
-              }
-            }
-            //  alert(pendingSum);
-            this.setState({
-              pendingItemsCount: this.state.pendingItems.length,
-              acceptedItemsCount: this.state.acceptedItems.length,
-              rejectedItemsCount: this.state.rejectedItems.length,
-              pendingItemsTotal: pendingSum,
-              acceptedItemsTotal: acceptedSum,
-              rejectedItemsTotal: rejectedSum,
-            });
+             this.setState({showLoading: false, searchResult : true, items: response.data.items.reverse()});
           }
         })
         .catch((error) => {
@@ -112,16 +101,103 @@ class Quotes extends Component {
     } else {
       Alert.alert('', 'No Internet Connection');
     }
-  };
+    
+  }
 
-  openScreen = (screen, param) => {
+  init = () => {
+  
+    setTimeout(()=>{ 
+      const {online} = this.props;
+      if (online) {
+        this.setState({showLoading: true});
+        this.props
+          .getQuotesList()
+          .then((response) => {
+          //  console.log('quotes', response);
+            this.setState({showLoading: false});
+            if (response.code === 200) {
+              let pendingSum = 0;
+              let acceptedSum = 0;
+              let rejectedSum = 0;
+              let arr = response.data.items
+                .slice(Math.max(response.data.items.length - 5, 1))
+                .reverse();
+              this.setState({items: arr});
+              for (var i = 0; i < response.data.items.length; i++) {
+                if (response.data.items[i].status == 'Pending') {
+                  this.state.pendingItems.push(response.data.items[i]);
+                  pendingSum += response.data.items[i].grand_total;
+                } else if (response.data.items[i].status == 'Accepted') {
+                  acceptedSum += response.data.items[i].grand_total;
+                  this.state.acceptedItems.push(
+                    response.data.items[i]
+                  );
+                } else {
+                  rejectedSum += response.data.items[i].grand_total;
+                  this.state.rejectedItems.push(
+                    response.data.items[i]
+                  );
+                }
+              }
+              //  alert(pendingSum);
+              this.setState({
+                pendingItemsCount: this.state.pendingItems.length,
+                acceptedItemsCount: this.state.acceptedItems.length,
+                rejectedItemsCount: this.state.rejectedItems.length,
+                pendingItemsTotal: pendingSum.toFixed(2),
+                acceptedItemsTotal: acceptedSum.toFixed(2),
+                rejectedItemsTotal: rejectedSum.toFixed(2),
+                pendingItems: this.state.pendingItems,
+                acceptedItems: this.state.acceptedItems,
+                rejectedItems: this.state.rejectedItems,
+              });
+            }
+          })
+          .catch((error) => {
+            this.setState({showLoading: false});
+            if (error.code === 'unauthorized') {
+              showErrorPopup(
+                "Couldn't validate those credentials.\nPlease try again",
+              );
+            } else {
+              showErrorPopup(
+                'There was an unexpected error.\nPlease wait a few minutes and try again.',
+              );
+            }
+          });
+      } else {
+        Alert.alert('', 'No Internet Connection');
+      }
+    }, 2000);
+   
+  
+ 
+  }
+
+  
+  
+
+  goToScreen = (screen, param) => {
     this.props.navigation.navigate(screen, {clientData: param});
   };
 
+  showSearch = () => {
+    this.setState({searchBar : true})
+  }
+  openScreen = (screen, param, status) => {
+    let data = {
+      'status' : status,
+      'list' : param
+    }
+    this.props.navigation.navigate(screen, {quoteStatusData: data});
+  };
+
   listItem = (item, index) => {
+
     return (
       <TouchableOpacity
         style={styles.rowItem}
+        onPress={() => this.goToScreen('Quote', item)}
         >
         <View style={styles.bottomQuotesRow}>
           <View
@@ -159,10 +235,15 @@ class Quotes extends Component {
       pendingItemsTotal,
       acceptedItemsTotal,
       rejectedItemsTotal,
+      pendingItems,
+      acceptedItems, 
+      rejectedItems,
+      searchBar,
+      searchResult
     } = this.state;
 
     return (
-      <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
+      <View style={commonStyles.ketboardAvoidingContainer}>
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
@@ -170,23 +251,29 @@ class Quotes extends Component {
         />
         <KeyboardAwareScrollView
           contentContainerStyle={{...commonStyles.content}}>
-          <View style={styles.rowContent}>
+          {!searchBar ?
+            <>
+            <TouchableOpacity style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
                 onPress={() => this.openScreen('AddQuote')}
               />
             </View>
-            <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
-            </View>
-          </View>
+            <TouchableOpacity style={{marginRight: moderateScale(-20)}} >
+              <ContainerSearch onPress={() => this.showSearch()}/>
+            </TouchableOpacity>
+            </TouchableOpacity>
+            </>
+            : <><TouchableOpacity style={styles.rowContent2}><SearchWithCross onSearchPress={(value) => this.searchText(value)} onImagePress={() => this.imagePressed()}/></TouchableOpacity></>}
+          {!searchResult ?
+          <>
           <CardWithIcon
             color={APP_MAIN_BLUE}
             count={pendingItemsCount}
             status={'Pending'}
-            amount={'£' + ' ' + pendingItemsTotal}
-            onPress={this.openQuote}
+            amount={'£' + ' ' + commafy(pendingItemsTotal)}
+            onPress={() => this.openScreen('StatusQuotes', pendingItems, 'PENDING')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />
@@ -194,8 +281,8 @@ class Quotes extends Component {
             color={APP_MAIN_GREEN}
             count={acceptedItemsCount}
             status={'Accepted'}
-            amount={'£' + ' ' + acceptedItemsTotal}
-            onPress={this.onClickListen}
+            amount={'£' + ' ' + commafy(acceptedItemsTotal)}
+            onPress={() => this.openScreen('StatusQuotes', acceptedItems, 'ACCEPTED')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />
@@ -203,14 +290,14 @@ class Quotes extends Component {
             color={APP_MAIN_COLOR}
             count={rejectedItemsCount}
             status={'Rejected'}
-            amount={'£' + ' ' + rejectedItemsTotal}
-            onPress={this.onClickListen}
+            amount={'£' + ' ' + commafy(rejectedItemsTotal)}
+            onPress={() => this.openScreen('StatusQuotes', rejectedItems, 'REJECTED')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />
 
           <TouchableOpacity style={styles.quotesRow}>
-            <View style={{width: '60%'}}>
+            <View style={{width: '60%', justifyContent : 'center'}}>
               <Text style={styles.recentText}>RECENT QUOTES</Text>
             </View>
             <View style={{width: '20%'}} />
@@ -222,6 +309,10 @@ class Quotes extends Component {
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
+          </>
+           : null}
+           
+           {items.length !==0 ? <>
           <FlatList
             style={styles.parentFlatList}
             data={items}
@@ -229,6 +320,8 @@ class Quotes extends Component {
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) => this.listItem(item, index)}
           />
+          </>
+          : <><Text style={commonStyles.noRecordFound}>No Quote Found </Text></>}
         </KeyboardAwareScrollView>
         <OverlaySpinner
           cancelable
@@ -237,7 +330,8 @@ class Quotes extends Component {
           textContent="Please wait..."
           textStyle={{color: WHITE}}
         />
-      </SafeAreaView>
+      </View>
+    
     );
   }
 }
@@ -254,9 +348,6 @@ const styles = ScaledSheet.create({
   },
   parentFlatList: {
     marginTop: moderateScale(10)
-  },
-  rowItem: {
-    height: moderateScale(30),
   },
   dotBlue: {
     marginTop: moderateScale(5),
@@ -283,7 +374,13 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: moderateScale(20),
-    marginHorizontal: moderateScale(20),
+    marginHorizontal: moderateScale(25),
+  },
+  rowContent2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(10),
+    marginHorizontal: moderateScale(5),
   },
   recentText: {
     fontSize: moderateScale(12),
@@ -328,15 +425,22 @@ const styles = ScaledSheet.create({
   statusTextStyle : {
     fontSize : moderateScale(13),
     fontWeight : 'bold'
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(20),
+    marginHorizontal: moderateScale(20),
   }
 });
 
 const mapStateToProps = (state) => ({
-  online: state.netInfo.online,
+  online: state.netInfo.online
 });
 
 const mapDispatchToProps = {
   getQuotesList,
+  searchQuote
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Quotes);

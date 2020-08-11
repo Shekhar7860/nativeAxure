@@ -47,11 +47,11 @@ import SimpleDropdown from '../../components/SimpleDropdown';
     };
   }
   componentDidMount = () => {
-    console.log('reseller_id',this.props.userInfo.reseller_id)
+    // console.log('reseller_id',this.props.userInfo.reseller_id)
     const {online} = this.props;
       if (online) {
     for(var i = 0; i< this.props.clients.items.length; i++) {
-      console.log('skskks')
+   //   console.log('skskks')
      this.state.clientItems.push(this.props.clients.items[i].name);
      this.state.clientIds.push(this.props.clients.items[i].id);
     }

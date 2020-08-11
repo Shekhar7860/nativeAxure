@@ -1,9 +1,11 @@
-'use strict';
 
 import React, {PureComponent} from 'react';
 
-import {StyleSheet, View, Platform, Image} from 'react-native';
-import { BACK, LOGO} from '../constants/Images';
+import {StyleSheet, View, Platform, Image, StatusBar, Dimensions} from 'react-native';
+import { BACK, HOMELOGO} from '../constants/Images';
+import {
+  WHITE
+} from '../constants/colors';
 import SafeArea from './SafeArea';
 import SubHeader from './SubHeader';
 import TouchableImage from './TouchableImage';
@@ -84,10 +86,10 @@ class HeaderWithLogo extends PureComponent {
       leftImage,
     } = this.props;
     const statusBarHeight = this.getStatusBarHeight();
-    const paddingTop =
-      Platform.OS === 'android' ? {paddingTop: moderateScale(20)} : {};
+    const paddingTop = {marginTop: moderateScale(10)};
     return (
       <SafeArea style={[styles.container, paddingTop]}>
+        <StatusBar backgroundColor={WHITE} barStyle="dark-content"/>
         <View style={{ overflow: 'hidden', paddingBottom: 5}}>
           <View style={styles.header}>
             <View style={styles.leftView}>
@@ -106,7 +108,7 @@ class HeaderWithLogo extends PureComponent {
                 />
               )}
             </View>
-            <Image source={LOGO} style={commonStyles.smallLogoIcon}/>
+            <Image source={HOMELOGO} style={commonStyles.smallLogoIcon}/>
             <View style={styles.lastView}>
               <TouchableImage
                 image={rightImage}
@@ -132,12 +134,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderBottomWidth : 0,
     borderTopColor : "white",
-    backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: { width: 1, height: 1 },
-        shadowOpacity:  0.4,
-        shadowRadius: 3,
-        elevation: 5,
+    backgroundColor: '#fff'
   },
   leftView: {
     flex: 1,

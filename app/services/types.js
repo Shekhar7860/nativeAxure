@@ -11,6 +11,7 @@ export const GET_PROFILE_SUCCESS = 'get_profile_success';
 export const UPDATE_PROFILE_SUCCESS = 'update_profile_success';
 export const UPDATE_PROFILE_FAIL = 'update_profile_fail';
 export const ONLINE = 'online';
+export const SCREEN_STATUS = 'screenStatus';
 export const OFFLINE = 'offline';
 
 // Open Channel

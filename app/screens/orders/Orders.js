@@ -19,9 +19,11 @@ import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
+import SearchWithCross from '../../components/SearchWithCross';
 import HR from '../../components/HR';
+import {commafy} from '../../util/utils';
 import {connect} from 'react-redux';
-import {getOrdersList} from '../../redux/reducers/orders';
+import {getOrdersList, searchOrder} from '../../redux/reducers/orders';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {
   View,
@@ -59,6 +61,8 @@ class Orders extends Component {
       partiallyShippedItemsTotal: 0,
       completedItemsTotal: 0,
       cancelledItemsTotal: 0,
+      searchBar : false,
+      searchResult : false
     };
   }
   componentDidMount = () => {
@@ -85,22 +89,22 @@ class Orders extends Component {
               } else if (response.data.items[i].status == 'Accepted') {
                 acceptedSum += response.data.items[i].grand_total;
                 this.state.acceptedItems.push(
-                  response.data.items[i].grand_total,
+                  response.data.items[i],
                 );
               } else if (response.data.items[i].status == 'Partially_Shipped') {
                 partiallyShippedSum += response.data.items[i].grand_total;
                 this.state.partiallyShippedItems.push(
-                  response.data.items[i].grand_total,
+                  response.data.items[i],
                 );
               } else if (response.data.items[i].status == 'Completed') {
                 completedSum += response.data.items[i].grand_total;
                 this.state.completedItems.push(
-                  response.data.items[i].grand_total,
+                  response.data.items[i],
                 );
               } else {
                 cancelledSum += response.data.items[i].grand_total;
                 this.state.cancelledItems.push(
-                  response.data.items[i].grand_total,
+                  response.data.items[i],
                 );
               }
             }
@@ -112,16 +116,21 @@ class Orders extends Component {
                 .length,
               completedItemsCount: this.state.completedItems.length,
               cancelledItemsCount: this.state.cancelledItems.length,
-              shippedItemsTotal: shippedSum,
-              acceptedItemsTotal: acceptedSum,
-              partiallyShippedItemsTotal: partiallyShippedSum,
-              completedItemsTotal: completedSum,
-              cancelledItemsTotal: cancelledSum,
+              shippedItemsTotal: shippedSum.toFixed(2),
+              acceptedItemsTotal: acceptedSum.toFixed(2),
+              partiallyShippedItemsTotal: partiallyShippedSum.toFixed(2),
+              completedItemsTotal: completedSum.toFixed(2),
+              cancelledItemsTotal: cancelledSum.toFixed(2),
+              shippedItems: this.state.shippedItems.reverse(),
+              acceptedItems: this.state.acceptedItems.reverse(),
+              partiallyShippedItems: this.state.partiallyShippedItems.reverse(),
+              completedItems: this.state.completedItems.reverse(),
+              cancelledItems: this.state.cancelledItems.reverse(),
             });
             let arr = response.data.items
               .slice(Math.max(response.data.items.length - 5, 1))
               .reverse();
-              console.log('this is array', arr);
+            //  console.log('this is array', arr);
            this.setState({items: arr});
           //  this.setState({items: response.data.items});
           }
@@ -147,17 +156,64 @@ class Orders extends Component {
     this.props.navigation.navigate('AddQuote');
   };
 
-  openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
+  showSearch = () => {
+    this.setState({searchBar : true})
+  }
+
+  imagePressed = () => {
+    this.setState({searchBar : false, searchResult : false})
+    this.componentDidMount()
+  }
+
+  searchText = (value) => {
+    this.setState({searchResult : true});
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .searchOrder(value)
+        .then((response) => {
+         // console.log('response', response);
+          if (response.code === 200) {
+             this.setState({showLoading: false, searchResult : true, items: response.data.items.reverse()});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+    
+  }
+
+
+  goToScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {orderData: param});
   };
 
-  openQuote = () => {
-    this.props.navigation.navigate('Quote');
+  openScreen = (screen, param, status) => {
+    let data = {
+      'status' : status,
+      'list' : param
+    }
+    this.props.navigation.navigate(screen, {orderStatusData: data});
   };
+
+  
 
   listItem = (item, index) => {
     return (
-      <TouchableOpacity style={styles.rowItem}>
+      <TouchableOpacity style={styles.rowItem} onPress={() => this.goToScreen('AddOrderQuote', item)}>
         <View style={styles.bottomQuotesRow}>
           <View style={!item.is_active == 1 ? styles.dotRed : styles.dotGreen}  />
           <View style={{width: '5%'}} />
@@ -175,6 +231,8 @@ class Orders extends Component {
   render() {
     const {
       items,
+      searchBar,
+      searchResult,
       showLoading,
       shippedItemsCount,
       acceptedItemsCount,
@@ -186,6 +244,11 @@ class Orders extends Component {
       partiallyShippedItemsTotal,
       completedItemsTotal,
       cancelledItemsTotal,
+      shippedItems,
+      acceptedItems,
+      partiallyShippedItems,
+      completedItems,
+      cancelledItems
     } = this.state;
 
     return (
@@ -193,61 +256,68 @@ class Orders extends Component {
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
-          title="Orders"
+          title="ORDERS"
         />
         <TouchableOpacity style={{...commonStyles.content, flex : 1}}>
-          <View style={styles.rowContent}>
+        {!searchBar ? <TouchableOpacity style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
-              <AddNewButtonGroup
+              {/* <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
                 onPress={() => this.openScreen('AddOrder')}
-              />
+              /> */}
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              <ContainerSearch onPress={() => this.showSearch()}/>
             </View>
-          </View>
+          </TouchableOpacity> : <TouchableOpacity style={styles.rowContent2}><SearchWithCross onSearchPress={(value) => this.searchText(value)} onImagePress={() => this.imagePressed()}/></TouchableOpacity>}
 
           <KeyboardAwareScrollView>
+          {!searchResult ?
+          <>
               <CardWithIcon
                 color={ORANGE_COLOR}
                 count={shippedItemsCount}
                 status={'Shipped'}
-                amount={'£' + ' ' + shippedItemsTotal}
+                amount={'£' + ' ' + commafy(shippedItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', shippedItems, 'SHIPPED')}
               />
               <CardWithIcon
                 color={APP_MAIN_GREEN}
                 count={acceptedItemsCount}
                 status={'Accepted'}
-                amount={ '£' + ' ' + acceptedItemsTotal}
+                amount={ '£' + ' ' + commafy(acceptedItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', acceptedItems, 'ACCEPTED')}
               />
               <CardWithIcon
                 color={CARD_DARK_BLUE}
                 count={partiallyShippedItemsCount}
                 status={'Partially Shipped'}
-                amount={'£' + ' ' + partiallyShippedItemsTotal}
+                amount={'£' + ' ' + commafy(partiallyShippedItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', partiallyShippedItems, 'PARTIALLY SHIPPED')}
               />
               <CardWithIcon
                 color={APP_MAIN_BLUE}
                 count={completedItemsCount}
                 status={'Completed'}
-                amount={'£' + ' ' +completedItemsTotal}
+                amount={'£' + ' ' + commafy(completedItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', completedItems, 'COMPLETED')}
               />
               <CardWithIcon
                 color={APP_MAIN_COLOR}
                 count={cancelledItemsCount}
                 status={'Cancelled'}
-                amount={'£' + ' ' + cancelledItemsTotal}
+                amount={'£' + ' ' + commafy(cancelledItemsTotal)}
                 amountStyle={styles.amountTextStyle}
                 statusStyle={styles.statusTextStyle}
+                onPress={() => this.openScreen('StatusOrders', cancelledItems, 'CANCELLED')}
               />
               <TouchableOpacity style={styles.quotesRow}>
                 <View style={{width: '60%'}}>
@@ -261,14 +331,16 @@ class Orders extends Component {
                     <Text style={styles.seeText}>SEE ALL</Text>
                   </TouchableOpacity>
                 </View>
-              </TouchableOpacity>
+              </TouchableOpacity></>
+              : null}
+            {items.length !==0 ? <>
               <FlatList
                 style={styles.parentFlatList}
                 data={items}
                 extraData={this.state}
                 keyExtractor={(item, index) => '' + index}
                 renderItem={({item, index}) => this.listItem(item, index)}
-              />
+              /></> : <><Text style={commonStyles.noRecordFound}>No Order Found </Text></>}
           </KeyboardAwareScrollView>
         </TouchableOpacity>
 
@@ -369,7 +441,13 @@ const styles = ScaledSheet.create({
   statusTextStyle : {
     fontSize : moderateScale(13),
     fontWeight : 'bold'
-  }
+  },
+  rowContent2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(10),
+    marginHorizontal: moderateScale(5)
+  },
 });
 
 const mapStateToProps = (state) => ({
@@ -378,6 +456,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getOrdersList,
+  searchOrder
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Orders);

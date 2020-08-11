@@ -19,17 +19,21 @@ import {
   FlatList,
   BackHandler,
   Linking,
-  Alert
+  Alert,
+  Dimensions
 } from 'react-native';
-import BaseScreen from '../../components/BaseScreen';
+import {RESOURCE_HUB_URL} from '../../constants/const';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {StackActions} from '@react-navigation/native';
 import {getClientsList} from '../../redux/reducers/clients';
 import {getProductsList} from '../../redux/reducers/products';
+import {getCountriesList} from '../../redux/reducers/countries';
 import {connect} from 'react-redux';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 import {WHITE} from '../../constants/colors';
+import {ROUTES} from '../../constants/routes';
+
 class Home extends PureComponent {
   constructor(props) {
     super(props);
@@ -59,6 +63,7 @@ class Home extends PureComponent {
       'hardwareBackPress',
       this.handleBackButtonClick,
     );
+    setTimeout(()=>{ 
     const {online} = this.props;
 
     if (online) {
@@ -66,7 +71,7 @@ class Home extends PureComponent {
       this.props
         .getClientsList()
         .then((response) => {
-          console.group('response', response);
+        //  console.group('response', response);
           if (response.code === 200) {
             this.setState({showLoading : false})
           }
@@ -82,9 +87,30 @@ class Home extends PureComponent {
           }
         });
         this.props
+          .getCountriesList()
+          .then((response) => {
+          //  console.log('Countries', response);
+            this.setState({showLoading: false});
+            if (response.code === 200) {
+              this.setState({items: response.data.items});
+            }
+          })
+          .catch((error) => {
+            this.setState({showLoading: false});
+            if (error.code === 'unauthorized') {
+              showErrorPopup(
+                "Couldn't validate those credentials.\nPlease try again",
+              );
+            } else {
+              showErrorPopup(
+                'There was an unexpected error.\nPlease wait a few minutes and try again.',
+              );
+            }
+          });
+          this.props
           .getProductsList()
           .then((response) => {
-            console.group('response', response);
+         //  console.log('response', response);
             this.setState({showLoading: false});
             if (response.code === 200) {
               this.setState({items: response.data.items});
@@ -105,6 +131,7 @@ class Home extends PureComponent {
     } else {
       Alert.alert('', 'No Internet Connection');
     }
+  }, 2000);
   };
 
   componentWillUnmount() {
@@ -119,16 +146,16 @@ class Home extends PureComponent {
   openScreen = (index) => {
     switch (index) {
       case 0:
-        this.props.navigation.navigate('Quotes');
+        this.props.navigation.navigate(ROUTES.Quotes);
         break;
       case 1:
-       this.props.navigation.navigate('Orders');
+       this.props.navigation.navigate(ROUTES.Orders);
       break;
       case 2:
-        this.props.navigation.navigate('Users');
+        this.props.navigation.navigate(ROUTES.Users);
         break;
       case 5:
-        Linking.openURL('https://resourcehub.mphgroup.uk');
+        Linking.openURL(RESOURCE_HUB_URL);
         break;
       default:
       // code block
@@ -154,7 +181,7 @@ class Home extends PureComponent {
         <HeaderWithLogo
           navigation={this.props.navigation}
           title="MPH GROUP"
-          rightImage={SEARCH}
+          rightImage={""}
         />
         {/* horizontal list */}
         <FlatList
@@ -185,8 +212,8 @@ const styles = ScaledSheet.create({
     marginRight: moderateScale(-20),
   },
   image: {
-    height: moderateScale(670),
-    width: moderateScale(310),
+    height: Dimensions.get('window').height - moderateScale(100),
+    width: Dimensions.get('window').width - moderateScale(30),
   },
 });
 
@@ -197,7 +224,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getClientsList,
-  getProductsList
+  getProductsList,
+  getCountriesList
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

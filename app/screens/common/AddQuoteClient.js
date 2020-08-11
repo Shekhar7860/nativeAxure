@@ -11,6 +11,8 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
   BLACK,
+  GRAY,
+  BORDER_COLOR,
 } from '../../constants/colors';
 import {
   USER,
@@ -20,7 +22,8 @@ import {
   CROSS,
   rightArrow,
   PRINTER,
-  LISTINGICON
+  LISTINGICON,
+  SEARCH,
 } from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
@@ -38,9 +41,15 @@ import ButtonDefault from '../../components/ButtonDefault';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {CheckBox} from 'react-native-elements';
 import {connect} from 'react-redux';
-import {updateQuote, addQuoteItem, deleteQuoteItem} from '../../redux/reducers/quotes';
+import {
+  updateQuote,
+  addQuoteItem,
+  deleteQuoteItem,
+  getQuoteItem,
+} from '../../redux/reducers/quotes';
 import Toast from 'react-native-simple-toast';
-
+const arrDataStatus = ['Pending', 'Accepted', 'Rejected'];
+const arrDataVat = ['Exempted'];
 import {
   View,
   Text,
@@ -51,17 +60,42 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
-  Alert
+  Alert,
+  TextInput,
 } from 'react-native';
-const arrDataMethod = ['FedEx', 'FedEx1Day@Fright', 'FedEx2Day@', 'FedEx2Day@ A.M', 'FedEx2Day@ Frieght', 'FedEx3Day@ Frieght', 'FedEx Europe First International Priority@', 'FedEx Express Saver@', 'FedEx First Overnight@', 'FedEx First@Frieght','FedEx Frieght', 'FedEx Frieght@Economy', 'FedEx Frieght@Priority',  'FedEx Ground@', 'FedEx Home Delivery@', 'FedEx International Economy@', 'FedEx International Economy@Frieght', 'FedEx International Priority@', 'FedEx International Priority@Frieght', 'FedEx International Priority@Frieght', 'FedEx SmartPost@', 'FedEx StandardOvernight@', 'Flsmidth'];
+const arrDataMethod = [
+  'FedEx',
+  'FedEx1Day@Fright',
+  'FedEx2Day@',
+  'FedEx2Day@ A.M',
+  'FedEx2Day@ Frieght',
+  'FedEx3Day@ Frieght',
+  'FedEx Europe First International Priority@',
+  'FedEx Express Saver@',
+  'FedEx First Overnight@',
+  'FedEx First@Frieght',
+  'FedEx Frieght',
+  'FedEx Frieght@Economy',
+  'FedEx Frieght@Priority',
+  'FedEx Ground@',
+  'FedEx Home Delivery@',
+  'FedEx International Economy@',
+  'FedEx International Economy@Frieght',
+  'FedEx International Priority@',
+  'FedEx International Priority@Frieght',
+  'FedEx International Priority@Frieght',
+  'FedEx SmartPost@',
+  'FedEx StandardOvernight@',
+  'Flsmidth',
+];
 
 class AddQuoteClient extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       items: [],
-      products : [],
-      prices : [],
+      products: [],
+      prices: [],
       isRememberMe: false,
       quoteField: '',
       quoteId: '',
@@ -80,7 +114,6 @@ class AddQuoteClient extends PureComponent {
       shippingAdd1: '',
       shippingAdd2: '',
       shippingCity: '',
-      shippingCountry: '',
       shippingPostalCode: '',
       billingCompanyName: '',
       billingfirstName: '',
@@ -94,118 +127,252 @@ class AddQuoteClient extends PureComponent {
       status: '',
       showLoading: false,
       quoteDetail: '',
-      item : 0,
-      productSum : 0,
-      shipping : 0.00,
-      vat : 0.00,
-      quoteData : { client : {}},
-      userquoteId : "",
-      clientName : ""
+      item: 0,
+      productSum: 0,
+      shipping: 0.0,
+      vat: 0.0,
+      quoteData: {client: {}},
+      userquoteId: '',
+      clientName: '',
+      clientItems: [],
+      clientIds: [],
+      country: '',
+      countries: [],
+      quantity: '1',
+      shippingCountry: 'Please Select Country',
+      showCountrySearch: false,
+      selectedCountries: [],
+      showShippingCountrySearch: false,
+      shippingCountries: [],
     };
+    this.arrayholder = [];
+    // this.inputRef = React.createRef();
   }
   componentDidMount = () => {
-    if (this.props.route.params) {
-      console.log('params', this.props.route.params);
-      if (this.props.route.params.quoteData !== undefined) {
-      this.setState({quoteData : this.props.route.params.quoteData})
-      var id = this.props.route.params.quoteData.id;
-      // as input value does not show integer, so connverting to string
-      console.log('id is this', id);
-      if(id !== undefined){
-        this.setState({quoteId : id.toString()});
-      }
-      this.setState({ userquoteId : id, quoteTitle : this.props.route.params.quoteData.name, poPreference : this.props.route.params.quoteData.po_reference, type : this.props.route.params.quoteData.type, status : this.props.route.params.quoteData.status,
-      paymentCurrency : this.props.route.params.quoteData.currency, paymentVat : this.props.route.params.quoteData.vat_percentage, shippingCost : this.props.route.params.shipping_cost, billingCompanyName :  this.props.route.params.billing_company_name, billingFirstName : this.props.route.params.billing_first_name,
-      billingLastName : this.props.route.params.billing_last_name,   billingEmail : this.props.route.params.billing_email,   billingCountry : this.props.route.params.billing_country,   billingCity : this.props.route.params.billing_city,   billingPostalCode : this.props.route.params.billing_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name,
-      shippingFirstName : this.props.route.params.shipping_first_name, billingAdd1 : this.props.route.params.billing_add1, billingAdd2 : this.props.route.params.billing_add2, shippingAdd1 : this.props.route.params.shipping_add1, shippingAdd2 : this.props.route.params.shipping_add2,
-      shippingLastName : this.props.route.params.shipping_last_name,   shippingEmail : this.props.route.params.shipping_email,   shippingCountry : this.props.route.params.shipping_country,   shippingCity : this.props.route.params.shipping_city,   shippingPostalCode : this.props.route.params.shipping_zip_code, shippingCompanyName : this.props.route.params.shipping_company_name
-    })
-    // this.setState({quoteId : id.toString(), userquoteId : id})
-    if (this.props.route.params.quoteData.client !== undefined) {
-      this.setState({
-        clientName: this.props.route.params.quoteData.client.name,
-      });
+    const {countries} = this.props;
+    //  console.log('here are countries', countries);
+    for (var i = 0; i < countries.items.length; i++) {
+      this.state.countries.push(countries.items[i].name);
+      this.state.shippingCountries.push(countries.items[i].name);
+      this.state.selectedCountries.push(countries.items[i].name);
     }
-      }
 
+    if (this.props.route.params) {
+      // console.log('params', this.props.route.params);
+      if (this.props.route.params.quoteData !== undefined) {
+        this.setState({quoteData: this.props.route.params.quoteData});
+        var id = this.props.route.params.quoteData.id;
+        // as input value does not show integer, so connverting to string
+        // console.log('id is this', id);
+        if (id !== undefined) {
+          this.setState({quoteId: id.toString()});
+        }
+        this.setState({
+          userquoteId: id,
+          quoteTitle: this.props.route.params.quoteData.name,
+          poPreference: this.props.route.params.quoteData.po_reference,
+          type: this.props.route.params.quoteData.type,
+          status: this.props.route.params.quoteData.status,
+          paymentCurrency: this.props.route.params.quoteData.currency,
+          paymentVat: this.props.route.params.quoteData.vat_percentage,
+          shippingCost: this.props.route.params.quoteData.shipping_cost,
+          billingCompanyName: this.props.route.params.quoteData
+            .billing_company_name,
+          billingFirstName: this.props.route.params.billing_first_name,
+          billingLastName: this.props.route.params.quoteData.billing_last_name,
+          billingEmail: this.props.route.params.quoteData.billing_email,
+          billingCountry: this.props.route.params.quoteData.billing_country,
+          billingCity: this.props.route.params.billing_city,
+          billingPostalCode: this.props.route.params.billing_zip_code,
+          shippingCompanyName: this.props.route.params.shipping_company_name,
+          shippingFirstName: this.props.route.params.quoteData
+            .shipping_first_name,
+          billingAdd1: this.props.route.params.quoteData.billing_add1,
+          billingAdd2: this.props.route.params.quoteData.billing_add2,
+          shippingAdd1: this.props.route.params.quoteData.shipping_add1,
+          shippingAdd2: this.props.route.params.quoteData.shipping_add2,
+          shippingLastName: this.props.route.params.quoteData
+            .shipping_last_name,
+          shippingEmail: this.props.route.params.quoteData.shipping_email,
+          shippingCountry: this.props.route.params.quoteData.shipping_country,
+          shippingCity: this.props.route.params.quoteData.shipping_city,
+          shippingPostalCode: this.props.route.params.quoteData
+            .shipping_zip_code,
+          shippingCompanyName: this.props.route.params.quoteData
+            .shipping_company_name,
+        });
+        // this.getQuoteItems(id)
+        var text = this.props.route.params.quoteData.terms.replace(
+          /<\/?[^>]+>/gi,
+          ' ',
+        );
+        this.setState({paymentTerm: text, terms: text});
+        // this.setState({quoteId : id.toString(), userquoteId : id})
+        if (this.props.route.params.quoteData.client !== undefined) {
+          this.setState({
+            clientName: this.props.route.params.quoteData.client.name,
+          });
+        }
+      }
     }
-    console.log('soosos', this.props.products)
+    // console.log('soosos', this.props.products)
     // adding products into array
     for (var i = 0; i < this.props.products.items.length; i++) {
       this.state.products.push(this.props.products.items[i].name);
-      this.state.prices.push({'price_gbp' : this.props.products.items[i].price_gbp, 'sku' : this.props.products.items[i].sku, product_id :this.props.products.items[i].id,  qty : 1})
+      this.state.prices.push({
+        price_gbp: this.props.products.items[i].price_gbp,
+        sku: this.props.products.items[i].sku,
+        product_id: this.props.products.items[i].id,
+        qty: 1,
+      });
     }
+  };
+
+  showDropDown = (value) => {
+    if (value == 'billing') {
+      this.setState({showCountrySearch: true});
+    } else {
+      this.setState({showShippingCountrySearch: true});
+    }
+  };
+
+  hideDropDown = () => {
+    // this.setState({showCountrySearch: false});
+  };
+
+  getQuoteItems = (quoteId) => {
+    const {online} = this.props;
+    if (online) {
+      this.props
+        .getQuoteItem(quoteId)
+        .then((response) => {
+          // console.log('quoteItems response', response);
+          if (response.code === 200) {
+            // this.setState({showLoading: false, searchResult : true, items: response.data.items.reverse()});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  };
+
+  callFunction = (value) => {
+    console.log('this is value', value);
   };
 
   selectData = (val) => {
-//   console.log('products', this.state.products[val], 'prices', this.state.prices[val]);
-      //creating an copy and pushing array
+    // console.log('products', this.state.quantity);
+    //creating an copy and pushing array
 
     for (var i = 0; i < this.state.items.length; i++) {
-      console.log('fired', this.state.items[i].name)
-        if (this.state.items[i].name === this.state.products[val]) {
-            this.state.items[i].qty++;
-            this.setState({
-           items: [...this.state.items]
-           })
-           this.addQuoteItem(this.state.prices[val].product_id, 1, val, false)
-           return;                       // exit loop and function
-        }
+      //  console.log('fired', this.state.items[i].name)
+      if (this.state.items[i].name === this.state.products[val]) {
+        this.state.items[i].qty++;
+        this.setState({
+          items: [...this.state.items],
+        });
+        this.addQuoteItem(
+          this.state.prices[val].product_id,
+          this.state.quantity,
+          val,
+          false,
+        );
+        return; // exit loop and function
       }
+    }
     //  console.log('ajjaj', this.state.items)
-      this.addQuoteItem(this.state.prices[val].product_id, 1, val, true)
-
-
+    this.addQuoteItem(
+      this.state.prices[val].product_id,
+      this.state.quantity,
+      val,
+      true,
+    );
   };
 
-
-addTotal = () => {
-  var sum=0;
-  for (var i =0; i < this.state.items.length; i++) {
-  var num =  this.multiply(this.state.items[i].price_gbp, this.state.items[i].qty)
-  sum += num;
+  addTotal = () => {
+    var sum = 0;
+    for (var i = 0; i < this.state.items.length; i++) {
+      var num = this.multiply(
+        this.state.items[i].price_gbp,
+        this.state.items[i].qty,
+      );
+      sum += num;
     }
-    console.log('suuus', sum)
-    this.setState({productSum : sum})
-  return '£' + sum;
+    // console.log('suuus', sum)
+    this.setState({productSum: sum});
+    return '£' + sum;
+  };
 
-}
-
-addQuoteItem = (product_id, qty, val, status) => {
-  this.props
-    .addQuoteItem(
-      this.state.userquoteId,
-      product_id,
-      qty
-    )
-    .then((response) => {
-      if (response.code === 200) {
-      //  console.log('responseQuoteItem', response)
-        if(status){
-        var newArray = this.state.items.slice(); // Create a copy
-        newArray.push({name:this.state.products[val], price_gbp : this.state.prices[val].price_gbp, sku :  this.state.prices[val].sku, qty : this.state.prices[val].qty, product_id :  this.state.prices[val].product_id});
-        this.setState({ items: newArray })}
-      } else {
-        if (response.validation_errors) {
-          showErrorPopup(response.validation_errors);
-        } else {
-         showErrorPopup(response.message);
-        }
-      }
-    })
-    .catch((error) => {
-      this.setState({showLoading: false});
-      if (error.code === 'unauthorized') {
-        showErrorPopup(
-          "Couldn't validate those credentials.\nPlease try again",
-        );
-      } else {
-        showErrorPopup(
-          'There was an unexpected error.\nPlease wait a few minutes and try again.',
-        );
-      }
+  searchCountries = (text, value) => {
+    // console.log('array holder', this.state.countries);
+    const newData = this.state.countries.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item ? item.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
     });
-}
+    console.log('data', newData);
+    if (text !== '') {
+      if (value == 'billing') {
+        this.setState({countries: newData});
+      } else {
+        this.setState({shippingCountries: newData});
+      }
+    } else {
+      this.setState({countries: this.state.selectedCountries});
+    }
+  };
+
+  addQuoteItem = (product_id, qty, val, status) => {
+    this.props
+      .addQuoteItem(this.state.userquoteId, product_id, qty)
+      .then((response) => {
+        if (response.code === 200) {
+          //  console.log('responseQuoteItem', response)
+          if (status) {
+            var newArray = this.state.items.slice(); // Create a copy
+            newArray.push({
+              name: this.state.products[val],
+              price_gbp: this.state.prices[val].price_gbp,
+              sku: this.state.prices[val].sku,
+              qty: this.state.quantity,
+              product_id: this.state.prices[val].product_id,
+            });
+            this.setState({items: newArray});
+          }
+        } else {
+          if (response.validation_errors) {
+            showErrorPopup(response.validation_errors);
+          } else {
+            showErrorPopup(response.message);
+          }
+        }
+      })
+      .catch((error) => {
+        this.setState({showLoading: false});
+        if (error.code === 'unauthorized') {
+          showErrorPopup(
+            "Couldn't validate those credentials.\nPlease try again",
+          );
+        } else {
+          showErrorPopup(
+            'There was an unexpected error.\nPlease wait a few minutes and try again.',
+          );
+        }
+      });
+  };
   removeItem = (val) => {
     Alert.alert('', 'Are you sure to delete this item?', [
       {
@@ -217,27 +384,26 @@ addQuoteItem = (product_id, qty, val, status) => {
         onPress: () => this.delete(val),
       },
     ]);
-
-  }
+  };
   total = () => {
     const {productSum, shipping, vat} = this.state;
-    console.log('productSum', productSum)
-    return parseInt(productSum) + parseInt(shipping) + parseInt(vat)
-
-  }
+    // console.log('productSum', productSum)
+    return parseInt(productSum) + parseInt(shipping) + parseInt(vat);
+  };
 
   delete = (val) => {
     this.props
       .deleteQuoteItem(val.product_id)
       .then((response) => {
-        console.log('deleteQuoteresponse', response);
+        // console.log('deleteQuoteresponse', response);
         if (response.code === 200) {
-              this.setState(prevState => {
-              const items = prevState.items.filter(item => item.name !== val.name);
-              return { items };
+          this.setState((prevState) => {
+            const items = prevState.items.filter(
+              (item) => item.name !== val.name,
+            );
+            return {items};
           });
         }
-
       })
       .catch((error) => {
         this.setState({showLoading: false});
@@ -248,51 +414,72 @@ addQuoteItem = (product_id, qty, val, status) => {
         } else {
         }
       });
-
-  }
-
+  };
 
   openScreen = (screen, param) => {
     this.props.navigation.navigate(screen, {clientData: param});
   };
   multiply = (price, quantity) => {
+    return price * quantity;
+  };
 
-    return price*quantity
-
-  }
+  dropDownValue = (value) => {
+    console.log('selected', value);
+  };
+  selectItem = (val, type) => {
+    if (type == 'type') {
+      this.setState({type: arrDataType[val]});
+    } else if (type == 'status') {
+      this.setState({status: arrDataStatus[val]});
+    } else if (type == 'billingCountry') {
+      this.setState({billingCountry: this.state.countries[val]});
+    } else if (type == 'shippingCountry') {
+      this.setState({shippingCountry: this.state.countries[val]});
+    } else if (type == 'vat') {
+      this.setState({paymentVat: arrDataVat[val]});
+    } else {
+      this.setState({clientId: this.state.clientIds[val]});
+      this.setState({client: this.state.clientItems[val]});
+    }
+  };
 
   listItem = (item, index) => {
     // console.log(item.name, 'skskks')
     return (
       <TouchableOpacity style={styles.rowItem}>
-        {item.name ?
-        <View style={styles.quotesRow}>
-          <View style={styles.listWidth}>
-           <Text style={styles.listRowText}>{item.sku}</Text>
-         </View>
-          <View style={styles.listWidth}>
-            <Text style={styles.listRowText}>{item.name}</Text>
-          </View>
-          <View style={styles.listWidth}>
-            <Text style={styles.listRowText}>{item.price_gbp}</Text>
-          </View>
-          <View style={styles.listWidth}>
-            <Text style={styles.listRowText}>{item.qty}</Text>
-          </View>
-          <View style={styles.listWidth}>
-            <Text style={styles.listRowText}>{'£' + this.multiply(item.price_gbp, item.qty)}</Text>
-          </View>
+        {item.name ? (
+          <View style={styles.quotesRow}>
+            <View style={styles.listWidth}>
+              <Text style={styles.listRowText}>{item.sku}</Text>
+            </View>
+            <View style={styles.listWidth}>
+              <Text style={styles.listRowText}>{item.name}</Text>
+            </View>
+            <View style={styles.listWidth}>
+              <Text style={styles.listRowText}>{item.price_gbp}</Text>
+            </View>
+            <View style={styles.listWidth}>
+              <Text style={styles.listRowText}>{item.qty}</Text>
+            </View>
+            <View style={styles.listWidth}>
+              <Text style={styles.listRowText}>
+                {'£' + this.multiply(item.price_gbp, item.qty)}
+              </Text>
+            </View>
 
-          <TouchableOpacity style={{width: '10%'}} onPress={()=> this.removeItem(item)}>
-            <Image source={CROSS} style={commonStyles.smallIcon}/>
-          </TouchableOpacity>
-        </View>
-      : null}
+            <TouchableOpacity
+              style={{width: '10%'}}
+              onPress={() => this.removeItem(item)}>
+              <Image source={CROSS} style={commonStyles.smallIcon} />
+            </TouchableOpacity>
+          </View>
+        ) : null}
       </TouchableOpacity>
     );
   };
 
   updateQuote = () => {
+    // alert(this.state.status)
     const {
       quoteId,
       type,
@@ -321,10 +508,14 @@ addQuoteItem = (product_id, qty, val, status) => {
       shippingAdd2,
       shippingCity,
       shippingCountry,
-      shippingPostalCode
+      shippingPostalCode,
     } = this.state;
     const {online} = this.props;
-
+ if((poPreference == '' || poPreference == null) && status == "Accepted")
+ {
+   Alert.alert('', 'In Order to accept quote, you must input value in po Reference')
+ }
+ else {
     if (online) {
       this.setState({showLoading: true});
       this.props
@@ -356,14 +547,14 @@ addQuoteItem = (product_id, qty, val, status) => {
           shippingAdd2,
           shippingCity,
           shippingCountry,
-          shippingPostalCode
+          shippingPostalCode,
         )
         .then((response) => {
-          console.log(response, 'update')
+          // console.log(response, 'update')
           this.setState({showLoading: false});
           if (response.code === 200) {
-            Toast.show(response.message)
-            this.props.navigation.navigate('AllQuotes')
+            Toast.show(response.message);
+            this.props.navigation.navigate('AllQuotes');
           } else {
             if (response.validation_errors) {
               showErrorPopup(response.validation_errors);
@@ -379,19 +570,105 @@ addQuoteItem = (product_id, qty, val, status) => {
               "Couldn't validate those credentials.\nPlease try again",
             );
           } else {
-            showErrorPopup(
-              'Please Add Product First',
-            );
+            showErrorPopup('Please Add Product First');
           }
         });
     } else {
       Alert.alert('', 'No Internet Connection');
     }
+  }
+  };
+  checkAlert = () => {
+    //alert('jiiii');
+  };
+
+  setSame = (
+    billingCompanyName,
+    billingFirstName,
+    billingLastName,
+    billingEmail,
+    billingAdd1,
+    billingAdd2,
+    billingCity,
+    billingCountry,
+    billingPostalCode,
+    isRememberMe,
+  ) => {
+    if (isRememberMe !== true) {
+      this.setState({
+        shippingCompanyName: billingCompanyName,
+        shippingFirstName: billingFirstName,
+        shippingLastName: billingLastName,
+        shippingEmail: billingEmail,
+        shippingAdd1: billingAdd1,
+        shippingAdd2: billingAdd2,
+        shippingCity: billingCity,
+        shippingCountry: billingCountry,
+        shippingPostalCode: billingPostalCode,
+      });
+    } else {
+      this.setState({
+        shippingCompanyName: '',
+        shippingFirstName: '',
+        shippingLastName: '',
+        shippingEmail: '',
+        shippingAdd1: '',
+        shippingAdd2: '',
+        shippingCity: '',
+        shippingCountry: 'Please Select Country',
+        shippingPostalCode: '',
+      });
+    }
+
+    this.setState({isRememberMe: !isRememberMe});
   };
 
   calculateCost = () => {};
   render() {
-    const {items, clientName, quoteTitle,shippingCost, poPreference,paymentCurrency, paymentVat, billingCompanyName, billingFirstName, billingLastName, billingCountry, billingCity, billingPostalCode, billingAdd1, billingAdd2, shippingCity, shippingCountry, shippingAdd2, shippingAdd1, shippingLastName, shippingFirstName,  type, status, isRememberMe, quoteDetail, quoteId, showLoading, products, shipping, vat, quoteData, shippingCompanyName, shippingPostalCode} = this.state;
+    const {
+      items,
+      terms,
+      showCountrySearch,
+      quantity,
+      clientName,
+      paymentTerm,
+      quoteTitle,
+      shippingCost,
+      poPreference,
+      paymentCurrency,
+      paymentVat,
+      billingCompanyName,
+      billingFirstName,
+      billingLastName,
+      billingCountry,
+      billingCity,
+      billingPostalCode,
+      billingAdd1,
+      billingAdd2,
+      shippingCity,
+      shippingCountry,
+      shippingAdd2,
+      shippingAdd1,
+      shippingLastName,
+      shippingFirstName,
+      type,
+      status,
+      isRememberMe,
+      quoteDetail,
+      quoteId,
+      showLoading,
+      products,
+      shipping,
+      vat,
+      quoteData,
+      shippingCompanyName,
+      shippingPostalCode,
+      countries,
+      billingEmail,
+      shippingEmail,
+      shippingCountries,
+      showShippingCountrySearch,
+    } = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -444,6 +721,7 @@ addQuoteItem = (product_id, qty, val, status) => {
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Quote Title</Text>
               <InputBox
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
@@ -525,104 +803,23 @@ addQuoteItem = (product_id, qty, val, status) => {
 
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Status</Text>
-              <InputBox
-                disabled
-                placeHolder=""
-                boxStyle={styles.inputBoxStyle}
-                inputStyle={styles.input}
-                onChangeText={(value) => this.setState({status: value})}
-                value={status}
+              <SimpleDropdown
+                placeHolder="Please select status"
+                style={commonStyles.dropDownStyle}
+                drowdownArray={arrDataStatus}
+                dropDownWidth={'85%'}
+                imageStyle={{
+                  marginTop: moderateScale(10),
+                  ...commonStyles.icon,
+                }}
+                isIconVisible={true}
+                onSelect={(value) => this.selectItem(value, 'status')}
+                showDropDownMenu={(value) => this.showDropdownMenu(value)}
               />
             </View>
 
             <View style={commonStyles.space}>
-              <ExpandCollapseLayout title="+ Payment & Shipping">
-                <Text style={styles.labelText}>Currency</Text>
-                <InputBox
-                  placeHolder=""
-                  boxStyle={styles.inputBoxStyle}
-                  inputStyle={styles.input}
-                  onChangeText={(value) =>
-                    this.setState({paymentCurrency: value})
-                  }
-                  value={paymentCurrency}
-                />
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Payment Term</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({paymentTerm: value})
-                    }
-                    value={quoteData.terms}
-                  />
-                </View>
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>VAT Percentage</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({paymentVat: value})}
-                    value={paymentVat}
-                  />
-                </View>
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Shipping Method</Text>
-                  <SimpleDropdown
-                    placeHolder="Please select Shipping Method"
-                    style={commonStyles.dropDownStyle}
-                    drowdownArray={arrDataMethod}
-                    dropDownWidth={'85%'}
-                    imageStyle={{
-                      marginTop: moderateScale(10),
-                      ...commonStyles.icon,
-                    }}
-                    isIconVisible={true}
-                  />
-                </View>
-
-                <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Shipping Cost</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({shippingCost: value})
-                    }
-                    value={shippingCost}
-                  />
-                </View>
-
-                <View style={commonStyles.topMargin}>
-                  <Text style={styles.labelText}>Total Weight : 0 LB</Text>
-                  <ButtonWithImage
-                    onPress={() => this.calculateCost()}
-                    isShowRightIcon
-                    style={commonStyles.otherButtons}
-                    textStyle={commonStyles.otherButtonText}
-                    rightImage={rightArrow}>
-                    Get Rates
-                  </ButtonWithImage>
-                </View>
-              </ExpandCollapseLayout>
-            </View>
-            <View style={commonStyles.space}>
               <ExpandCollapseLayout title="+ Billing & Shipping Address">
-                <CheckBox
-                  title="Same As Billing"
-                  checked={isRememberMe}
-                  onPress={() => this.setState({isRememberMe: !isRememberMe})}
-                  checkedColor={BLACK}
-                  containerStyle={commonStyles.checkBoxContainer}
-                  uncheckedIcon="square"
-                  size={15}
-                  textStyle={commonStyles.checkBoxText}
-                />
-
                 <Text style={styles.topLabelText}>Billing</Text>
 
                 <Text style={styles.labelText}>Company Name</Text>
@@ -645,7 +842,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                     onChangeText={(value) =>
                       this.setState({billingFirstName: value})
                     }
-                      value={billingFirstName}
+                    value={billingFirstName}
                   />
                 </View>
 
@@ -671,7 +868,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                     onChangeText={(value) =>
                       this.setState({billingEmail: value})
                     }
-                    value={quoteData.billing_email}
+                    value={billingEmail}
                   />
                 </View>
 
@@ -718,18 +915,52 @@ addQuoteItem = (product_id, qty, val, status) => {
                   />
                 </View>
 
-                <View style={commonStyles.space}>
+                <TouchableOpacity
+                  style={commonStyles.space}
+                  onPress={() => this.checkAlert()}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({billingCountry: value})
-                    }
-                    value={billingCountry}
-                  />
-                </View>
+                  {showCountrySearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={{
+                          width: '88%',
+                          marginTop: moderateScale(0),
+                          borderBottomWidth: 1,
+                        }}
+                        onChangeText={(text) =>
+                          this.searchCountries(text, 'billing')
+                        }
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                  <View style={commonStyles.space}>
+                    <SimpleDropdown
+                      placeHolder="Please select Country"
+                      style={commonStyles.dropDownStyle}
+                      // ref={this.inputRef}
+
+                      drowdownArray={countries}
+                      dropDownWidth={'85%'}
+                      imageStyle={{
+                        marginTop: moderateScale(10),
+                        ...commonStyles.icon,
+                      }}
+                      showDropDown={() => this.showDropDown('billing')}
+                      hideDropDown={() => this.hideDropDown('billing')}
+                      isIconVisible={true}
+                      onSelect={(value) =>
+                        this.selectItem(value, 'billingCountry')
+                      }
+                    />
+                  </View>
+                </TouchableOpacity>
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Postal Code/Zip Code</Text>
@@ -745,10 +976,33 @@ addQuoteItem = (product_id, qty, val, status) => {
                   />
                 </View>
 
-
                 <View style={commonStyles.space}>
+                  <CheckBox
+                    title="Same As Billing"
+                    checked={isRememberMe}
+                    onPress={() =>
+                      this.setSame(
+                        billingCompanyName,
+                        billingFirstName,
+                        billingLastName,
+                        billingEmail,
+                        billingAdd1,
+                        billingAdd2,
+                        billingCity,
+                        billingCountry,
+                        billingPostalCode,
+                        isRememberMe,
+                      )
+                    }
+                    checkedColor={BLACK}
+                    containerStyle={commonStyles.checkBoxContainer}
+                    uncheckedIcon="square"
+                    size={15}
+                    textStyle={commonStyles.checkBoxText}
+                  />
+                </View>
+
                 <Text style={styles.topLabelText}>Shipping</Text>
-               </View>
 
                 <Text style={styles.labelText}>Company Name</Text>
                 <InputBox
@@ -796,7 +1050,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                     onChangeText={(value) =>
                       this.setState({shippingEmail: value})
                     }
-                    value={quoteData.shipping_email}
+                    value={shippingEmail}
                   />
                 </View>
 
@@ -845,15 +1099,41 @@ addQuoteItem = (product_id, qty, val, status) => {
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <InputBox
-                    placeHolder=""
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) =>
-                      this.setState({shippingCountry: value})
-                    }
-                    value={shippingCountry}
-                  />
+                  {showShippingCountrySearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={commonStyles.commonTextBorder}
+                        onChangeText={(text) =>
+                          this.searchCountries(text, 'shipping')
+                        }
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                  <View style={commonStyles.space}>
+                    <SimpleDropdown
+                      placeHolder={shippingCountry}
+                      style={commonStyles.dropDownStyle}
+                      drowdownArray={shippingCountries}
+                      showDropDown={() => this.showDropDown('shipping')}
+                      hideDropDown={() => this.hideDropDown('shipping')}
+                      dropDownWidth={'85%'}
+                      imageStyle={{
+                        marginTop: moderateScale(10),
+                        ...commonStyles.icon,
+                      }}
+                      isIconVisible={true}
+                      onSelect={(value) =>
+                        this.selectItem(value, 'shippingCountry')
+                      }
+                    />
+                  </View>
                 </View>
 
                 <View style={commonStyles.space}>
@@ -868,6 +1148,88 @@ addQuoteItem = (product_id, qty, val, status) => {
                     }
                     value={shippingPostalCode}
                   />
+                </View>
+              </ExpandCollapseLayout>
+            </View>
+            <View style={commonStyles.space}>
+              <ExpandCollapseLayout title="+ Payment & Shipping">
+                <Text style={styles.labelText}>Currency</Text>
+                <InputBox
+                  disabled
+                  placeHolder=""
+                  boxStyle={styles.inputBoxStyle}
+                  inputStyle={styles.input}
+                  onChangeText={(value) =>
+                    this.setState({paymentCurrency: value})
+                  }
+                  value={paymentCurrency}
+                />
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Payment Term</Text>
+                  <InputBox
+                    disabled
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyle}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({paymentTerm: value})
+                    }
+                    value={paymentTerm}
+                  />
+                </View>
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>VAT Percentage</Text>
+                  <SimpleDropdown
+                    placeHolder="Please select VAT percentage"
+                    style={commonStyles.dropDownStyle}
+                    drowdownArray={arrDataVat}
+                    dropDownWidth={'85%'}
+                    imageStyle={{
+                      marginTop: moderateScale(10),
+                      ...commonStyles.icon,
+                    }}
+                    isIconVisible={true}
+                    onSelect={(value) => this.selectItem(value, 'vat')}
+                  />
+                </View>
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Shipping Service</Text>
+                  <SimpleDropdown
+                    placeHolder="Please select Shipping Service"
+                    style={commonStyles.dropDownStyle}
+                    drowdownArray={arrDataMethod}
+                    dropDownWidth={'85%'}
+                    imageStyle={{
+                      marginTop: moderateScale(10),
+                      ...commonStyles.icon,
+                    }}
+                    isIconVisible={true}
+                  />
+                </View>
+
+                <View style={commonStyles.space}>
+                  <Text style={styles.labelText}>Shipping Cost</Text>
+                  <InputBox
+                    disabled
+                    placeHolder=""
+                    boxStyle={styles.inputBoxStyleBackground}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      this.setState({shippingCost: value})
+                    }
+                    value={shippingCost}
+                  />
+                </View>
+                <View style={commonStyles.topMargin}>
+                  <Text style={styles.labelText}>Total Weight : 0 LB</Text>
+                  <ButtonWithImage
+                    onPress={() => this.calculateCost()}
+                    isShowRightIcon
+                    style={commonStyles.otherButtons}
+                    textStyle={commonStyles.otherButtonText}
+                    rightImage={rightArrow}>
+                    Get Rates
+                  </ButtonWithImage>
                 </View>
               </ExpandCollapseLayout>
             </View>
@@ -887,9 +1249,8 @@ addQuoteItem = (product_id, qty, val, status) => {
                   }}
                   inputStyle={styles.input}
                   onChangeText={(value) => this.setState({terms: value})}
-                  value={quoteData.terms}
+                  value={terms}
                 />
-
               </ExpandCollapseLayout>
             </View>
 
@@ -911,7 +1272,7 @@ addQuoteItem = (product_id, qty, val, status) => {
                 <View style={styles.listWidth}>
                   <Text style={styles.listRowText}>TOTAL</Text>
                 </View>
-                <View style={{width:'10%'}}/>
+                <View style={{width: '10%'}} />
               </TouchableOpacity>
             </View>
             <FlatList
@@ -921,79 +1282,89 @@ addQuoteItem = (product_id, qty, val, status) => {
               keyExtractor={(item, index) => '' + index}
               renderItem={({item, index}) => this.listItem(item, index)}
             />
-            {items.length !== 0 ?
-            <View>
-            <View style={commonStyles.space}>
-              <TouchableOpacity style={styles.quotesRow}>
-                <View style={styles.listWidthFull}>
+            {items.length !== 0 ? (
+              <View>
+                <View style={commonStyles.space}>
+                  <TouchableOpacity style={styles.quotesRow}>
+                    <View style={styles.listWidthFull}></View>
+                    <View style={styles.listWidth}>
+                      <Text style={styles.listRowText}>SubTotal</Text>
+                    </View>
+                    <View style={styles.listWidth}>
+                      <Text style={styles.listRowText}>{this.addTotal()}</Text>
+                    </View>
+                    <View style={{width: '10%'}} />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>SubTotal</Text>
+                <View style={commonStyles.space}>
+                  <TouchableOpacity style={styles.quotesRow}>
+                    <View style={styles.listWidthFull}></View>
+                    <View style={styles.listWidth}>
+                      <Text style={styles.listRowText}>Shipping</Text>
+                    </View>
+                    <View style={styles.listWidth}>
+                      <Text style={styles.listRowText}>£{shipping}</Text>
+                    </View>
+                    <View style={{width: '10%'}} />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>{this.addTotal()}</Text>
+                <View style={commonStyles.space}>
+                  <TouchableOpacity style={styles.quotesRow}>
+                    <View style={styles.listWidthFull}></View>
+                    <View style={styles.listWidth}>
+                      <Text style={styles.listRowText}>VAT(0%)</Text>
+                    </View>
+                    <View style={styles.listWidth}>
+                      <Text style={styles.listRowText}>£{vat}</Text>
+                    </View>
+                    <View style={{width: '10%'}} />
+                  </TouchableOpacity>
                 </View>
-                <View style={{width:'10%'}}/>
-              </TouchableOpacity>
-            </View>
-            <View style={commonStyles.space}>
-              <TouchableOpacity style={styles.quotesRow}>
-                <View style={styles.listWidthFull}>
+                <View style={commonStyles.space}>
+                  <TouchableOpacity style={styles.quotesRow}>
+                    <View style={styles.listWidthFull}></View>
+                    <View style={styles.listWidth}>
+                      <Text style={styles.listRowText}>Total</Text>
+                    </View>
+                    <View style={styles.listWidth}>
+                      <Text style={styles.listRowText}>£{this.total()}</Text>
+                    </View>
+                    <View style={{width: '10%'}} />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>Shipping</Text>
-                </View>
-                <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>£{shipping}</Text>
-                </View>
-                <View style={{width:'10%'}}/>
-              </TouchableOpacity>
-            </View>
-            <View style={commonStyles.space}>
-              <TouchableOpacity style={styles.quotesRow}>
-                <View style={styles.listWidthFull}>
-                </View>
-                <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>VAT(0%)</Text>
-                </View>
-                <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>£{vat}</Text>
-                </View>
-                <View style={{width:'10%'}}/>
-              </TouchableOpacity>
-            </View>
-            <View style={commonStyles.space}>
-              <TouchableOpacity style={styles.quotesRow}>
-                <View style={styles.listWidthFull}>
-                </View>
-                <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>Total</Text>
-                </View>
-                <View style={styles.listWidth}>
-                  <Text style={styles.listRowText}>£{this.total()}</Text>
-                </View>
-                <View style={{width:'10%'}}/>
-              </TouchableOpacity>
-            </View>
-          </View>
-          : null}
+              </View>
+            ) : null}
             <View style={commonStyles.space}>
               <Text style={styles.topLabelText}>Add a product</Text>
             </View>
             <View style={commonStyles.space}>
-            <SimpleDropdown
-              placeHolder="Add Product"
-              style={commonStyles.dropDownStyle}
-              drowdownArray={products}
-            onSelect={(value) => this.selectData(value)}
-              dropDownWidth={'85%'}
-              imageStyle={{
-                marginTop: moderateScale(10),
-                ...commonStyles.icon,
+              <SimpleDropdown
+                placeHolder="Add Product"
+                style={commonStyles.dropDownStyle}
+                drowdownArray={products}
+                onSelect={(value) => this.selectData(value)}
+                dropDownWidth={'85%'}
+                imageStyle={{
+                  marginTop: moderateScale(10),
+                  ...commonStyles.icon,
+                }}
+                isIconVisible={true}
+              />
+            </View>
+            <Text style={styles.labelText}>Quantity</Text>
+            <InputBox
+              placeHolder=""
+              maxLines={5}
+              maxLength={50}
+              boxStyle={{
+                ...styles.inputBoxStyle3,
               }}
-              isIconVisible={true}
+              inputStyle={styles.input2}
+              onChangeText={(value) => this.setState({quantity: value})}
+              value={quantity}
+              keyboardType={'numeric'}
+              maxLength={1}
             />
-          </View>
 
             <ButtonDefault onPress={() => this.updateQuote('EditQuote')}>
               SAVE
@@ -1106,8 +1477,34 @@ const styles = ScaledSheet.create({
     borderBottomWidth: 1,
     borderColor: DARK_BLUE,
   },
+  inputBoxStyleBackground: {
+    marginTop: moderateScale(-10),
+    height: moderateScale(45),
+    backgroundColor: GRAY,
+    borderBottomWidth: 0,
+    borderWidth: 0,
+    borderRadius: 0,
+    width: '90%',
+    alignSelf: 'center',
+    borderBottomColor: WHITE,
+  },
+  inputBoxStyle3: {
+    height: moderateScale(40),
+    borderRadius: 0,
+    borderWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: DARK_BLUE,
+    width: '15%',
+    marginHorizontal: moderateScale(20),
+  },
   input: {
     fontWeight: 'normal',
+
+    fontSize: moderateScale(10),
+  },
+  inputBoxStyle2: {
+    fontWeight: 'normal',
+    color: 'black',
     fontSize: moderateScale(10),
   },
   recentText: {
@@ -1125,20 +1522,22 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(8),
     fontWeight: 'normal',
   },
-  listWidthFull : {
-    width : '48%'
-  }
+  listWidthFull: {
+    width: '48%',
+  },
 });
 
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
-  products : state.products.productsList
+  products: state.products.productsList,
+  countries: state.countries.countriesList,
 });
 
 const mapDispatchToProps = {
   updateQuote,
   addQuoteItem,
-  deleteQuoteItem
+  deleteQuoteItem,
+  getQuoteItem,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddQuoteClient);

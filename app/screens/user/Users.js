@@ -30,8 +30,9 @@ import {
   Alert
 } from 'react-native';
 import {connect} from 'react-redux';
+import SearchWithCross from '../../components/SearchWithCross';
 import OverlaySpinner from '../../components/OverlaySpinner';
-import {getUsersList} from '../../redux/reducers/users';
+import {getUsersList, searchUser} from '../../redux/reducers/users';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 
 class Users extends Component {
@@ -43,7 +44,9 @@ class Users extends Component {
       activeUsersCount: 0,
       inActiveUsersCount: 0,
       activeUsers : [],
-      inActiveUsers : []
+      inActiveUsers : [],
+      searchBar : false,
+      searchResult : false
     };
   }
   componentDidMount = () => {
@@ -54,7 +57,7 @@ class Users extends Component {
       this.props
         .getUsersList()
         .then((response) => {
-          console.log('response', response);
+         // console.log('response', response);
           this.setState({showLoading: false});
           if (response.code === 200) {
 
@@ -67,14 +70,16 @@ class Users extends Component {
                 this.state.activeUsers.push(response.data.items[i]);
               } else {
                 this.state.inActiveUsers.push(
-                  response.data.items[i].grand_total,
+                  response.data.items[i],
                 );
               }
             }
             //  alert(pendingSum);
             this.setState({
               activeUsersCount: this.state.activeUsers.length,
-              inActiveUsersCount: this.state.inActiveUsers.length
+              inActiveUsersCount: this.state.inActiveUsers.length,
+              activeUsers: this.state.activeUsers,
+              inActiveUsers: this.state.inActiveUsers
             });
           }
         })
@@ -95,13 +100,57 @@ class Users extends Component {
     }
   };
 
+  showSearch = () => {
+    this.setState({searchBar : true})
+  }
+
+  imagePressed = () => {
+    this.setState({searchBar : false, searchResult : false})
+    this.componentDidMount()
+  }
+
+  searchText = (value) => {
+    this.setState({searchResult : true});
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .searchUser(value)
+        .then((response) => {
+          // console.log('response', response);
+          if (response.code === 200) {
+             this.setState({showLoading: false, searchResult : true, items: response.data.items.reverse()});
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+    
+  }
+
   openScreen = (screen, param) => {
-    this.props.navigation.navigate(screen, {clientData: param});
+    this.props.navigation.navigate(screen, {userData: param});
+  };
+
+  goToScreen = (screen, param) => {
+    this.props.navigation.navigate(screen, {userData: param});
   };
 
   listItem = (item, index) => {
     return (
-      <TouchableOpacity style={styles.rowItem} >
+      <TouchableOpacity style={styles.rowItem} onPress={() => this.goToScreen('UserDetail', item)}>
         <View style={styles.bottomQuotesRow}>
           <View style={!item.is_active == 1 ? styles.dotRed : styles.dotGreen} />
           <View style={{width: '5%'}} />
@@ -110,14 +159,14 @@ class Users extends Component {
           </View>
           <View style={{width: '35%'}} />
           <View style={{width: '10%'}}>
-            <Image source={leftArrow} style={commonStyles.icon}/>
+            {/* <Image source={leftArrow} style={commonStyles.icon}/> */}
           </View>
         </View>
       </TouchableOpacity>
     );
   };
   render() {
-    const {items, showLoading, activeUsersCount, inActiveUsersCount} = this.state;
+    const {items, searchBar, searchResult, activeUsers, inActiveUsers, showLoading, activeUsersCount, inActiveUsersCount} = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -127,7 +176,7 @@ class Users extends Component {
           title="USERS"
         />
         <TouchableOpacity style={commonStyles.content}>
-          <View style={styles.rowContent}>
+        {!searchBar ? <TouchableOpacity style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
               <AddNewButtonGroup
                 color={APP_MAIN_GREEN}
@@ -135,17 +184,16 @@ class Users extends Component {
               />
             </View>
             <View style={{marginRight: moderateScale(-10)}}>
-              <ContainerSearch />
+              <ContainerSearch onPress={() => this.showSearch()}/>
             </View>
-          </View>
-
+          </TouchableOpacity> : <TouchableOpacity style={styles.rowContent2}><SearchWithCross onSearchPress={(value) => this.searchText(value)} onImagePress={() => this.imagePressed()}/></TouchableOpacity>}
+          {!searchResult ?  <>
           <CardWithIcon
             color={APP_MAIN_GREEN}
             count={''}
             status={''}
             amount={activeUsersCount + ' ' + 'Active'}
-            amountStyle={styles.amountStyle}
-            onPress={this.onClickListen}
+            onPress={() => this.openScreen('StatusUsers', activeUsers, 'PENDING')}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />
@@ -153,9 +201,8 @@ class Users extends Component {
             color={APP_MAIN_COLOR}
             count={''}
             status={''}
-            amount={inActiveUsersCount + ' ' +  'InActive'}
-            amountStyle={styles.amountStyle}
-            onPress={this.onClickListen}
+            onPress={() => this.openScreen('StatusUsers', inActiveUsers, 'PENDING')}
+            amount={inActiveUsersCount + ' ' +  'Inactive'}
             amountStyle={styles.amountTextStyle}
             statusStyle={styles.statusTextStyle}
           />
@@ -172,14 +219,16 @@ class Users extends Component {
                 <Text style={styles.seeText}>SEE ALL</Text>
               </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity></>
+          : null}
+          {items.length !==0 ? <>
           <FlatList
             style={styles.parentFlatList}
             data={items}
             extraData={this.state}
             keyExtractor={(item, index) => '' + index}
             renderItem={({item, index}) => this.listItem(item, index)}
-          />
+          /></> : <><Text style={commonStyles.noRecordFound}>No User Found </Text></>}
         </TouchableOpacity>
         <OverlaySpinner
           cancelable
@@ -278,6 +327,12 @@ const styles = ScaledSheet.create({
   statusTextStyle : {
     fontSize : moderateScale(13),
     fontWeight : 'bold'
+  },
+  rowContent2: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(10),
+    marginHorizontal: moderateScale(5)
   }
 });
 const mapStateToProps = (state) => ({
@@ -286,6 +341,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   getUsersList,
+  searchUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Users);

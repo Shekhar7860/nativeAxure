@@ -3661,7 +3661,7 @@ interpret@^1.0.0:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.4.0.tgz#665ab8bc4da27a774a40584e812e3e0fa45b1a1e"
   integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
-invariant@*, invariant@^2.2.4:
+invariant@*, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -5860,10 +5860,10 @@ react-native-fast-image@7.0.2:
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-7.0.2.tgz#e06b21f42f4a9786eaa86f3db35d919070fb8403"
   integrity sha512-MfuzJbC0RjYobR2gFCdqe1I7jvNOCfDkjQ7VGOHXniqjohhULMkcWNBE9Umovi9Dx93lJ6t5utcE2wf/09zvlg==
 
-react-native-freshchat-sdk@^2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/react-native-freshchat-sdk/-/react-native-freshchat-sdk-2.6.1.tgz#5afc574126c3368d646ba96d6eddc8c868a7345a"
-  integrity sha512-irbC3V06it3Ye3zx+GQKAotUcpLVpI5UhRkIjn1IZJ/FIWJEeVnRzybVobYACx+/tuCTeaecvc27a7Lg5DkmIQ==
+react-native-freshchat-sdk@^2.6.2:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/react-native-freshchat-sdk/-/react-native-freshchat-sdk-2.6.2.tgz#be48960d61f313bea6878f8ca74e5614c63809bc"
+  integrity sha512-pgw27s+5srJvHQIPssBiMd31YfDYqAxgDJFjAZASuZj6s73WtJC2MfzHga+FTBWji9+7V7TYs56T3o7Y51YcrA==
 
 react-native-gesture-handler@^1.6.1:
   version "1.6.1"
@@ -5890,10 +5890,10 @@ react-native-gifted-chat@^0.16.3:
     react-native-typing-animation "^0.1.7"
     uuid "3.4.0"
 
-react-native-image-picker@^2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-2.3.1.tgz#1977b65e07793d2c0b2d1976fb675c5f75ad7f11"
-  integrity sha512-c/a2h7/T7yBo5KlNQhcSn4xf4+6Li6LfJ59+GZT1ZzzWrj/6X8DiJ/TJBOlOZMC5tJriZKuRkWSsr74k6z+brw==
+react-native-image-picker@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-2.3.3.tgz#eaacd4a1ed9e9887613be31f0765478ca2f18a51"
+  integrity sha512-i/7JDnxKkUGSbFY2i7YqFNn3ncJm1YlcrPKXrXmJ/YUElz8tHkuwknuqBd9QCJivMfHX41cmq4XvdBDwIOtO+A==
 
 react-native-iphone-x-helper@^1.0.3, react-native-iphone-x-helper@^1.2.1:
   version "1.2.1"
@@ -5928,6 +5928,13 @@ react-native-modal-dropdown@0.6.2:
   integrity sha512-1jzByA+ME+q0mZJ2rZrLsf6jVwJhNxNHdg7I50xYZ9oYJsmmKwF9r/ks95tZxxks4Zvd7/FnaveNtyd+uevXAw==
   dependencies:
     prop-types "^15.6.0"
+
+react-native-onesignal@^3.9.0:
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.9.0.tgz#8f67a8f3c95096adcd179db556cc2838afead914"
+  integrity sha512-Ux2S+MlPb6+RUg1clmgUcwHIM4XhF0DrZTWcrBPxue3PJkuoIhtsNbxbQJA9fGSNeAMHScxr2RTofuVDp2puSw==
+  dependencies:
+    invariant "^2.2.2"
 
 react-native-parsed-text@0.0.22:
   version "0.0.22"

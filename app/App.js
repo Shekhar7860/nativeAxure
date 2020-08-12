@@ -30,7 +30,7 @@ class App extends PureComponent {
   componentDidMount() {
      this.requestUserPermission()
      this.getToken();
-    // console.disableYellowBox = true;
+     console.disableYellowBox = true;
    
     // OneSignal.setLogLevel(6, 0);
     // OneSignal.init("6c356504-bbfc-4036-bb77-07245ccdb10e", {kOSSettingsKeyAutoPrompt : false, kOSSettingsKeyInAppLaunchURL: false, kOSSettingsKeyInFocusDisplayOption:2});
@@ -61,8 +61,8 @@ onIds(device) {
   // checking if app opened from notification or not
   async getToken() {
    const token = await messaging().getToken();
-   console.log('token', token)
-   Freshchat.setPushRegistrationToken(token);
+    alert(token)
+   Freshchat.setPushRegistrationToken(token)
   }
 
   async requestUserPermission() {

@@ -31,6 +31,7 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [NSThread sleepForTimeInterval:3.0];
   [FIRApp configure];
 #if DEBUG
   InitializeFlipper(application);

@@ -32,7 +32,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  ScrollView,
+  ScrollView
 } from 'react-native';
 
 export default class Requests extends Component {
@@ -118,17 +118,18 @@ export default class Requests extends Component {
     const {items} = this.state;
 
     return (
-      <View
+      <SafeAreaView
         style={{
           ...commonStyles.ketboardAvoidingContainer,
-          backgroundColor: LIGHTEST_GRAY,
+          backgroundColor: WHITE
         }}>
         <Header
           navigation={this.props.navigation}
           rightImage={USER}
           title="SUPPORT REQUESTS"
         />
-
+        
+        <View style={{backgroundColor: LIGHTEST_GRAY}}>
         <View style={styles.rowContent}>
           <View
             style={{marginLeft: moderateScale(20), justifyContent: 'center'}}>
@@ -180,8 +181,9 @@ export default class Requests extends Component {
             </ActionButton.Item>
           </ActionButton>
           {/* end of  bottom add button */}
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }

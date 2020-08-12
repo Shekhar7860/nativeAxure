@@ -20,6 +20,7 @@ import ContainerSearch from '../../components/ContainerSearch';
 import CardWithIcon from '../../components/CardWithIcon';
 import {connect} from 'react-redux';
 import HR from '../../components/HR';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   View,
   Text,
@@ -30,7 +31,7 @@ import {
   FlatList,
   ScrollView,
 } from 'react-native';
-import {getUploadedOrdersList} from '../../redux/reducers/uploadedOrders';
+import {getUploadedOrdersList, addUploadedOrders} from '../../redux/reducers/uploadedOrders';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 import OverlaySpinner from '../../components/OverlaySpinner';
 
@@ -83,10 +84,10 @@ import OverlaySpinner from '../../components/OverlaySpinner';
     return (
       <TouchableOpacity style={styles.rowItem}>
         <View style={styles.bottomQuotesRow}>
-          <View style={!index == 0 ? styles.dotRed : styles.dotGreen} />
+          <View style={item.is_active !== 1 ? styles.dotRed : styles.dotGreen} />
           <View style={{width: '5%'}} />
           <View style={{width: '50%', justifyContent: 'center'}}>
-            <Text style={styles.labelText}>NAME</Text>
+            <Text style={styles.labelText}>{item.name}</Text>
           </View>
           <View style={{width: '20%'}} />
           <View style={{width: '25%'}}>
@@ -106,6 +107,8 @@ import OverlaySpinner from '../../components/OverlaySpinner';
           rightImage={USER}
           title="UPLOAD ORDER"
         />
+        <KeyboardAwareScrollView
+          contentContainerStyle={{...commonStyles.content}}>
         <TouchableOpacity style={commonStyles.content}>
           <View style={styles.rowContent}>
             <View style={{marginLeft: moderateScale(-20)}}>
@@ -149,6 +152,7 @@ import OverlaySpinner from '../../components/OverlaySpinner';
           textContent="Please wait..."
           textStyle={{color: WHITE}}
         />
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     );
   }
@@ -229,10 +233,11 @@ const styles = ScaledSheet.create({
 });
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
+  userInfo: state.session.userInfo
 });
 
 const mapDispatchToProps = {
-  getUploadedOrdersList,
+  getUploadedOrdersList
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadedOrders);

@@ -29,11 +29,19 @@ import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
   constructor(props) {
     super(props);
     this.state = {
-      imagesList: []
+      imagesList: [],
+      showChat : false
     };
   }
   componentDidMount = () => {
-    console.log('this.prss', this.props)
+    // call function everytime when screen is focused
+    this.init()
+    this.focusListener = this.props.navigation.addListener('focus',
+        () => this.init())
+  };
+
+  init = () => {
+    // alert('true')
     const {userInfo} = this.props;
     if(userInfo) {
     var freshchatConfig = new FreshchatConfig(
@@ -43,40 +51,22 @@ import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
     freshchatConfig.domain = "https://msdk.in.freshchat.com";
     freshchatConfig.cameraCaptureEnabled = false;
     Freshchat.init(freshchatConfig);
-
-    Freshchat.showConversations();
-   // freshchatConfig.domain = "https://msdk.in.freshchat.com";
     var freshchatUser = new FreshchatUser();
-freshchatUser.firstName = userInfo.first_name;
-freshchatUser.lastName = userInfo.last_name;
-freshchatUser.email =  userInfo.email;
-freshchatUser.phoneCountryCode = "+91";
-freshchatUser.phone = "8837826904";
-// Freshchat.setPushRegistrationToken(device.pushToken);
-Freshchat.setUser(freshchatUser, (error) => {
-   // alert('hiii')
-});
-Freshchat.getFreshchatUserId((data) => {
- console.log('uswerid', data)
-  });
-}
-
+    freshchatUser.firstName = userInfo.first_name;
+    freshchatUser.lastName = userInfo.last_name;
+    freshchatUser.email =  userInfo.email;
+    freshchatUser.phoneCountryCode = "+91";
+    freshchatUser.phone = "8837826904";
+    // Freshchat.setPushRegistrationToken(device.pushToken);
+    Freshchat.setUser(freshchatUser, (error) => {
+       // alert('hiii')
+    });
+    
+    Freshchat.showConversations();
+    this.setState({showChat : true})
   
-//   Freshchat.showFAQs();
-//   var freshchatConfig2 = new FreshchatConfig(FRESH_CHAT_APP_ID,FRESH_CHAT_ID_APP_KEY);
-// freshchatConfig2.teamMemberInfoVisible = true;
-// freshchatConfig2.cameraCaptureEnabled = true;
-// freshchatConfig2.gallerySelectionEnabled = true;
-// freshchatConfig2.responseExpectationEnabled = true
-// Freshchat.init(freshchatConfig2);
-//     var conversationOptions = new ConversationOptions();
-// conversationOptions.tags = ["premium"];
-// conversationOptions.filteredViewTitle = "Premium Support"; 
-// Freshchat.showFAQs();
-//  Freshchat.showConversations();
-//  Freshchat.sharedInstance().showConversations()
-   // this.props.navigation.navigate('Cart')
-  };
+}
+  }
 
   openScreen = (screen, param) => {
     this.props.navigation.navigate(screen, {clientData: param});
@@ -106,8 +96,12 @@ Freshchat.getFreshchatUserId((data) => {
     );
   };
 
+  openChat = () => {
+    Freshchat.showConversations();
+  }
+
   render() {
-    const {imagesList} = this.state;
+    const {imagesList, showChat} = this.state;
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
         <Header
@@ -116,6 +110,11 @@ Freshchat.getFreshchatUserId((data) => {
           rightImage={SEARCH}
           leftImage={DRAWER_MENU}
         />
+         {showChat ?
+        <TouchableOpacity style={commonStyles.buttonContainer} onPress={ () => this.openChat()}>
+        <Text style={commonStyles.buttonText}>Open Chat</Text>
+        </TouchableOpacity> : null
+         }
         {/* horizontal list */}
         <FlatList
           style={styles.patientFlatList}

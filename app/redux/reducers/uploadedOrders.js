@@ -18,6 +18,44 @@ export const getUploadedOrdersList = () => {
   };
 };
 
+export const addUploadedOrders = (reseller_id, name) => {
+  return (dispatch) => {
+    return API.addUploadedOrders({
+      reseller_id, 
+      name
+    }).then((response) => {
+      if (response.code === 200) {
+        if (response.data) {
+         // dispatch(addQuoteSuccess(response.data));
+        }
+      }
+      return response;
+    });
+  };
+};
+
+export const updateUploadedOrders = (
+  orderId,
+  client_id,
+  name,
+  file
+) => {
+  return (dispatch) => {
+    return API.updateUploadedOrders(orderId, {
+      client_id,
+      name,
+      file
+    }).then((response) => {
+      if (response.code === 200) {
+        if (response.data) {
+       //   dispatch(updateQuoteSuccess(response.data));
+        }
+      }
+      return response;
+    });
+  };
+};
+
 const INITAIL_STATE = {
   uploadedOrdersList: []
 };

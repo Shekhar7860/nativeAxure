@@ -2,7 +2,7 @@ import {StyleSheet, Dimensions} from 'react-native';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {
   WHITE,
-  APP_MAIN_COLOR,
+  APP_MAIN_GREEN,
   BLACK,
   PINK_COLOR,
   LIGHTEST_GRAY,
@@ -156,6 +156,20 @@ const commonStyles = ScaledSheet.create({
     marginTop: moderateScale(0),
     borderBottomWidth: 1,
   },
+  buttonContainer : {
+    width : '80%',
+    height : moderateScale(50),
+    alignSelf : 'center',
+    justifyContent : 'center',
+    alignItems : 'center',
+    backgroundColor: APP_MAIN_GREEN,
+    marginTop : fontSizes.font20,
+    borderRadius : fontSizes.font25
+  },
+  buttonText : {
+    color : WHITE,
+    fontWeight : 'bold'
+  }
 });
 
 export default commonStyles;

@@ -7,14 +7,10 @@
  */
 
 import React, {PureComponent} from 'react';
-import {
-  StyleSheet
-} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
-import {
-  Colors
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 import AppNavigator from './Navigator';
 import SplashScreen from 'react-native-splash-screen';
 import messaging, {AuthorizationStatus} from '@react-native-firebase/messaging';
@@ -28,31 +24,24 @@ const {store, persistor} = createStore();
 
 class App extends PureComponent {
   componentDidMount() {
-     this.requestUserPermission()
-     this.getToken();
-     console.disableYellowBox = true;
-   
+    this.requestUserPermission();
+    this.getToken();
+    console.disableYellowBox = true;
+
     // OneSignal.setLogLevel(6, 0);
     // OneSignal.init("6c356504-bbfc-4036-bb77-07245ccdb10e", {kOSSettingsKeyAutoPrompt : false, kOSSettingsKeyInAppLaunchURL: false, kOSSettingsKeyInFocusDisplayOption:2});
     // setTimeout(()=>{
     //   SplashScreen.hide();
-    // }, 2000); 
+    // }, 2000);
     // OneSignal.promptForPushNotificationsWithUserResponse(this.myiOSPromptCallback);
     // OneSignal.addEventListener('ids', this.onIds);
-   
-    
-    
   }
-  
- myiOSPromptCallback(permission){
-  
-}
 
-onIds(device) {
-  console.log('Device info: ', device);
-  
-}
+  myiOSPromptCallback(permission) {}
 
+  onIds(device) {
+    console.log('Device info: ', device);
+  }
 
   handleConnectionChange = (isConnected) => {
     status = isConnected;
@@ -60,9 +49,9 @@ onIds(device) {
 
   // checking if app opened from notification or not
   async getToken() {
-   const token = await messaging().getToken();
-    alert(token)
-   Freshchat.setPushRegistrationToken(token)
+    const token = await messaging().getToken();
+    // alert(token);
+    Freshchat.setPushRegistrationToken(token);
   }
 
   async requestUserPermission() {
@@ -70,7 +59,7 @@ onIds(device) {
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  
+
     if (enabled) {
       console.log('Authorization status:', authStatus);
     }

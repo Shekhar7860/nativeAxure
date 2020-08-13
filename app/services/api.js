@@ -55,24 +55,15 @@ export default class Api {
     return response;
   }
 
-
   static addUploadedOrders(userData = {}) {
-    const formData = clearQuery(
-      pick(userData, ['reseller_id', 'name']),
-    );
+    const formData = clearQuery(pick(userData, ['reseller_id', 'name']));
     let response = this.sendRequest('POST', 'uploaded-orders', {formData});
     return response;
   }
 
   static updateUploadedOrders(ID, userData = {}) {
     // console.log('quoteId is', ID)
-    const formData = clearQuery(
-      pick(userData, [
-        'client_id',
-        'name',
-        'file'
-      ]),
-    );
+    const formData = clearQuery(pick(userData, ['client_id', 'name', 'file']));
     let response = this.sendRequest('PATCH', `uploaded-orders/${ID}`, {
       formData,
     });
@@ -396,7 +387,10 @@ export default class Api {
   }
 
   static getUploadedOrdersList() {
-    let response = this.sendRequest('GET', 'uploaded-orders?force_all_data=yes');
+    let response = this.sendRequest(
+      'GET',
+      'uploaded-orders?force_all_data=yes',
+    );
     return response;
   }
 
@@ -471,7 +465,7 @@ export default class Api {
 
     const url = urlTo(fullPath, opts.publicApi);
     const requestBody = jsonBody || formDataToObject(formData) || query || '';
-   console.log('Request:', fetchOpts.headers, url, requestBody);
+    console.log('Request:', fetchOpts.headers, url, requestBody);
     return fetch(url, fetchOpts)
       .then(async (res) => {
         let data = res;
@@ -481,7 +475,7 @@ export default class Api {
           console.log('Response parse error: ', parseError);
         }
 
-       console.log('Response:', res, data);
+        console.log('Response:', res, data);
 
         switch (res.status) {
           case 200: {

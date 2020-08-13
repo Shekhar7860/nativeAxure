@@ -25,7 +25,7 @@ const StoreDB = {
     return AsyncStorage.getItem(EMAIL);
   },
 
-  userPassword(password = undefined) {
+         userPassword(password = undefined) {
     if (password) {
       return AsyncStorage.setItem(PASSWORD, password);
     }

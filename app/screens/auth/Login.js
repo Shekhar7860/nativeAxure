@@ -28,7 +28,7 @@ import {
 } from '../../constants/colors';
 import InputBox from '../../components/InputBox';
 import {SIGN_UP_URL} from '../../constants/const';
-import {loginUser} from '../../redux/reducers/session';
+// import {loginUser} from '../../redux/reducers/session';
 import {isEmailValid, showErrorPopup} from '../../util/utils';
 import StoreDB from '../../storage/StoreDB';
 import Api from '../../services/api';
@@ -66,57 +66,53 @@ class Login extends Component {
     const {username, password, isRememberMe} = this.state;
     const {online} = this.props;
 
-    if (online) {
-      // console.group('username', username, 'password', password)
-      if (!username) {
-        Alert.alert('', 'Please enter Username.');
-      } else if (!isEmailValid(username)) {
-        Alert.alert('', 'Please enter valid Username.');
-      } else if (!password) {
-        Alert.alert('', 'Please enter Password.');
-      } else {
-        this.setState({showLoading: true});
-        this.props
-          .loginUser(username, password)
-          .then((response) => {
-            this.setState({showLoading: false});
-            if (response.code === 200) {
-              if (isRememberMe) {
-                StoreDB.userEmail(username);
-                StoreDB.userPassword(password);
-              } else {
-                StoreDB.userEmail('');
-                StoreDB.userPassword('');
-              }
-              Api.setAuthToken(response.data.auth_token);
-              StoreDB.loggedInUserData(response.data);
-              this.props.navigation.navigate(ROUTES.Home);
-              this.props.navigation.reset({
-                routes: [{name: ROUTES.Home}],
-              });
-            } else {
-              if (response.validation_errors) {
-                showErrorPopup(response.validation_errors);
-              } else {
-                showErrorPopup(response.message);
-              }
-            }
-          })
-          .catch((error) => {
-            this.setState({showLoading: false});
-            if (error.code === 'unauthorized') {
-              showErrorPopup(
-                "Couldn't validate those credentials.\nPlease try again",
-              );
-            } else {
-              showErrorPopup(
-                'There was an unexpected error.\nPlease wait a few minutes and try again.',
-              );
-            }
-          });
-      }
+    // console.group('username', username, 'password', password)
+    if (!username) {
+      Alert.alert('', 'Please enter Username.');
+    } else if (!isEmailValid(username)) {
+      Alert.alert('', 'Please enter valid Username.');
+    } else if (!password) {
+      Alert.alert('', 'Please enter Password.');
     } else {
-      Alert.alert('', 'No Internet Connection');
+      this.setState({showLoading: true});
+      this.props
+        .loginUser(username, password)
+        .then((response) => {
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            if (isRememberMe) {
+              StoreDB.userEmail(username);
+              StoreDB.userPassword(password);
+            } else {
+              StoreDB.userEmail('');
+              StoreDB.userPassword('');
+            }
+            Api.setAuthToken(response.data.auth_token);
+            StoreDB.loggedInUserData(response.data);
+            this.props.navigation.navigate(ROUTES.Home);
+            this.props.navigation.reset({
+              routes: [{name: ROUTES.Home}],
+            });
+          } else {
+            if (response.validation_errors) {
+              showErrorPopup(response.validation_errors);
+            } else {
+              showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup(
+              'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            );
+          }
+        });
     }
   };
 
@@ -133,7 +129,7 @@ class Login extends Component {
         behavior={Platform.OS === 'android' ? null : 'padding'}
         enabled>
         <View style={styles.loginAppName}>
-          <Image source={LOGO} style={commonStyles.smallLogoIcon}/>
+          <Image source={LOGO} style={commonStyles.smallLogoIcon} />
           <Text style={styles.signInText}>Sign In</Text>
           <View style={styles.contentMargin}>
             <InputBox
@@ -184,9 +180,7 @@ class Login extends Component {
           <ClickableText
             textStyle={styles.registerText}
             isBoldText={true}
-            onPress={() =>
-              this.openUrl(SIGN_UP_URL)
-            }>
+            onPress={() => this.openUrl(SIGN_UP_URL)}>
             REGISTER
           </ClickableText>
         </View>
@@ -204,8 +198,8 @@ class Login extends Component {
 
 const styles = ScaledSheet.create({
   loginAppName: {
-    flex : 1,
-    justifyContent : 'center'
+    flex: 1,
+    justifyContent: 'center',
   },
   signInText: {
     marginTop: moderateScale(10),
@@ -241,8 +235,12 @@ const mapStateToProps = (state) => ({
   online: state.netInfo.online,
 });
 
-const mapDispatchToProps = {
-  loginUser,
-};
+// const mapDispatchToProps = {
+//   loginUser,
+// };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+const mapDispatch = ({userData: {loginUser}}) => ({
+  loginUser: (password) => loginUser(password),
+});
+
+export default connect(null, mapDispatch)(Login);

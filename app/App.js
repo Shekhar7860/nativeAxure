@@ -18,9 +18,9 @@ import createStore from './redux/store';
 import OneSignal from 'react-native-onesignal';
 import {Freshchat} from 'react-native-freshchat-sdk';
 
-//import store from './redux/store';
+import store from './redux/storeRematch';
 
-const {store, persistor} = createStore();
+const {persistor} = createStore();
 
 class App extends PureComponent {
   componentDidMount() {

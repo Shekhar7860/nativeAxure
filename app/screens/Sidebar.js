@@ -63,7 +63,7 @@ openScreen = (screenName, props) => {
     screenName == 'Support Requests' ||
     screenName == 'Products'
   ) {
-     // alert(ROUTES.Clients);
+    // alert(ROUTES.Clients);
     props.navigation.navigate(screenName);
   } else if (screenName == 'Resource Hub') {
     Linking.openURL(RESOURCE_HUB_URL);
@@ -158,6 +158,7 @@ const Sidebar = (props) => {
   };
 
   const {userInfo, screenStatus} = props;
+  console.log('userinfo', userInfo);
   // if(screenStatus.screenStatus == true) {
   //   props.navigation.navigate('HomePage')
   // }
@@ -253,10 +254,9 @@ const mapDispatchToProps = {
   updateProfilePic,
 };
 
-const mapStateToProps = (state) => ({
-  online: state.netInfo.online,
-  userInfo: state.session.userInfo,
-  screenStatus: state.screenStatus,
+const mapState = (state) => ({
+  online: state.userData.online,
+  userInfo: state.userData.userInfo.userInfo,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
+export default connect(mapState, mapDispatchToProps)(Sidebar);

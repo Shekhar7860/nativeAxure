@@ -20,7 +20,7 @@ import {
   BackHandler,
   Linking,
   Alert,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import {RESOURCE_HUB_URL} from '../../constants/const';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -46,12 +46,13 @@ class Home extends PureComponent {
         {image: SLIDE_5},
         {image: SLIDE_6},
       ],
-      showLoading : false
+      showLoading: false,
     };
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
 
   componentDidMount() {
+    // console.log('usefingo', this.props);
     this.init();
     this._sub = this.props.navigation.addListener('didFocus', () => {
       this.init();
@@ -63,33 +64,32 @@ class Home extends PureComponent {
       'hardwareBackPress',
       this.handleBackButtonClick,
     );
-    setTimeout(()=>{ 
-    const {online} = this.props;
+    setTimeout(() => {
+      const {online} = this.props;
 
-    if (online) {
-      this.setState({showLoading : true})
-      this.props
-        .getClientsList()
-        .then((response) => {
-        //  console.group('response', response);
-          if (response.code === 200) {
-            this.setState({showLoading : false})
-          }
-
-        })
-        .catch((error) => {
-          this.setState({showLoading: false});
-          if (error.code === 'unauthorized') {
-            showErrorPopup(
-              "Couldn't validate those credentials.\nPlease try again",
-            );
-          } else {
-          }
-        });
+      if (online) {
+        this.setState({showLoading: true});
+        this.props
+          .getClientsList()
+          .then((response) => {
+            //  console.group('response', response);
+            if (response.code === 200) {
+              this.setState({showLoading: false});
+            }
+          })
+          .catch((error) => {
+            this.setState({showLoading: false});
+            if (error.code === 'unauthorized') {
+              showErrorPopup(
+                "Couldn't validate those credentials.\nPlease try again",
+              );
+            } else {
+            }
+          });
         this.props
           .getCountriesList()
           .then((response) => {
-          //  console.log('Countries', response);
+            //  console.log('Countries', response);
             this.setState({showLoading: false});
             if (response.code === 200) {
               this.setState({items: response.data.items});
@@ -107,10 +107,10 @@ class Home extends PureComponent {
               );
             }
           });
-          this.props
+        this.props
           .getProductsList()
           .then((response) => {
-         //  console.log('response', response);
+            //  console.log('response', response);
             this.setState({showLoading: false});
             if (response.code === 200) {
               this.setState({items: response.data.items});
@@ -128,10 +128,10 @@ class Home extends PureComponent {
               );
             }
           });
-    } else {
-      Alert.alert('', 'No Internet Connection');
-    }
-  }, 2000);
+      } else {
+        Alert.alert('', 'No Internet Connection');
+      }
+    }, 2000);
   };
 
   componentWillUnmount() {
@@ -149,8 +149,8 @@ class Home extends PureComponent {
         this.props.navigation.navigate(ROUTES.Quotes);
         break;
       case 1:
-       this.props.navigation.navigate(ROUTES.Orders);
-      break;
+        this.props.navigation.navigate(ROUTES.Orders);
+        break;
       case 2:
         this.props.navigation.navigate(ROUTES.Users);
         break;
@@ -181,7 +181,7 @@ class Home extends PureComponent {
         <HeaderWithLogo
           navigation={this.props.navigation}
           title="MPH GROUP"
-          rightImage={""}
+          rightImage={''}
         />
         {/* horizontal list */}
         <FlatList
@@ -217,15 +217,23 @@ const styles = ScaledSheet.create({
   },
 });
 
-
-const mapStateToProps = (state) => ({
-  online: state.netInfo.online,
+const mapState = (state) => ({
+  online: state.userData.online,
+  userInfo: state.userData.userInfo,
 });
 
 const mapDispatchToProps = {
   getClientsList,
   getProductsList,
-  getCountriesList
+  getCountriesList,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+const mapDispatch = ({
+  userData: {getClientsList, getProductsList, getCountriesList},
+}) => ({
+  getClientsList: () => getClientsList(),
+  getProductsList: () => getProductsList(),
+  getCountriesList: () => getCountriesList(),
+});
+
+export default connect(mapState, mapDispatch)(Home);

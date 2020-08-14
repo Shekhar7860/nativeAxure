@@ -82,4 +82,8 @@ const mapDispatchToProps = {
   getUserInfo,
 };
 
-export default connect(null, mapDispatchToProps)(Landing);
+const mapDispatch = ({userData: {checkInternet}}) => ({
+  checkInternet: (obj) => checkInternet(obj),
+});
+
+export default connect(null, mapDispatch)(Landing);

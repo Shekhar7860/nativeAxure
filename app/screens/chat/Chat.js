@@ -22,51 +22,56 @@ import {
 import {APP_MAIN_BLUE} from '../../constants/colors';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
- import {Freshchat, FreshchatConfig, FreshchatUser } from 'react-native-freshchat-sdk';
- import {connect} from 'react-redux';
+import {
+  Freshchat,
+  FreshchatConfig,
+  FreshchatUser,
+} from 'react-native-freshchat-sdk';
+import {connect} from 'react-redux';
 
- class Chat extends PureComponent {
+class Chat extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       imagesList: [],
-      showChat : false
+      showChat: false,
     };
   }
   componentDidMount = () => {
     // call function everytime when screen is focused
-    this.init()
-    this.focusListener = this.props.navigation.addListener('focus',
-        () => this.init())
+    this.init();
+    this.focusListener = this.props.navigation.addListener('focus', () =>
+      this.init(),
+    );
   };
 
   init = () => {
     // alert('true')
     const {userInfo} = this.props;
-    if(userInfo) {
-    var freshchatConfig = new FreshchatConfig(
-      FRESH_CHAT_APP_ID,
-      FRESH_CHAT_ID_APP_KEY,
-    );
-    freshchatConfig.domain = "https://msdk.in.freshchat.com";
-    freshchatConfig.cameraCaptureEnabled = false;
-    Freshchat.init(freshchatConfig);
-    var freshchatUser = new FreshchatUser();
-    freshchatUser.firstName = userInfo.first_name;
-    freshchatUser.lastName = userInfo.last_name;
-    freshchatUser.email =  userInfo.email;
-    freshchatUser.phoneCountryCode = "+91";
-    freshchatUser.phone = "8837826904";
-    // Freshchat.setPushRegistrationToken(device.pushToken);
-    Freshchat.setUser(freshchatUser, (error) => {
-       // alert('hiii')
-    });
-    
-    Freshchat.showConversations();
-    this.setState({showChat : true})
-  
-}
-  }
+    console.log('userfinfo', userInfo);
+    if (userInfo) {
+      var freshchatConfig = new FreshchatConfig(
+        FRESH_CHAT_APP_ID,
+        FRESH_CHAT_ID_APP_KEY,
+      );
+      freshchatConfig.domain = 'https://msdk.in.freshchat.com';
+      freshchatConfig.cameraCaptureEnabled = false;
+      Freshchat.init(freshchatConfig);
+      var freshchatUser = new FreshchatUser();
+      freshchatUser.firstName = userInfo.first_name;
+      freshchatUser.lastName = userInfo.last_name;
+      freshchatUser.email = userInfo.email;
+      freshchatUser.phoneCountryCode = '+91';
+      freshchatUser.phone = '8837826904';
+      // Freshchat.setPushRegistrationToken(device.pushToken);
+      Freshchat.setUser(freshchatUser, (error) => {
+        // alert('hiii')
+      });
+
+      Freshchat.showConversations();
+      this.setState({showChat: true});
+    }
+  };
 
   openScreen = (screen, param) => {
     this.props.navigation.navigate(screen, {clientData: param});
@@ -98,7 +103,7 @@ import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
 
   openChat = () => {
     Freshchat.showConversations();
-  }
+  };
 
   render() {
     const {imagesList, showChat} = this.state;
@@ -110,11 +115,13 @@ import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
           rightImage={SEARCH}
           leftImage={DRAWER_MENU}
         />
-         {showChat ?
-        <TouchableOpacity style={commonStyles.buttonContainer} onPress={ () => this.openChat()}>
-        <Text style={commonStyles.buttonText}>Open Chat</Text>
-        </TouchableOpacity> : null
-         }
+        {showChat ? (
+          <TouchableOpacity
+            style={commonStyles.buttonContainer}
+            onPress={() => this.openChat()}>
+            <Text style={commonStyles.buttonText}>Open Chat</Text>
+          </TouchableOpacity>
+        ) : null}
         {/* horizontal list */}
         <FlatList
           style={styles.patientFlatList}
@@ -167,13 +174,13 @@ const styles = ScaledSheet.create({
   },
 });
 
-const mapStateToProps = (state) => ({
-  online: state.netInfo.online,
-  userInfo: state.session.userInfo,
+const mapState = (state) => ({
+  online: state.userData.online.online,
+  userInfo: state.userData.userInfo.userInfo,
 });
 
 // const mapDispatchToProps = {
 //   getQuoteDetails,
 // };
 
-export default connect(mapStateToProps, null)(Chat);
+export default connect(mapState, null)(Chat);

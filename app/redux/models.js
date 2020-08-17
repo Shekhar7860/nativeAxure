@@ -4,19 +4,68 @@ import API from '../services/api';
 export const userData = {
   state: DEFAULT,
   reducers: {
-    setFirstName(state, firstName) {
-      return {...state, currentPerson: {...state.currentPerson, firstName}};
+    checkInternet(state, online) {
+      return {...state, online: {...state.online, online}};
     },
-    setLastName(state, lastName) {
-      return {...state, currentPerson: {...state.currentPerson, lastName}};
+    setUserData(state, userInfo) {
+      // console.log('userdata', userInfo);
+      return {...state, userInfo: {...state.userInfo, userInfo}};
     },
-    setPeople(state, payload) {
-      return {...state, people: payload};
+    setClientsList(state, payload) {
+      return {...state, clientList: payload};
+    },
+    setProductsList(state, payload) {
+      return {...state, productsList: payload};
+    },
+    setCountriesList(state, payload) {
+      return {...state, countriesList: payload};
     },
   },
   effects: {
-    async loginUser(email, password) {
-      const people = await API.login({email, password});
+    loginUser(user) {
+      let email = user.username;
+      let password = user.password;
+      return API.login({email, password})
+        .then((response) => {
+          if (response.code === 200) {
+            this.setUserData(response.data);
+          }
+          return response;
+        })
+        .catch((error) => {
+          return error;
+        });
+      // const people = await API.login({email, password});
+    },
+    getClientsList() {
+      return API.getClientsList().then((response) => {
+        if (response.code === 200) {
+          if (response.data) {
+            this.setClientsList(response.data);
+          }
+        }
+        return response;
+      });
+    },
+    getProductsList() {
+      return API.getProductsList().then((response) => {
+        if (response.code === 200) {
+          if (response.data) {
+            this.setProductsList(response.data);
+          }
+        }
+        return response;
+      });
+    },
+    getCountriesList() {
+      return API.getCountriesList().then((response) => {
+        if (response.code === 200) {
+          if (response.data) {
+            this.setCountriesList(response.data);
+          }
+        }
+        return response;
+      });
     },
   },
 };

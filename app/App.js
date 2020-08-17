@@ -19,8 +19,8 @@ import OneSignal from 'react-native-onesignal';
 import {Freshchat} from 'react-native-freshchat-sdk';
 
 import store from './redux/storeRematch';
-
-const {persistor} = createStore();
+import {getPersistor} from '@rematch/persist';
+const persistor = getPersistor();
 
 class App extends PureComponent {
   componentDidMount() {

@@ -58,7 +58,7 @@ class Client extends PureComponent {
       this.props
         .getClientDetails(id)
         .then((response) => {
-         // console.log('response', response);
+          // console.log('response', response);
           this.setState({showLoading: false});
           if (response.code === 200) {
             this.setState({client: response.data});
@@ -319,12 +319,12 @@ const styles = ScaledSheet.create({
   },
 });
 
-const mapStateToProps = (state) => ({
-  online: state.netInfo.online,
+const mapState = (state) => ({
+  online: state.userData.online.online,
 });
 
 const mapDispatchToProps = {
   getClientDetails,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Client);
+export default connect(mapState, mapDispatchToProps)(Client);

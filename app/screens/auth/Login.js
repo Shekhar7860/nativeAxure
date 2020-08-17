@@ -75,8 +75,9 @@ class Login extends Component {
       Alert.alert('', 'Please enter Password.');
     } else {
       this.setState({showLoading: true});
+      var obj = {username: username, password: password};
       this.props
-        .loginUser(username, password)
+        .loginUser(obj)
         .then((response) => {
           this.setState({showLoading: false});
           if (response.code === 200) {
@@ -231,16 +232,15 @@ const styles = ScaledSheet.create({
   },
 });
 
-const mapStateToProps = (state) => ({
-  online: state.netInfo.online,
+const mapState = (state) => ({
+  online: state.userData.online,
 });
-
 // const mapDispatchToProps = {
 //   loginUser,
-// };
+// };s
 
 const mapDispatch = ({userData: {loginUser}}) => ({
-  loginUser: (password) => loginUser(password),
+  loginUser: (obj) => loginUser(obj),
 });
 
-export default connect(null, mapDispatch)(Login);
+export default connect(mapState, mapDispatch)(Login);

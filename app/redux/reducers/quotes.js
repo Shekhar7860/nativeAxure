@@ -10,7 +10,6 @@ const addQuoteSuccess = (value) => ({type: ADD_QUOTE_SUCCESS, value});
 const updateQuoteSuccess = (value) => ({type: UPDATE_QUOTE_SUCCESS, value});
 const addQuoteItemSuccess = (value) => ({type: ADD_QUOTE_ITEM_SUCCESS, value});
 
-
 export const getQuotesList = () => {
   return (dispatch) => {
     return API.getQuotesList().then((response) => {
@@ -69,12 +68,11 @@ export const updateQuote = (
   shipping_add2,
   shipping_city,
   shipping_country,
-  shipping_zip_code
+  shipping_zip_code,
 ) => {
   return (dispatch) => {
-    return API.updateQuote(quoteId, {
+    return API.updateQuote(quoteId, status, {
       type,
-      status,
       code,
       terms,
       name,
@@ -111,16 +109,12 @@ export const updateQuote = (
   };
 };
 
-export const addQuote = (
-  reseller_id,
-  client_id,
-  type,
-) => {
+export const addQuote = (reseller_id, client_id, type) => {
   return (dispatch) => {
     return API.addQuote({
       reseller_id,
       client_id,
-      type
+      type,
     }).then((response) => {
       if (response.code === 200) {
         if (response.data) {
@@ -132,16 +126,12 @@ export const addQuote = (
   };
 };
 
-export const addQuoteItem = (
-  quote_id,
-  product_id,
-  quantity
-) => {
+export const addQuoteItem = (quote_id, product_id, quantity) => {
   return (dispatch) => {
     return API.addQuoteItem({
       quote_id,
       product_id,
-      quantity
+      quantity,
     }).then((response) => {
       if (response.code === 200) {
         if (response.data) {
@@ -180,9 +170,9 @@ export default function reducer(state = INITAIL_STATE, action) {
     case ADD_QUOTE_SUCCESS:
       return {...state, addQuote: action.value};
     case UPDATE_QUOTE_SUCCESS:
-    return {...state,updateQuote: action.value};
+      return {...state, updateQuote: action.value};
     case ADD_QUOTE_ITEM_SUCCESS:
-        return {...state, addQuoteItem: action.value};
+      return {...state, addQuoteItem: action.value};
     default:
       return state;
   }

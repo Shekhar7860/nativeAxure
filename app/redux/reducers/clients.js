@@ -11,7 +11,7 @@ const updateClientSuccess = (value) => ({type: UPDATE_CLIENT_SUCCESS, value});
 export const getClientsList = () => {
   return (dispatch) => {
     return API.getClientsList().then((response) => {
-      console.log('response', response);
+     // console.log('response', response);
       if (response.code === 200) {
         if (response.data) {
           dispatch(setClientsList(response.data));

@@ -2,7 +2,7 @@ import {StyleSheet, Dimensions} from 'react-native';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {
   WHITE,
-  APP_MAIN_COLOR,
+  APP_MAIN_GREEN,
   BLACK,
   PINK_COLOR,
   LIGHTEST_GRAY,
@@ -40,7 +40,7 @@ const commonStyles = ScaledSheet.create({
   },
   rowItem: {
     marginHorizontal: fontSizes.font20,
-    marginBottom: fontSizes.font25
+    marginBottom: fontSizes.font25,
   },
   itemText: {
     color: WHITE,
@@ -60,7 +60,7 @@ const commonStyles = ScaledSheet.create({
   },
   otherButtons: {
     backgroundColor: PINK_COLOR,
-    height:  fontSizes.font60,
+    height: fontSizes.font60,
     flex: null,
     marginBottom: fontSizes.fontTen,
     borderRadius: fontSizes.font30,
@@ -87,13 +87,13 @@ const commonStyles = ScaledSheet.create({
   },
   largeIcon: {
     width: fontSizes.font56,
-    height: fontSizes.font57
+    height: fontSizes.font57,
   },
   content: {
-    marginHorizontal: fontSizes.fontTen
+    marginHorizontal: fontSizes.fontTen,
   },
   space: {
-    marginTop: fontSizes.font20
+    marginTop: fontSizes.font20,
   },
   shadowLayout: {
     marginTop: fontSizes.fontTen,
@@ -130,7 +130,7 @@ const commonStyles = ScaledSheet.create({
   noRecordFound: {
     marginTop: fontSizes.font20,
     textAlign: 'center',
-    fontSize: fontSizes.font20
+    fontSize: fontSizes.font20,
   },
   logoIcon: {
     alignSelf: 'center',
@@ -146,9 +146,29 @@ const commonStyles = ScaledSheet.create({
   marginTop20: {
     marginTop: fontSizes.font20,
   },
-  commonRow  : {
-  flexDirection: 'row',
-  marginHorizontal: fontSizes.font20
+  commonRow: {
+    flexDirection: 'row',
+    marginHorizontal: fontSizes.font20,
+    marginTop: fontSizes.negativeFont30,
+  },
+  commonTextBorder: {
+    width: '88%',
+    marginTop: moderateScale(0),
+    borderBottomWidth: 1,
+  },
+  buttonContainer : {
+    width : '80%',
+    height : moderateScale(50),
+    alignSelf : 'center',
+    justifyContent : 'center',
+    alignItems : 'center',
+    backgroundColor: APP_MAIN_GREEN,
+    marginTop : fontSizes.font20,
+    borderRadius : fontSizes.font25
+  },
+  buttonText : {
+    color : WHITE,
+    fontWeight : 'bold'
   }
 });
 

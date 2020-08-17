@@ -11,7 +11,7 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
 } from '../../constants/colors';
-import {USER, BACK, TASK, DRAWER_MENU} from '../../constants/Images';
+import {USER, BACK, SEARCH} from '../../constants/Images';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AddNewButtonGroup from '../../components/AddNewButtonGroup';
 import ClickableText from '../../components/ClickableText';
@@ -33,7 +33,8 @@ import {
   TouchableOpacity,
   FlatList,
   Dimensions,
-  Alert
+  Alert,
+  TextInput,
 } from 'react-native';
 import ButtonDefault from '../../components/ButtonDefault';
 import {addUSER, updateUser} from '../../redux/reducers/users';
@@ -44,174 +45,230 @@ class UserDetail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      userData : {},
-      showLoading : false,
-      email : "",
-      firstName : "",
-      surName : "",
-      password : "",
-      confirmPassword : "",
-      add1 : "",
-      add2 : "",
-      city : "",
-      country : "",
-      postalCode : "",
-      group : "",
-      partner : "",
-      phone : "",
-      mobile : "",
-      countries : [],
-      userId : "",
-      groupId : [21]
+      userData: {},
+      showLoading: false,
+      email: '',
+      firstName: '',
+      surName: '',
+      password: '',
+      confirmPassword: '',
+      add1: '',
+      add2: '',
+      city: '',
+      country: '',
+      postalCode: '',
+      group: '',
+      partner: '',
+      phone: '',
+      mobile: '',
+      countries: [],
+      userId: '',
+      groupId: [21],
+      showCountrySearch: false,
+      selectedCountries: [],
     };
   }
   componentDidMount = () => {
     const {countries} = this.props;
-   // console.log('here are countries', countries);
+    // console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
+      this.state.selectedCountries.push(countries.items[i].name);
     }
     if (this.props.route.params) {
-    //  console.log('here are params', this.props.route.params);
-      if(this.props.route.params.userData !== undefined)
-      {
-      this.setState({userData : this.props.route.params.userData, email : this.props.route.params.userData.email,
-        firstName : this.props.route.params.userData.first_name, surName : this.props.route.params.userData.last_name,
-        add1 : this.props.route.params.userData.address1, add2 : this.props.route.params.userData.address2,
-        phone : this.props.route.params.userData.phone, mobile : this.props.route.params.userData.mobile,
-        postalCode : this.props.route.params.userData.zip_code,
-        userId : this.props.route.params.userData.id,
-        emailVerified : this.props.route.params.userData.email_verified_at})
+      //  console.log('here are params', this.props.route.params);
+      if (this.props.route.params.userData !== undefined) {
+        this.setState({
+          userData: this.props.route.params.userData,
+          email: this.props.route.params.userData.email,
+          firstName: this.props.route.params.userData.first_name,
+          surName: this.props.route.params.userData.last_name,
+          add1: this.props.route.params.userData.address1,
+          add2: this.props.route.params.userData.address2,
+          phone: this.props.route.params.userData.phone,
+          mobile: this.props.route.params.userData.mobile,
+          postalCode: this.props.route.params.userData.zip_code,
+          userId: this.props.route.params.userData.id,
+          emailVerified: this.props.route.params.userData.email_verified_at,
+        });
 
-        if(this.props.route.params.userData.type == "reseller-user"){
-          this.setState({group : "Partner user"})
+        if (this.props.route.params.userData.type == 'reseller-user') {
+          this.setState({group: 'Partner user'});
+        } else {
+          this.setState({group: 'Partner admin'});
         }
-        else {
-          this.setState({group : "Partner admin"})
+        if (this.props.route.params.userData.reseller_id == 27) {
+          this.setState({partner: 'Yantra Test Reseller'});
         }
-        if(this.props.route.params.userData.reseller_id == 27){
-          this.setState({partner : "Yantra Test Reseller"})
-        }
-        
       }
     }
     //this.props.navigation.navigate('Cart')
   };
 
+  showDropDown = (value) => {
+    this.setState({showCountrySearch: true});
+  };
+
+  hideDropDown = () => {
+    // this.setState({showCountrySearch: false});
+  };
+
+  searchCountries = (text, value) => {
+    // console.log('array holder', this.state.countries);
+    const newData = this.state.countries.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item ? item.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    console.log('data', newData);
+    if (text !== '') {
+      this.setState({countries: newData});
+    } else {
+      this.setState({countries: this.state.selectedCountries});
+    }
+  };
   saveUser = () => {
     const {online, userInfo} = this.props;
-    console.log('this grp id', this.state.groupId)
+    console.log('this grp id', this.state.groupId);
     const {
-      email, firstName, surName, add1, add2,
-      phone, mobile, postalCode, newPassword, confirmPassword,
-      city, userId, groupId
+      email,
+      firstName,
+      surName,
+      add1,
+      add2,
+      phone,
+      mobile,
+      postalCode,
+      newPassword,
+      confirmPassword,
+      city,
+      userId,
+      groupId,
     } = this.state;
-    if(firstName){
+    if (firstName) {
       if (online) {
-      this.setState({showLoading: true});
-  if(userId == "") {
-      this.props
-        .addUSER(
-          email,
-          firstName,
-          surName,
-          userInfo.reseller_id,
-          newPassword,
-          add1,
-          add2,
-          phone, 
-          mobile, 
-          postalCode,
-          city,
-          confirmPassword,
-          groupId,
-        )
-        .then((response) => {
-          console.log('ddd', response)
-          this.setState({showLoading: false});
-          if (response.code === 200) {
-            Toast.show(response.message)
-            this.props.navigation.navigate('AllUsers')
-          } else {
-            if (response.validation_errors) {
-              showErrorPopup(response.validation_errors);
-            } else {
-              showErrorPopup(response.message);
-            }
-          }
-        })
-        .catch((error) => {
-          this.setState({showLoading: false});
-          if (error.code === 'unauthorized') {
-            showErrorPopup(
-              "Couldn't validate those credentials.\nPlease try again",
-            );
-          } else {
-            showErrorPopup(
-              'There was an unexpected error.\nPlease wait a few minutes and try again.',
-            );
-          }
-        });
-      }
-      else {
-        this.props
-        .updateUser(
-          userId,
-          email,
-          firstName,
-          surName,
-          userInfo.reseller_id,
-          newPassword,
-          add1,
-          add2,
-          phone, 
-          mobile, 
-          postalCode,
-          city,
-          confirmPassword
-        )
-        .then((response) => {
-          console.log('ddd', response)
-          this.setState({showLoading: false});
-          if (response.code === 200) {
-            Toast.show(response.message)
-            this.props.navigation.navigate('AllUsers')
-          } else {
-            if (response.validation_errors) {
-              showErrorPopup(response.validation_errors);
-            } else {
-              showErrorPopup(response.message);
-            }
-          }
-        })
-        .catch((error) => {
-          this.setState({showLoading: false});
-          if (error.code === 'unauthorized') {
-            showErrorPopup(
-              "Couldn't validate those credentials.\nPlease try again",
-            );
-          } else {
-            showErrorPopup(
-              'There was an unexpected error.\nPlease wait a few minutes and try again.',
-            );
-          }
-        });
+        this.setState({showLoading: true});
+        if (userId == '') {
+          this.props
+            .addUSER(
+              email,
+              firstName,
+              surName,
+              userInfo.reseller_id,
+              newPassword,
+              add1,
+              add2,
+              phone,
+              mobile,
+              postalCode,
+              city,
+              confirmPassword,
+              groupId,
+            )
+            .then((response) => {
+              console.log('ddd', response);
+              this.setState({showLoading: false});
+              if (response.code === 200) {
+                Toast.show(response.message);
+                this.props.navigation.navigate('AllUsers');
+              } else {
+                if (response.validation_errors) {
+                  showErrorPopup(response.validation_errors);
+                } else {
+                  showErrorPopup(response.message);
+                }
+              }
+            })
+            .catch((error) => {
+              this.setState({showLoading: false});
+              if (error.code === 'unauthorized') {
+                showErrorPopup(
+                  "Couldn't validate those credentials.\nPlease try again",
+                );
+              } else {
+                showErrorPopup(
+                  'There was an unexpected error.\nPlease wait a few minutes and try again.',
+                );
+              }
+            });
+        } else {
+          this.props
+            .updateUser(
+              userId,
+              email,
+              firstName,
+              surName,
+              userInfo.reseller_id,
+              newPassword,
+              add1,
+              add2,
+              phone,
+              mobile,
+              postalCode,
+              city,
+              confirmPassword,
+            )
+            .then((response) => {
+              console.log('ddd', response);
+              this.setState({showLoading: false});
+              if (response.code === 200) {
+                Toast.show(response.message);
+                this.props.navigation.navigate('AllUsers');
+              } else {
+                if (response.validation_errors) {
+                  showErrorPopup(response.validation_errors);
+                } else {
+                  showErrorPopup(response.message);
+                }
+              }
+            })
+            .catch((error) => {
+              this.setState({showLoading: false});
+              if (error.code === 'unauthorized') {
+                showErrorPopup(
+                  "Couldn't validate those credentials.\nPlease try again",
+                );
+              } else {
+                showErrorPopup(
+                  'There was an unexpected error.\nPlease wait a few minutes and try again.',
+                );
+              }
+            });
+        }
+      } else {
+        Alert.alert('', 'No Internet Connection');
       }
     } else {
-      Alert.alert('', 'No Internet Connection');
+      Alert.alert('', 'Please enter first Name');
     }
-  }
-  else {
-    Alert.alert('', 'Please enter first Name')
-  }
-  }
+  };
 
   selectData = (val) => {
-      this.setState({country: this.state.countries[val]});
+    this.setState({country: this.state.countries[val]});
   };
 
   render() {
-    const {items, userData, showLoading, email, firstName, surName, add1, add2, city, country, postalCode, emailVerified, group, partner, phone, mobile, countries} = this.state;
+    const {
+      items,
+      userData,
+      showLoading,
+      email,
+      firstName,
+      surName,
+      add1,
+      add2,
+      city,
+      country,
+      postalCode,
+      emailVerified,
+      group,
+      partner,
+      phone,
+      mobile,
+      countries,
+      showCountrySearch,
+    } = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -271,7 +328,7 @@ class UserDetail extends PureComponent {
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Partner</Text>
               <InputBox
-              disabled
+                disabled
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
@@ -359,15 +416,43 @@ class UserDetail extends PureComponent {
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <SimpleDropdown
-              placeHolder="Please select Country"
-              style={commonStyles.dropDownStyle}
-              drowdownArray={countries}
-              dropDownWidth={'85%'}
-              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
-              isIconVisible={true}
-              onSelect={(value) => this.selectData(value, 'country')}
-            />
+                  {showCountrySearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={{
+                          width: '88%',
+                          marginTop: moderateScale(0),
+                          borderBottomWidth: 1,
+                        }}
+                        onChangeText={(text) =>
+                          this.searchCountries(text, 'billing')
+                        }
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                  <View style={commonStyles.space}>
+                    <SimpleDropdown
+                      placeHolder="Please select Country"
+                      style={commonStyles.dropDownStyle}
+                      showDropDown={() => this.showDropDown('billing')}
+                      hideDropDown={() => this.hideDropDown('billing')}
+                      drowdownArray={countries}
+                      dropDownWidth={'85%'}
+                      imageStyle={{
+                        marginTop: moderateScale(10),
+                        ...commonStyles.icon,
+                      }}
+                      isIconVisible={true}
+                      onSelect={(value) => this.selectData(value, 'country')}
+                    />
+                  </View>
                 </View>
 
                 <View style={commonStyles.space}>
@@ -433,7 +518,7 @@ class UserDetail extends PureComponent {
                 </View>
               </ExpandCollapseLayout>
             </View>
-            
+
             <ButtonDefault onPress={() => this.saveUser('AddOrderQuote')}>
               SAVE
             </ButtonDefault>
@@ -529,7 +614,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   addUSER,
-  updateUser
+  updateUser,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserDetail);

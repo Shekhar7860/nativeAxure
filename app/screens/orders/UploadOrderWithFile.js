@@ -33,7 +33,11 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {addOrder} from '../../redux/reducers/orders';
+import {addUploadedOrders, updateUploadedOrders} from '../../redux/reducers/uploadedOrders';
+import Toast from 'react-native-simple-toast';
 import OverlaySpinner from '../../components/OverlaySpinner';
+import {showErrorPopup} from '../../util/utils';
+import ImagePicker from 'react-native-image-picker';
 import SimpleDropdown from '../../components/SimpleDropdown';
 
  class UploadOrderWithFile extends PureComponent {
@@ -44,6 +48,9 @@ import SimpleDropdown from '../../components/SimpleDropdown';
       clientItems: [],
       clientIds: [],
       clientId : '',
+      name : '',
+      orderId : '',
+      file : ''
     };
   }
   componentDidMount = () => {
@@ -60,12 +67,124 @@ import SimpleDropdown from '../../components/SimpleDropdown';
       Alert.alert('', 'No Internet Connection');
     }
     this.setState({clientItems: this.state.clientItems, clientIds: this.state.clientIds});
+    this.uploadOrder();
   };
 
   selectData = (val, type) => {
       this.setState({clientId: this.state.clientIds[val]});
       this.setState({client: this.state.clientItems[val]});
   };
+
+
+  openImagePicker = () => {
+  const {online} = this.props;
+
+  if (online) {
+    const options = {
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      //console.group('Response = ', response);
+
+      if (response.didCancel) {
+        //  console.log('User cancelled image picker');
+      } else if (response.error) {
+        // console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        //  console.log('User tapped custom button: ', response.customButton);
+      } else {
+         console.log('uri,', response)
+        const source = {uri: response.uri};
+       
+
+        let image = {uri: response.uri, name: 'image.jpg', type: 'image/jpeg'};
+        this.setState({file: image});
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+      }
+    });
+  } else {
+    Alert.alert('', 'No Internet Connection');
+  }
+};
+
+  uploadOrder = () => {
+      this.props
+        .addUploadedOrders(
+          this.props.userInfo.reseller_id, 
+          'Yantra Reseller'
+        )
+        .then((response) => {
+          if (response.code === 200) {
+            this.setState({orderId : response.data.id})
+          } else {
+            if (response.validation_errors) {
+             // showErrorPopup(response.validation_errors);
+            } else {
+            //  showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            // showErrorPopup(
+            //   "Couldn't validate those credentials.\nPlease try again",
+            // );
+          } else {
+            // showErrorPopup(
+            //   'There was an unexpected error.\nPlease wait a few minutes and try again.',
+            // );
+          }
+        });
+    
+   
+  }
+
+  submit = () => {
+    const {orderId, name, clientId, file} = this.state;
+    const {online} = this.props;
+    if (online) {
+      this.setState({showLoading: true});
+      this.props
+        .updateUploadedOrders(
+          orderId,
+          clientId,
+          name,
+          file
+        )
+        .then((response) => {
+          // console.log(response, 'update')
+          this.setState({showLoading: false});
+          if (response.code === 200) {
+            Toast.show(response.message);
+            this.props.navigation.navigate('UploadOrderStack');
+          } else {
+            if (response.validation_errors) {
+              showErrorPopup(response.validation_errors);
+            } else {
+              showErrorPopup(response.message);
+            }
+          }
+        })
+        .catch((error) => {
+          this.setState({showLoading: false});
+          if (error.code === 'unauthorized') {
+            showErrorPopup(
+              "Couldn't validate those credentials.\nPlease try again",
+            );
+          } else {
+            showErrorPopup('Please Add Product First');
+          }
+        });
+    } else {
+      Alert.alert('', 'No Internet Connection');
+    }
+  }
   render() {
     const {items, clientItems, showLoading} = this.state;
 
@@ -118,9 +237,14 @@ import SimpleDropdown from '../../components/SimpleDropdown';
                   borderRadius: moderateScale(0),
                   marginTop: moderateScale(10),
                 }}
+                onPress={() => this.openImagePicker()}
                 textStyle={{color: GRAY}}>
                 Upload
               </ButtonDefault>
+
+              <ButtonDefault onPress={() => this.submit()}>
+             Submit
+            </ButtonDefault>
             </View>
           </View>
         </ScrollView>
@@ -219,7 +343,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  addOrder
+  addOrder,
+  addUploadedOrders,
+  updateUploadedOrders
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UploadOrderWithFile);

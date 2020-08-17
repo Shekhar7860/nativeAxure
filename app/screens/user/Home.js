@@ -22,7 +22,7 @@ import {
   Alert,
   Dimensions
 } from 'react-native';
-import BaseScreen from '../../components/BaseScreen';
+import {RESOURCE_HUB_URL} from '../../constants/const';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {StackActions} from '@react-navigation/native';
 import {getClientsList} from '../../redux/reducers/clients';

@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import Header from '../../components/Header';
 import commonStyles from '../../commonStyles/commonStyles';
-import DateTimePicker from "react-native-modal-datetime-picker";
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import {
   APP_LIGHT_BLUE_COLOR,
   SEMI_TRANSPARENT,
@@ -12,9 +12,10 @@ import {
   APP_MAIN_BLUE,
   APP_MAIN_COLOR,
   BLACK,
-  GRAY
+  GRAY,
 } from '../../constants/colors';
-import {USER, BACK, TASK} from '../../constants/Images';
+import {USER, BACK, TASK, SEARCH} from '../../constants/Images';
+import TouchableImage from '../../components/TouchableImage';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import ExpandCollapseLayout from '../../components/ExpandCollapseLayout';
 import InputBox from '../../components/InputBox';
@@ -35,12 +36,22 @@ import {
   FlatList,
   Dimensions,
   Alert,
+  TextInput,
 } from 'react-native';
 import OverlaySpinner from '../../components/OverlaySpinner';
 import {connect} from 'react-redux';
 import {addClient} from '../../redux/reducers/clients';
 import ButtonDefault from '../../components/ButtonDefault';
-const arrDataDesignation = ['Head of Company', 'Head of Sales', 'Head of Marketing', 'Head of Finance', 'Head of Technical', 'Head of Purchasing', 'Business Development Mgr/Dir', 'Other'];
+const arrDataDesignation = [
+  'Head of Company',
+  'Head of Sales',
+  'Head of Marketing',
+  'Head of Finance',
+  'Head of Technical',
+  'Head of Purchasing',
+  'Business Development Mgr/Dir',
+  'Other',
+];
 const arrDataCurrency = ['GBP', 'USD', 'EUR'];
 
 class AddClient extends PureComponent {
@@ -50,7 +61,7 @@ class AddClient extends PureComponent {
       items: [1, 2, 3, 4],
       isRememberMe: false,
       showLoading: false,
-      contCountry : "Please select Country",
+      contCountry: 'Please select Country',
       clientname: '',
       first3letters: '',
       mphId: '',
@@ -77,44 +88,62 @@ class AddClient extends PureComponent {
       contPostalCode: '',
       contPhone: '',
       contMobile: '',
-      bankName : '',
-      bankSortCode : '',
-      bankAccountNo : '',
-      bankAddress : '',
-      finYear : 'Select Financial Year End Date',
-      cardLimit : '',
-      holdingCompany : '',
-      tradeAddress : '',
-      tradePhone : '',
-      tradeFax : '',
+      bankName: '',
+      bankSortCode: '',
+      bankAccountNo: '',
+      bankAddress: '',
+      finYear: 'Select Financial Year End Date',
+      cardLimit: '',
+      holdingCompany: '',
+      tradeAddress: '',
+      tradePhone: '',
+      tradeFax: '',
       tradeRegNumber: '',
-      tradeRegDate : 'Select Registeration Date',
+      tradeRegDate: 'Select Registeration Date',
       tradeVatRegNumber: '',
-      tradeRefName : '',
-      tradeRefPhone : '',
-      tradeRefAddress : '',
+      tradeRefName: '',
+      tradeRefPhone: '',
+      tradeRefAddress: '',
       tradeRefFax: '',
-      tradeRefContactName : '',
-      tradeRefBankerName : '',
-      tradeRefBankerAddress : '',
-      tradeRefBankerAccountNumber : '',
+      tradeRefContactName: '',
+      tradeRefBankerName: '',
+      tradeRefBankerAddress: '',
+      tradeRefBankerAccountNumber: '',
       regDatePickerVisible: false,
-      yearDatePickerVisible : false,
-      website : "",
-      note : "",
-      countries : [],
-      countryIndex : 0
+      yearDatePickerVisible: false,
+      website: '',
+      note: '',
+      countries: [],
+      countryIndex: 0,
+      showContactSearch: false,
+      selectedCountries: [],
+      showSearch: false,
+      contactCountries: [],
     };
   }
   componentDidMount = () => {
     const {userInfo} = this.props;
-   // console.log('userinfo', userInfo)
+    // console.log('userinfo', userInfo)
     const {countries} = this.props;
-   // console.log('here are countries', countries);
+    // console.log('here are countries', countries);
     for (var i = 0; i < countries.items.length; i++) {
       this.state.countries.push(countries.items[i].name);
+      this.state.contactCountries.push(countries.items[i].name);
+      this.state.selectedCountries.push(countries.items[i].name);
     }
     //this.props.navigation.navigate('Cart')
+  };
+
+  showDropDown = (value) => {
+    if (value == 'address') {
+      this.setState({showSearch: true});
+    } else {
+      this.setState({showContactSearch: true});
+    }
+  };
+
+  hideDropDown = () => {
+    // this.setState({showCountrySearch: false});
   };
 
   addEditClient = () => {
@@ -167,176 +196,183 @@ class AddClient extends PureComponent {
       tradeRefBankerAddress,
       tradeRefBankerAccountNumber,
       website,
-      note
+      note,
     } = this.state;
     const {online, userInfo} = this.props;
-if(clientname && first3letters && email){
-  if(isEmailValid(email) && isEmailValid(contactEmail)){
-    if (online) {
-      this.setState({showLoading: true});
-      this.props
-        .addClient(
-          clientname,
-          first3letters,
-          mphId,
-          trading,
-          vatReg,
-          comRegNum,
-          targetTech,
-          email,
-          currency,
-          description,
-          add1,
-          add2,
-          city,
-          country,
-          postalCode,
-          phone,
-          firstName,
-          surName,
-          contactEmail,
-          contAdd1,
-          contAdd2,
-          contCity,
-          contCountry,
-          contPostalCode,
-          contPhone,
-          contMobile,
-          bankName,
-          bankSortCode,
-          bankAccountNo,
-          bankAddress,
-          finYear,
-          cardLimit,
-          holdingCompany,
-      tradeAddress,
-      tradePhone,
-      tradeFax,
-      tradeRegNumber,
-      tradeRegDate,
-      tradeVatRegNumber,
-      tradeRefName,
-      tradeRefPhone,
-      tradeRefAddress,
-      tradeRefFax,
-      tradeRefContactName,
-      tradeRefBankerName,
-      tradeRefBankerAddress,
-      tradeRefBankerAccountNumber,
-      website,
-      note,
-      userInfo.reseller_id
-        )
-        .then((response) => {
-         // console.log('ddd', response)
-          this.setState({showLoading: false});
-          if (response.code === 200) {
-            Toast.show(response.message)
-            this.props.navigation.navigate('AllClients')
-          } else {
-            if (response.validation_errors) {
-              showErrorPopup(response.validation_errors);
-            } else {
-              showErrorPopup(response.message);
-            }
-          }
-        })
-        .catch((error) => {
-          this.setState({showLoading: false});
-          if (error.code === 'unauthorized') {
-            showErrorPopup(
-              "Couldn't validate those credentials.\nPlease try again",
-            );
-          } else {
-            showErrorPopup(
-              'There was an unexpected error.\nPlease wait a few minutes and try again.',
-            );
-          }
-        });
+    if (clientname && first3letters && email) {
+      if (isEmailValid(email) && isEmailValid(contactEmail)) {
+        if (online) {
+          this.setState({showLoading: true});
+          this.props
+            .addClient(
+              clientname,
+              first3letters,
+              mphId,
+              trading,
+              vatReg,
+              comRegNum,
+              targetTech,
+              email,
+              currency,
+              description,
+              add1,
+              add2,
+              city,
+              country,
+              postalCode,
+              phone,
+              firstName,
+              surName,
+              contactEmail,
+              contAdd1,
+              contAdd2,
+              contCity,
+              contCountry,
+              contPostalCode,
+              contPhone,
+              contMobile,
+              bankName,
+              bankSortCode,
+              bankAccountNo,
+              bankAddress,
+              finYear,
+              cardLimit,
+              holdingCompany,
+              tradeAddress,
+              tradePhone,
+              tradeFax,
+              tradeRegNumber,
+              tradeRegDate,
+              tradeVatRegNumber,
+              tradeRefName,
+              tradeRefPhone,
+              tradeRefAddress,
+              tradeRefFax,
+              tradeRefContactName,
+              tradeRefBankerName,
+              tradeRefBankerAddress,
+              tradeRefBankerAccountNumber,
+              website,
+              note,
+              userInfo.reseller_id,
+            )
+            .then((response) => {
+              // console.log('ddd', response)
+              this.setState({showLoading: false});
+              if (response.code === 200) {
+                Toast.show(response.message);
+                this.props.navigation.navigate('AllClients');
+              } else {
+                if (response.validation_errors) {
+                  showErrorPopup(response.validation_errors);
+                } else {
+                  showErrorPopup(response.message);
+                }
+              }
+            })
+            .catch((error) => {
+              this.setState({showLoading: false});
+              if (error.code === 'unauthorized') {
+                showErrorPopup(
+                  "Couldn't validate those credentials.\nPlease try again",
+                );
+              } else {
+                showErrorPopup(
+                  'There was an unexpected error.\nPlease wait a few minutes and try again.',
+                );
+              }
+            });
+        } else {
+          Alert.alert('', 'No Internet Connection');
+        }
+      } else {
+        Alert.alert('', 'Enter Valid Email Address');
+      }
     } else {
-      Alert.alert('', 'No Internet Connection');
+      Alert.alert('', 'Please Enter Valid Details');
     }
-  }
-  else {
-    Alert.alert('', 'Enter Valid Email Address');
-  }
-  }
-  else {
-    Alert.alert('', 'Please Enter Valid Details');
-  }
   };
   showDateTimePicker = (val) => {
-    if(val == "regDatePickerVisible")
-    {
-    this.setState({ regDatePickerVisible: true })
-    }
-    else {
-     this.setState({ yearDatePickerVisible: true })
+    if (val == 'regDatePickerVisible') {
+      this.setState({regDatePickerVisible: true});
+    } else {
+      this.setState({yearDatePickerVisible: true});
     }
   };
- 
+
   hideDateTimePicker = (val) => {
-    if(val == "regDatePickerVisible")
-    {
-    this.setState({ regDatePickerVisible: false })
+    if (val == 'regDatePickerVisible') {
+      this.setState({regDatePickerVisible: false});
+    } else {
+      this.setState({yearDatePickerVisible: false});
     }
-    else {
-     this.setState({ yearDatePickerVisible: false})
+  };
+
+  searchCountries = (text, value) => {
+    // console.log('array holder', this.state.countries);
+    const newData = this.state.countries.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const itemData = item ? item.toUpperCase() : ''.toUpperCase();
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    console.log('data', newData);
+    if (text !== '') {
+      if (value == 'address') {
+        this.setState({countries: newData});
+      } else {
+        this.setState({contactCountries: newData});
+      }
+    } else {
+      this.setState({countries: this.state.selectedCountries});
     }
   };
 
   setSame = (add1, add2, city, country, postalCode, isRememberMe) => {
     // console.log('selected', this.state.countries[this.state.countryIndex])
     // console.log('isRememberME', isRememberMe)
-    if(isRememberMe !== true){
-     this.setState({
-       contAdd1 : add1,
-       contAdd2 : add2,
-       contCity : city,
-       contCountry : country,
-       contPostalCode : postalCode,
-       
-       
-     })
-    }
-    else {
+    if (isRememberMe !== true) {
       this.setState({
-        contAdd1 : "",
-       contAdd2 : "",
-       contCity : "",
-       contCountry : "Please Select Country",
-       contPostalCode : ""
-      })
+        contAdd1: add1,
+        contAdd2: add2,
+        contCity: city,
+        contCountry: country,
+        contPostalCode: postalCode,
+      });
+    } else {
+      this.setState({
+        contAdd1: '',
+        contAdd2: '',
+        contCity: '',
+        contCountry: 'Please Select Country',
+        contPostalCode: '',
+      });
     }
 
-    this.setState({ isRememberMe : !isRememberMe})
-    
-  }
- 
+    this.setState({isRememberMe: !isRememberMe});
+  };
+
   handleDatePicked = (date, val) => {
     // console.log("A date has been picked: ", date);
-    var selectedDate= moment(date).format("MM/DD/YYYY")
+    var selectedDate = moment(date).format('MM/DD/YYYY');
     // console.log('jjs,', selectedDate)
-    if(val == "regDatePickerVisible")
-    {
-    this.setState({ tradeRegDate: selectedDate })
-    }
-    else {
-     this.setState({ finYear: selectedDate})
+    if (val == 'regDatePickerVisible') {
+      this.setState({tradeRegDate: selectedDate});
+    } else {
+      this.setState({finYear: selectedDate});
     }
     this.hideDateTimePicker(val);
   };
 
   selectData = (val, type) => {
-      this.setState({currency: arrDataCurrency[val]});
+    this.setState({currency: arrDataCurrency[val]});
   };
 
   selectItem = (val, type) => {
-     if (type == "country"){
+    if (type == 'country') {
       this.setState({country: this.state.countries[val]});
       this.setState({countryIndex: val});
-    }
-    else if (type == "contCountry"){
+    } else if (type == 'contCountry') {
       this.setState({contCountry: this.state.countries[val]});
     } else {
       this.setState({clientId: this.state.clientIds[val]});
@@ -345,7 +381,26 @@ if(clientname && first3letters && email){
   };
 
   render() {
-    const {countries, add1, add2, city, country, postalCode, contAdd1, contAdd2, contCity, contCountry, contPostalCode, items, isRememberMe, showLoading} = this.state;
+    const {
+      countries,
+      add1,
+      add2,
+      city,
+      country,
+      postalCode,
+      contAdd1,
+      contAdd2,
+      contCity,
+      contCountry,
+      contPostalCode,
+      items,
+      isRememberMe,
+      showLoading,
+      shippingCountries,
+      showSearch,
+      contactCountries,
+      showContactSearch,
+    } = this.state;
 
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
@@ -371,7 +426,7 @@ if(clientname && first3letters && email){
                 Prefix (First 3 letters of Name)
               </Text>
               <InputBox
-              maxLength={3}
+                maxLength={3}
                 placeHolder=""
                 boxStyle={styles.inputBoxStyle}
                 inputStyle={styles.input}
@@ -445,17 +500,17 @@ if(clientname && first3letters && email){
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Currency</Text>
               <SimpleDropdown
-                    placeHolder="Please select Currency"
-                    style={commonStyles.dropDownStyle}
-                    drowdownArray={arrDataCurrency}
-                    dropDownWidth={'85%'}
-                    imageStyle={{
-                      marginTop: moderateScale(10),
-                      ...commonStyles.icon,
-                    }}
-                    isIconVisible={true}
-                    onSelect={(value) => this.selectData(value, 'currency')}
-                  />
+                placeHolder="Please select Currency"
+                style={commonStyles.dropDownStyle}
+                drowdownArray={arrDataCurrency}
+                dropDownWidth={'85%'}
+                imageStyle={{
+                  marginTop: moderateScale(10),
+                  ...commonStyles.icon,
+                }}
+                isIconVisible={true}
+                onSelect={(value) => this.selectData(value, 'currency')}
+              />
             </View>
 
             <View style={commonStyles.space}>
@@ -471,13 +526,13 @@ if(clientname && first3letters && email){
             <View style={commonStyles.space}>
               <Text style={styles.labelText}>Note</Text>
               <InputBox
-                    placeHolder=""
-                    maxLines={5}
-                    maxLength={50}
-                    boxStyle={styles.inputBoxStyle}
-                    inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({note: value})}
-                  />
+                placeHolder=""
+                maxLines={5}
+                maxLength={50}
+                boxStyle={styles.inputBoxStyle}
+                inputStyle={styles.input}
+                onChangeText={(value) => this.setState({note: value})}
+              />
             </View>
 
             <View style={commonStyles.space}>
@@ -543,16 +598,45 @@ if(clientname && first3letters && email){
                 </View>
 
                 <View style={commonStyles.space}>
-                  <Text style={styles.labelText}>Country</Text>
-                  <SimpleDropdown
-              placeHolder="Please select Country"
-              style={commonStyles.dropDownStyle}
-              drowdownArray={countries}
-              dropDownWidth={'85%'}
-              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
-              isIconVisible={true}
-              onSelect={(value) => this.selectItem(value, 'country')}
-            />
+                <Text style={styles.labelText}>Country</Text>
+                  {showSearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={{
+                          width: '88%',
+                          marginTop: moderateScale(0),
+                          borderBottomWidth: 1,
+                        }}
+                        onChangeText={(text) =>
+                          this.searchCountries(text, 'address')
+                        }
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                  
+                  <View style={commonStyles.space}>
+                    <SimpleDropdown
+                      placeHolder="Please select Country"
+                      style={commonStyles.dropDownStyle}
+                      drowdownArray={countries}
+                      dropDownWidth={'85%'}
+                      showDropDown={() => this.showDropDown('address')}
+                      hideDropDown={() => this.hideDropDown('address')}
+                      imageStyle={{
+                        marginTop: moderateScale(10),
+                        ...commonStyles.icon,
+                      }}
+                      isIconVisible={true}
+                      onSelect={(value) => this.selectItem(value, 'country')}
+                    />
+                  </View>
                 </View>
 
                 <View style={commonStyles.space}>
@@ -575,7 +659,16 @@ if(clientname && first3letters && email){
                 <CheckBox
                   title="Same details As Address?"
                   checked={isRememberMe}
-                  onPress={() => this.setSame(add1, add2, city, country, postalCode, isRememberMe)}
+                  onPress={() =>
+                    this.setSame(
+                      add1,
+                      add2,
+                      city,
+                      country,
+                      postalCode,
+                      isRememberMe,
+                    )
+                  }
                   checkedColor={BLACK}
                   containerStyle={commonStyles.checkBoxContainer}
                   uncheckedIcon="square"
@@ -654,15 +747,45 @@ if(clientname && first3letters && email){
 
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Country</Text>
-                  <SimpleDropdown
-              placeHolder={contCountry}
-              style={commonStyles.dropDownStyle}
-              drowdownArray={countries}
-              dropDownWidth={'85%'}
-              imageStyle={{marginTop: moderateScale(10), ...commonStyles.icon}}
-              isIconVisible={true}
-              onSelect={(value) => this.selectItem(value, 'contCountry')}
-            />
+                  {showContactSearch ? (
+                    <View style={commonStyles.commonRow}>
+                      <TextInput
+                        style={{
+                          width: '88%',
+                          marginTop: moderateScale(0),
+                          borderBottomWidth: 1,
+                        }}
+                        onChangeText={(text) =>
+                          this.searchCountries(text, 'contact')
+                        }
+                      />
+                      <TouchableImage
+                        image={SEARCH}
+                        imageStyle={{
+                          ...commonStyles.icon,
+                          marginTop: moderateScale(10),
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                  <View style={commonStyles.space}>
+                    <SimpleDropdown
+                      placeHolder={contCountry}
+                      style={commonStyles.dropDownStyle}
+                      drowdownArray={contactCountries}
+                      dropDownWidth={'85%'}
+                      showDropDown={() => this.showDropDown('contact')}
+                      hideDropDown={() => this.hideDropDown('contact')}
+                      imageStyle={{
+                        marginTop: moderateScale(10),
+                        ...commonStyles.icon,
+                      }}
+                      isIconVisible={true}
+                      onSelect={(value) =>
+                        this.selectItem(value, 'contCountry')
+                      }
+                    />
+                  </View>
                 </View>
 
                 <View style={commonStyles.space}>
@@ -694,7 +817,7 @@ if(clientname && first3letters && email){
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Mobile</Text>
                   <InputBox
-                   keyboardType={'numeric'}
+                    keyboardType={'numeric'}
                     maxLength={10}
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
@@ -771,8 +894,13 @@ if(clientname && first3letters && email){
                   />
                 </View>
 
-                <TouchableOpacity style={commonStyles.space} onPress={this.showDateTimePicker.bind(this, 'yearDatePickerVisible')}>
-                <Text style={styles.labelText}>Financial Year End</Text>
+                <TouchableOpacity
+                  style={commonStyles.space}
+                  onPress={this.showDateTimePicker.bind(
+                    this,
+                    'yearDatePickerVisible',
+                  )}>
+                  <Text style={styles.labelText}>Financial Year End</Text>
                   <Text style={styles.labelText}>{this.state.finYear}</Text>
                   {/* <InputBox
                     placeHolder=""
@@ -783,11 +911,16 @@ if(clientname && first3letters && email){
                     onChangeText={(value) => this.setState({finYear: value})}
                   /> */}
                   <DateTimePicker
-                  maximumDate={new Date()}
-          isVisible={this.state.yearDatePickerVisible}
-          onConfirm={(date) => this.handleDatePicked(date,  'yearDatePickerVisible')}
-          onCancel={this.hideDateTimePicker.bind(this, 'yearDatePickerVisible')}
-        />
+                    maximumDate={new Date()}
+                    isVisible={this.state.yearDatePickerVisible}
+                    onConfirm={(date) =>
+                      this.handleDatePicked(date, 'yearDatePickerVisible')
+                    }
+                    onCancel={this.hideDateTimePicker.bind(
+                      this,
+                      'yearDatePickerVisible',
+                    )}
+                  />
                 </TouchableOpacity>
 
                 <View style={commonStyles.space}>
@@ -860,13 +993,22 @@ if(clientname && first3letters && email){
                     keyboardType={'numeric'}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({tradeRegNumber: value})}
+                    onChangeText={(value) =>
+                      this.setState({tradeRegNumber: value})
+                    }
                   />
                 </View>
 
-                <TouchableOpacity style={commonStyles.space} onPress={this.showDateTimePicker.bind(this, 'regDatePickerVisible')} >
+                <TouchableOpacity
+                  style={commonStyles.space}
+                  onPress={this.showDateTimePicker.bind(
+                    this,
+                    'regDatePickerVisible',
+                  )}>
                   <Text style={styles.labelText}>Registeration Date</Text>
-                  <Text style={styles.labelText}>{this.state.tradeRegDate}</Text>
+                  <Text style={styles.labelText}>
+                    {this.state.tradeRegDate}
+                  </Text>
                   {/* <InputBox
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
@@ -874,11 +1016,16 @@ if(clientname && first3letters && email){
                     onChangeText={(value) => this.setState({tradeRegDate: value})}
                   /> */}
                   <DateTimePicker
-                  maximumDate={new Date()}
-          isVisible={this.state.regDatePickerVisible}
-          onConfirm={(date) => this.handleDatePicked(date,  'regDatePickerVisible')}
-          onCancel={this.hideDateTimePicker.bind(this, 'regDatePickerVisible')}
-        />
+                    maximumDate={new Date()}
+                    isVisible={this.state.regDatePickerVisible}
+                    onConfirm={(date) =>
+                      this.handleDatePicked(date, 'regDatePickerVisible')
+                    }
+                    onCancel={this.hideDateTimePicker.bind(
+                      this,
+                      'regDatePickerVisible',
+                    )}
+                  />
                 </TouchableOpacity>
 
                 <View style={commonStyles.space}>
@@ -889,12 +1036,14 @@ if(clientname && first3letters && email){
                     maxLength={10}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({tradeVatRegNo: value})}
+                    onChangeText={(value) =>
+                      this.setState({tradeVatRegNo: value})
+                    }
                   />
                 </View>
               </ExpandCollapseLayout>
             </View>
-                        <View style={commonStyles.space}>
+            <View style={commonStyles.space}>
               <ExpandCollapseLayout title="+ Trade Reference">
                 <View style={commonStyles.space}>
                   <Text style={styles.labelText}>Name</Text>
@@ -902,7 +1051,9 @@ if(clientname && first3letters && email){
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({tradeRefName: value})}
+                    onChangeText={(value) =>
+                      this.setState({tradeRefName: value})
+                    }
                   />
                 </View>
 
@@ -914,7 +1065,9 @@ if(clientname && first3letters && email){
                     maxLength={50}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({tradeRefAddress: value})}
+                    onChangeText={(value) =>
+                      this.setState({tradeRefAddress: value})
+                    }
                   />
                 </View>
 
@@ -926,7 +1079,9 @@ if(clientname && first3letters && email){
                     maxLength={10}
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({tradeRefPhone: value})}
+                    onChangeText={(value) =>
+                      this.setState({tradeRefPhone: value})
+                    }
                   />
                 </View>
 
@@ -936,7 +1091,9 @@ if(clientname && first3letters && email){
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({tradeRefFax: value})}
+                    onChangeText={(value) =>
+                      this.setState({tradeRefFax: value})
+                    }
                   />
                 </View>
 
@@ -960,7 +1117,9 @@ if(clientname && first3letters && email){
                     placeHolder=""
                     boxStyle={styles.inputBoxStyle}
                     inputStyle={styles.input}
-                    onChangeText={(value) => this.setState({tradeRefBankerName: value})}
+                    onChangeText={(value) =>
+                      this.setState({tradeRefBankerName: value})
+                    }
                   />
                 </View>
 
@@ -994,9 +1153,6 @@ if(clientname && first3letters && email){
               </ExpandCollapseLayout>
             </View>
 
-            
-            
-            
             <ButtonDefault onPress={() => this.addEditClient('EditQuote')}>
               SAVE
             </ButtonDefault>
@@ -1090,13 +1246,13 @@ const styles = ScaledSheet.create({
   inputBoxStyleBackground: {
     marginTop: moderateScale(-10),
     height: moderateScale(45),
-    backgroundColor : GRAY,
-    borderBottomWidth : 0,
-    borderWidth : 0,
-    borderRadius : 0,
-    width : '90%',
-    alignSelf : 'center',
-    borderBottomColor : WHITE
+    backgroundColor: GRAY,
+    borderBottomWidth: 0,
+    borderWidth: 0,
+    borderRadius: 0,
+    width: '90%',
+    alignSelf: 'center',
+    borderBottomColor: WHITE,
   },
   input: {
     fontWeight: 'normal',
@@ -1107,7 +1263,7 @@ const styles = ScaledSheet.create({
 const mapStateToProps = (state) => ({
   online: state.netInfo.online,
   userInfo: state.session.userInfo,
-  countries: state.countries.countriesList
+  countries: state.countries.countriesList,
 });
 
 const mapDispatchToProps = {

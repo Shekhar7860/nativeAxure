@@ -9,6 +9,7 @@ export const fontSizes = {
   font15: moderateScale(15),
   font20: moderateScale(20),
   negativeFont20: moderateScale(-20),
+  negativeFont30: moderateScale(-30),
   font25: moderateScale(25),
   font30: moderateScale(30),
   font35: moderateScale(35),

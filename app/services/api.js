@@ -49,22 +49,32 @@ export default class Api {
 
   static addQuote(userData = {}) {
     const formData = clearQuery(
-      pick(userData, [
-        'reseller_id',
-        'client_id',
-        'type'
-      ]),
+      pick(userData, ['reseller_id', 'client_id', 'type']),
     );
     let response = this.sendRequest('POST', 'quotes', {formData});
     return response;
   }
 
-  static updateQuote(ID, userData = {}) {
-    console.log('quoteId is', ID)
+  static addUploadedOrders(userData = {}) {
+    const formData = clearQuery(pick(userData, ['reseller_id', 'name']));
+    let response = this.sendRequest('POST', 'uploaded-orders', {formData});
+    return response;
+  }
+
+  static updateUploadedOrders(ID, userData = {}) {
+    // console.log('quoteId is', ID)
+    const formData = clearQuery(pick(userData, ['client_id', 'name', 'file']));
+    let response = this.sendRequest('PATCH', `uploaded-orders/${ID}`, {
+      formData,
+    });
+    return response;
+  }
+
+  static updateQuote(ID, status, userData = {}) {
+    // console.log('quoteId is', ID)
     const formData = clearQuery(
       pick(userData, [
         'type',
-        'status',
         'code',
         'terms',
         'name',
@@ -72,7 +82,7 @@ export default class Api {
         'currency',
         'vat_percentage',
         'shipping_cost',
-         'billing_company_name',
+        'billing_company_name',
         'billing_first_name',
         'billing_last_name',
         'billing_email',
@@ -90,15 +100,16 @@ export default class Api {
         'shipping_city',
         'shipping_country',
         'shipping_zip_code',
-
       ]),
     );
-    let response = this.sendRequest('PATCH', `quotes/${ID}`, {formData});
+    let response = this.sendRequest('PATCH', `quotes/${ID}?status=${status}`, {
+      formData,
+    });
     return response;
   }
 
   static updateClient(ID, userData = {}) {
-  //  console.log('clientId is', ID)
+    //  console.log('clientId is', ID)
     const formData = clearQuery(
       pick(userData, [
         'name',
@@ -147,7 +158,7 @@ export default class Api {
         'trade_reference_contact_name',
         'trade_reference_banker_name',
         'trade_reference_banker_address',
-        'trade_reference_banker_account_no'
+        'trade_reference_banker_account_no',
       ]),
     );
     let response = this.sendRequest('PATCH', `clients/${ID}`, {formData});
@@ -206,7 +217,7 @@ export default class Api {
         'trade_reference_banker_account_no',
         'website',
         'note',
-        'reseller_id'
+        'reseller_id',
       ]),
     );
     let response = this.sendRequest('POST', 'clients', {formData});
@@ -215,36 +226,25 @@ export default class Api {
 
   static addQuoteItem(userData = {}) {
     const formData = clearQuery(
-      pick(userData, [
-        'quote_id',
-        'product_id',
-        'quantity'
-      ]),
+      pick(userData, ['quote_id', 'product_id', 'quantity']),
     );
     let response = this.sendRequest('POST', 'quote-items', {formData});
     return response;
   }
-
 
   static getQuoteItem(ID) {
     let response = this.sendRequest('GET', `quote-items/${ID}`);
     return response;
   }
 
-
   static deleteQuoteItem(ID) {
     let response = this.sendRequest('DELETE', `quote-items/${ID}`);
     return response;
   }
 
-
   static addOrder(userData = {}) {
     const formData = clearQuery(
-      pick(userData, [
-        'client_id',
-        'reseller_id',
-        'status',
-      ]),
+      pick(userData, ['client_id', 'reseller_id', 'status']),
     );
     let response = this.sendRequest('POST', 'orders', {formData});
     return response;
@@ -257,15 +257,15 @@ export default class Api {
         'first_name',
         'last_name',
         'reseller_id',
-         'password',
-         'address1',
-         'address2',
-         'phone',
-         'mobile',
-         'zip_code',
-         'city',
-         'password_confirmation',
-         'group_ids'
+        'password',
+        'address1',
+        'address2',
+        'phone',
+        'mobile',
+        'zip_code',
+        'city',
+        'password_confirmation',
+        'group_ids',
       ]),
     );
     let response = this.sendRequest('POST', 'users', {formData});
@@ -273,31 +273,29 @@ export default class Api {
   }
 
   static updateUser(ID, userData = {}) {
-    console.log('userId is', ID)
+    console.log('userId is', ID);
     const formData = clearQuery(
       pick(userData, [
         'email',
         'first_name',
         'last_name',
         'reseller_id',
-         'password',
-         'address1',
-         'address2',
-         'phone',
-         'mobile',
-         'zip_code',
-         'city',
-        'confirm_password'
-
+        'password',
+        'address1',
+        'address2',
+        'phone',
+        'mobile',
+        'zip_code',
+        'city',
+        'confirm_password',
       ]),
     );
     let response = this.sendRequest('PATCH', `users/${ID}`, {formData});
     return response;
   }
 
-
   static updateOrder(ID, userData = {}) {
-    console.log('this is orderId', ID)
+    console.log('this is orderId', ID);
     const formData = clearQuery(
       pick(userData, [
         'mph_id',
@@ -326,14 +324,12 @@ export default class Api {
         'shipping_city',
         'shipping_country_name',
         'shipping_zip_code',
-        'terms'
-
+        'terms',
       ]),
     );
     let response = this.sendRequest('PATCH', `orders/${ID}`, {formData});
     return response;
   }
-
 
   static updateProfilePicture(apptData = {}) {
     console.group('inside api');
@@ -391,12 +387,20 @@ export default class Api {
   }
 
   static getUploadedOrdersList() {
-    let response = this.sendRequest('GET', 'uploaded-orders');
+    let response = this.sendRequest(
+      'GET',
+      'uploaded-orders?force_all_data=yes',
+    );
     return response;
   }
 
   static getCountriesList() {
-    let response = this.sendRequest('GET', 'countries?force_all_data=yes', "", true);
+    let response = this.sendRequest(
+      'GET',
+      'countries?force_all_data=yes',
+      '',
+      true,
+    );
     return response;
   }
 
@@ -435,7 +439,7 @@ export default class Api {
       'X-Auth-Token': API_AUTH_TOKEN,
       'Client-id': API_CLIENT_ID,
     };
-   // console.log('this.authToken: ' + this.authToken);
+    // console.log('this.authToken: ' + this.authToken);
     if (!skipAuth && this.authToken) {
       headers.authorization = `Bearer ${this.authToken}`;
     }
@@ -461,7 +465,7 @@ export default class Api {
 
     const url = urlTo(fullPath, opts.publicApi);
     const requestBody = jsonBody || formDataToObject(formData) || query || '';
-   console.log('Request:', fetchOpts.headers, url, requestBody);
+    console.log('Request:', fetchOpts.headers, url, requestBody);
     return fetch(url, fetchOpts)
       .then(async (res) => {
         let data = res;
@@ -475,16 +479,15 @@ export default class Api {
 
         switch (res.status) {
           case 200: {
-            if(data.code !== 422)
-            {
-            if (data.status === 'fail') {
-              throw {
-                request: {url, data: body},
-                response: data,
-                ...data,
-              };
+            if (data.code !== 422) {
+              if (data.status === 'fail') {
+                throw {
+                  request: {url, data: body},
+                  response: data,
+                  ...data,
+                };
+              }
             }
-          }
             return data;
           }
           case 401:
@@ -494,13 +497,13 @@ export default class Api {
               request: {url, data: requestBody},
               response: data,
             };
-            case 422:
-              throw {
-                code: 'unauthorized',
-                status: res.status,
-                request: {url, data: requestBody},
-                response: data,
-              };
+          case 422:
+            throw {
+              code: 'unauthorized',
+              status: res.status,
+              request: {url, data: requestBody},
+              response: data,
+            };
           default:
             throw {
               code: 'unknown',
@@ -511,7 +514,7 @@ export default class Api {
         }
       })
       .catch((error) => {
-        console.log('err', error);
+        //  console.log('err', error);
       });
   }
 
@@ -544,7 +547,6 @@ export default class Api {
         let data = response;
         switch (response.status) {
           case 200: {
-
             return data;
           }
           case 401:

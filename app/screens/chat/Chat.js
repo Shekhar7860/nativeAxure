@@ -22,23 +22,51 @@ import {
 import {APP_MAIN_BLUE} from '../../constants/colors';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import {FRESH_CHAT_APP_ID, FRESH_CHAT_ID_APP_KEY} from '../../constants/config';
-// import {Freshchat, FreshchatConfig} from 'react-native-freshchat-sdk';
+ import {Freshchat, FreshchatConfig, FreshchatUser } from 'react-native-freshchat-sdk';
+ import {connect} from 'react-redux';
 
-export default class Chat extends PureComponent {
+ class Chat extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      imagesList: [1, 2],
+      imagesList: [],
+      showChat : false
     };
   }
   componentDidMount = () => {
-    // var freshchatConfig = new FreshchatConfig(
-    //   FRESH_CHAT_APP_ID,
-    //   FRESH_CHAT_ID_APP_KEY,
-    // );
-    // Freshchat.init(freshchatConfig);
-    //this.props.navigation.navigate('Cart')
+    // call function everytime when screen is focused
+    this.init()
+    this.focusListener = this.props.navigation.addListener('focus',
+        () => this.init())
   };
+
+  init = () => {
+    // alert('true')
+    const {userInfo} = this.props;
+    if(userInfo) {
+    var freshchatConfig = new FreshchatConfig(
+      FRESH_CHAT_APP_ID,
+      FRESH_CHAT_ID_APP_KEY,
+    );
+    freshchatConfig.domain = "https://msdk.in.freshchat.com";
+    freshchatConfig.cameraCaptureEnabled = false;
+    Freshchat.init(freshchatConfig);
+    var freshchatUser = new FreshchatUser();
+    freshchatUser.firstName = userInfo.first_name;
+    freshchatUser.lastName = userInfo.last_name;
+    freshchatUser.email =  userInfo.email;
+    freshchatUser.phoneCountryCode = "+91";
+    freshchatUser.phone = "8837826904";
+    // Freshchat.setPushRegistrationToken(device.pushToken);
+    Freshchat.setUser(freshchatUser, (error) => {
+       // alert('hiii')
+    });
+    
+    Freshchat.showConversations();
+    this.setState({showChat : true})
+  
+}
+  }
 
   openScreen = (screen, param) => {
     this.props.navigation.navigate(screen, {clientData: param});
@@ -68,8 +96,12 @@ export default class Chat extends PureComponent {
     );
   };
 
+  openChat = () => {
+    Freshchat.showConversations();
+  }
+
   render() {
-    const {imagesList} = this.state;
+    const {imagesList, showChat} = this.state;
     return (
       <SafeAreaView style={commonStyles.ketboardAvoidingContainer}>
         <Header
@@ -78,6 +110,11 @@ export default class Chat extends PureComponent {
           rightImage={SEARCH}
           leftImage={DRAWER_MENU}
         />
+         {showChat ?
+        <TouchableOpacity style={commonStyles.buttonContainer} onPress={ () => this.openChat()}>
+        <Text style={commonStyles.buttonText}>Open Chat</Text>
+        </TouchableOpacity> : null
+         }
         {/* horizontal list */}
         <FlatList
           style={styles.patientFlatList}
@@ -129,3 +166,14 @@ const styles = ScaledSheet.create({
     backgroundColor: APP_MAIN_BLUE,
   },
 });
+
+const mapStateToProps = (state) => ({
+  online: state.netInfo.online,
+  userInfo: state.session.userInfo,
+});
+
+// const mapDispatchToProps = {
+//   getQuoteDetails,
+// };
+
+export default connect(mapStateToProps, null)(Chat);

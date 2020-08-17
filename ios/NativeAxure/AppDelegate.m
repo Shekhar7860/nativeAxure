@@ -3,6 +3,8 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <Firebase.h>
+#import <FirebaseMessaging/FIRMessaging.h>
 
 #if DEBUG
 #import <FlipperKit/FlipperClient.h>
@@ -11,6 +13,8 @@
 #import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
+
+
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
@@ -27,7 +31,8 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-   [NSThread sleepForTimeInterval:2.0];
+  [NSThread sleepForTimeInterval:3.0];
+  [FIRApp configure];
 #if DEBUG
   InitializeFlipper(application);
 #endif
@@ -57,3 +62,4 @@ static void InitializeFlipper(UIApplication *application) {
 }
 
 @end
+

@@ -20,6 +20,9 @@ export const userData = {
     setCountriesList(state, payload) {
       return {...state, countriesList: payload};
     },
+    setQuotesList(state, payload) {
+      return {...state, quotesList: payload};
+    },
   },
   effects: {
     loginUser(user) {
@@ -62,6 +65,17 @@ export const userData = {
         if (response.code === 200) {
           if (response.data) {
             this.setCountriesList(response.data);
+          }
+        }
+        return response;
+      });
+    },
+    getQuotesList() {
+      return API.getQuotesList().then((response) => {
+        console.log('response', response);
+        if (response.code === 200) {
+          if (response.data) {
+            this.setQuotesList(response.data);
           }
         }
         return response;

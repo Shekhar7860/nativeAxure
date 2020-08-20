@@ -39,7 +39,7 @@ class Quote extends PureComponent {
       items: [1, 2, 3, 4],
       quoteId: 0,
       quote: {},
-      showLoading : false
+      showLoading: false,
     };
   }
   componentDidMount = () => {
@@ -60,8 +60,8 @@ class Quote extends PureComponent {
       this.props
         .getQuoteDetails(id)
         .then((response) => {
-        //  console.log('response', response);
-           this.setState({showLoading: false});
+          //  console.log('response', response);
+          this.setState({showLoading: false});
           if (response.code === 200) {
             this.setState({quote: response.data});
           }
@@ -118,9 +118,7 @@ class Quote extends PureComponent {
               <View style={styles.emptyWidth} />
               <View style={styles.lastTextWidth}>
                 <TouchableOpacity
-                  onPress={() =>
-                    this.openScreen('EditQuote', quote)
-                  }>
+                  onPress={() => this.openScreen('EditQuote', quote)}>
                   <Image source={TASK} style={commonStyles.icon} />
                 </TouchableOpacity>
               </View>
@@ -284,12 +282,12 @@ const styles = ScaledSheet.create({
   },
 });
 
-const mapStateToProps = (state) => ({
-  online: state.netInfo.online,
+const mapState = (state) => ({
+  online: state.userData.online,
 });
 
-const mapDispatchToProps = {
+const mapDispatch = {
   getQuoteDetails,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Quote);
+export default connect(mapState, mapDispatch)(Quote);
